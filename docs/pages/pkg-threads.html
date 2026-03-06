@@ -1,0 +1,50 @@
+<h1>@volundr/threads</h1>
+<p class="lead">Worker thread pool for multi-core sharding.</p>
+
+<div class="req">npm install @volundr/threads</div>
+
+<p>Run CPU-intensive work across worker threads. Used by <code>@volundr/gateway</code> for multi-core sharding.</p>
+
+<h2>Usage</h2>
+<pre><code class="language-typescript">import { ThreadPool } from "@volundr/threads";
+
+const pool = new ThreadPool({ size: 4 });
+
+// Run a function in a worker
+const result = await pool.run((a, b) => a + b, 2, 3);
+console.log(result); // 5
+
+// Wait for all tasks
+await pool.drain();
+
+// Shut down
+await pool.close();</code></pre>
+
+<hr>
+
+<h2>ThreadPool</h2>
+<p><code>new ThreadPool(options?)</code></p>
+<details class="opt"><summary>ThreadPoolOptions</summary><div class="opt-fields">
+    <div class="opt-field"><code>size</code> <span class="opt-type">number - number of workers (default: <code>os.availableParallelism()</code>)</div>
+    <div class="opt-field"><code>taskTimeout</code> <span class="opt-type">number - timeout per task in ms</div>
+</div></details>
+
+<h3>Methods</h3>
+<table>
+    <thead><tr><th>Method</th><th>Returns</th><th>Description</th></tr></thead>
+    <tbody>
+        <tr><td><code>run&lt;T&gt;(fn, ...args)</code></td><td><code>Promise&lt;T&gt;</code></td><td>Execute function in a worker</td></tr>
+        <tr><td><code>drain()</code></td><td><code>Promise&lt;void&gt;</code></td><td>Wait for all pending tasks</td></tr>
+        <tr><td><code>close()</code></td><td><code>Promise&lt;void&gt;</code></td><td>Drain then terminate pool</td></tr>
+        <tr><td><code>terminate()</code></td><td><code>Promise&lt;void&gt;</code></td><td>Force-terminate all workers</td></tr>
+        <tr><td><code>ensureWorkers()</code></td><td><code>void</code></td><td>Eagerly spawn workers (auto on first task)</td></tr>
+        <tr><td><code>getStatus()</code></td><td><code>PoolStatus</code></td><td>Current pool status</td></tr>
+    </tbody>
+</table>
+
+<h3>PoolStatus</h3>
+<details class="opt"><summary>PoolStatus</summary><div class="opt-fields">
+    <div class="opt-field"><code>workers</code> <span class="opt-type">WorkerInfo[] - <code>{ id: number, status: "idle" | "busy" }</code></div>
+    <div class="opt-field"><code>queueSize</code> <span class="opt-type">number - pending tasks</div>
+    <div class="opt-field"><code>poolSize</code> <span class="opt-type">number - total workers</div>
+</div></details>

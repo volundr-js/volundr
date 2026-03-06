@@ -1,0 +1,93 @@
+<h1>Sending Messages</h1>
+<p class="lead">Three ways to send. Same result. Works everywhere.</p>
+
+<h2>The golden rule</h2>
+<p>Every <code>.send()</code> and <code>.reply()</code> in Völundr accepts the same three input types:</p>
+
+<h3>1. String</h3>
+<pre><code class="language-typescript">channel.send("Hello!");</code></pre>
+
+<h3>2. Options object</h3>
+<pre><code class="language-typescript">channel.send({
+    content: "Hello!",
+    embeds: [embed.toJSON()],
+});</code></pre>
+
+<h3>3. Callback builder</h3>
+<pre><code class="language-typescript">channel.send(msg => {
+    msg.content = "Hello!";
+    msg.embed(e => {
+        e.title = "Welcome";
+        e.description = "This is an embed";
+        e.color = 0x5865F2;
+        e.field("Users", "1,234", true);
+        e.field("Servers", "56", true);
+    });
+    msg.row(
+        new ButtonBuilder().setCustomId("ok").setLabel("Got it").setStyle(ButtonStyle.Primary),
+    );
+});</code></pre>
+
+<div class="callout callout-tip">
+    <strong>Tip:</strong> The callback builder requires zero imports. Build embeds, buttons, and action rows inline.
+</div>
+
+<h2>Works on every entity</h2>
+<p>The same <code>MessageInput</code> type is accepted by:</p>
+<ul>
+    <li><code>TextChannel.send()</code></li>
+    <li><code>DMChannel.send()</code></li>
+    <li><code>VoiceChannel.send()</code></li>
+    <li><code>ThreadChannel.send()</code></li>
+    <li><code>User.send()</code></li>
+    <li><code>Message.reply()</code></li>
+</ul>
+
+<h2>Embeds</h2>
+<pre><code class="language-typescript">import { EmbedBuilder, Colors } from "@volundr/client";
+
+const embed = new EmbedBuilder()
+    .setTitle("Server Info")
+    .setColor(Colors.Blurple)
+    .addFields(
+        { name: "Members", value: "1,234", inline: true },
+        { name: "Channels", value: "56", inline: true },
+    )
+    .setFooter({ text: "Powered by Völundr" })
+    .setTimestamp();
+
+channel.send({ embeds: [embed.toJSON()] });</code></pre>
+
+<h2>Replying to messages</h2>
+<pre><code class="language-typescript">client.on("MESSAGE_CREATE", (message) => {
+    // Simple reply
+    message.reply("Got it!");
+
+    // Rich reply
+    message.reply(msg => {
+        msg.embed(e => {
+            e.title = "Reply";
+            e.description = "This is a reply with an embed";
+        });
+    });
+});</code></pre>
+
+<h2>Tagged template mentions</h2>
+<p>Use <code>fmt</code> to auto-resolve entities to Discord mention syntax:</p>
+<pre><code class="language-typescript">import { fmt } from "@volundr/client";
+
+// User, Channel, Role - all auto-resolved
+channel.send(fmt`Welcome ${member}! Check out ${rulesChannel}.`);
+
+// Dates become Discord timestamps
+channel.send(fmt`Event starts ${new Date("2025-01-01")}`);</code></pre>
+
+<h2>Attachments</h2>
+<pre><code class="language-typescript">import { AttachmentBuilder } from "@volundr/client";
+
+const file = new AttachmentBuilder("./image.png", "screenshot.png");
+
+channel.send({
+    content: "Here's the image",
+    files: [file],
+});</code></pre>

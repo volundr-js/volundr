@@ -1,0 +1,250 @@
+<h1>Events</h1>
+<p class="lead">Listen to Discord events with type-safe handlers.</p>
+
+<h2>Listening to events</h2>
+<pre><code class="language-typescript">client.on("MESSAGE_CREATE", (message) => {
+    console.log(message.content);
+});
+
+client.on("GUILD_MEMBER_ADD", (member) => {
+    console.log(`${member.user.username} joined ${member.guild.name}`);
+});
+
+client.on("ready", () => {
+    console.log("Bot is online!");
+});</code></pre>
+
+<h2>Event names</h2>
+<p>Völundr uses Discord's native event names in SCREAMING_SNAKE_CASE. No translation layer. You can use string literals or the <code>GatewayEvent</code> enum:</p>
+
+<pre><code class="language-typescript">import { GatewayEvent } from "@volundr/types";
+
+// Both are equivalent
+client.on("MESSAGE_CREATE", (message) => { /* ... */ });
+client.on(GatewayEvent.MessageCreate, (message) => { /* ... */ });</code></pre>
+
+<h2>Rich entities</h2>
+<p>5 events emit rich entity objects with methods. All others emit raw Discord API data.</p>
+
+<table>
+    <thead><tr><th>Event</th><th>Payload</th><th>Description</th></tr></thead>
+    <tbody>
+        <tr><td><code>MESSAGE_CREATE</code></td><td><code>Message</code></td><td>Rich entity with <code>.reply()</code>, <code>.delete()</code>, <code>.react()</code></td></tr>
+        <tr><td><code>MESSAGE_UPDATE</code></td><td><code>Message</code></td><td>Rich entity (only if cached)</td></tr>
+        <tr><td><code>INTERACTION_CREATE</code></td><td><code>Interaction</code></td><td>Rich entity with <code>.reply()</code>, <code>.deferReply()</code>, etc.</td></tr>
+        <tr><td><code>GUILD_CREATE</code></td><td><code>Guild</code></td><td>Rich entity (only if cached)</td></tr>
+        <tr><td><code>GUILD_MEMBER_ADD</code></td><td><code>GuildMember</code></td><td>Rich entity (only if cached)</td></tr>
+    </tbody>
+</table>
+
+<pre><code class="language-typescript">client.on("MESSAGE_CREATE", (message) => {
+    // message is a Message entity, not raw API data
+    message.author.username;    // User entity
+    message.guild;              // Guild entity (or null in DMs)
+    message.channel;            // Channel entity
+    message.reply("Hello!");    // method - calls REST API
+});</code></pre>
+
+<h2>Once</h2>
+<p>Listen for an event only once:</p>
+<pre><code class="language-typescript">client.once("ready", () => {
+    console.log("First ready!");
+});</code></pre>
+
+<h2>Event streaming</h2>
+<p>Consume events as an async iterable with <code>client.stream()</code>. Cancel with an AbortSignal:</p>
+<pre><code class="language-typescript">// Process messages as a stream
+const ac = new AbortController();
+
+for await (const message of client.stream("MESSAGE_CREATE", { signal: ac.signal })) {
+    console.log(message.content);
+    if (message.content === "stop") ac.abort();
+}</code></pre>
+
+<p>Useful for sequential workflows where you need to wait for a specific event:</p>
+<pre><code class="language-typescript">// Wait for a specific user's message
+async function waitForResponse(channelId: string, userId: string): Promise<string> {
+    for await (const msg of client.stream("MESSAGE_CREATE")) {
+        if (msg.channel?.id === channelId && msg.author.id === userId) {
+            return msg.content;
+        }
+    }
+    return "";
+}</code></pre>
+
+<hr>
+
+<h2>All gateway events</h2>
+<p>57 events total. All except the 5 above emit raw Discord API data.</p>
+
+<h3>Guilds</h3>
+<table>
+    <thead><tr><th>Event</th><th>Intent</th><th>Description</th></tr></thead>
+    <tbody>
+        <tr><td><code>READY</code></td><td>-</td><td>Client connected and identified</td></tr>
+        <tr><td><code>RESUMED</code></td><td>-</td><td>Session resumed after disconnect</td></tr>
+        <tr><td><code>GUILD_CREATE</code></td><td>Guilds</td><td>Bot joined a guild or guild became available</td></tr>
+        <tr><td><code>GUILD_UPDATE</code></td><td>Guilds</td><td>Guild settings changed</td></tr>
+        <tr><td><code>GUILD_DELETE</code></td><td>Guilds</td><td>Bot removed from guild or guild unavailable</td></tr>
+        <tr><td><code>USER_UPDATE</code></td><td>-</td><td>Current user updated</td></tr>
+    </tbody>
+</table>
+
+<h3>Channels</h3>
+<table>
+    <thead><tr><th>Event</th><th>Intent</th><th>Description</th></tr></thead>
+    <tbody>
+        <tr><td><code>CHANNEL_CREATE</code></td><td>Guilds</td><td>Channel created</td></tr>
+        <tr><td><code>CHANNEL_UPDATE</code></td><td>Guilds</td><td>Channel settings updated</td></tr>
+        <tr><td><code>CHANNEL_DELETE</code></td><td>Guilds</td><td>Channel deleted</td></tr>
+        <tr><td><code>CHANNEL_PINS_UPDATE</code></td><td>Guilds / DirectMessages</td><td>Pinned messages changed</td></tr>
+    </tbody>
+</table>
+
+<h3>Threads</h3>
+<table>
+    <thead><tr><th>Event</th><th>Intent</th><th>Description</th></tr></thead>
+    <tbody>
+        <tr><td><code>THREAD_CREATE</code></td><td>Guilds</td><td>Thread created or bot added to thread</td></tr>
+        <tr><td><code>THREAD_UPDATE</code></td><td>Guilds</td><td>Thread settings updated</td></tr>
+        <tr><td><code>THREAD_DELETE</code></td><td>Guilds</td><td>Thread deleted</td></tr>
+        <tr><td><code>THREAD_LIST_SYNC</code></td><td>Guilds</td><td>Sent when gaining access to a channel</td></tr>
+        <tr><td><code>THREAD_MEMBER_UPDATE</code></td><td>Guilds</td><td>Current user's thread member updated</td></tr>
+        <tr><td><code>THREAD_MEMBERS_UPDATE</code></td><td>Guilds</td><td>Members added/removed from thread</td></tr>
+    </tbody>
+</table>
+
+<h3>Members</h3>
+<table>
+    <thead><tr><th>Event</th><th>Intent</th><th>Description</th></tr></thead>
+    <tbody>
+        <tr><td><code>GUILD_MEMBER_ADD</code></td><td>GuildMembers <span class="opt-req">privileged</td><td>New member joined</td></tr>
+        <tr><td><code>GUILD_MEMBER_REMOVE</code></td><td>GuildMembers <span class="opt-req">privileged</td><td>Member left or was removed</td></tr>
+        <tr><td><code>GUILD_MEMBER_UPDATE</code></td><td>GuildMembers <span class="opt-req">privileged</td><td>Member updated (roles, nickname, etc.)</td></tr>
+        <tr><td><code>GUILD_MEMBERS_CHUNK</code></td><td>-</td><td>Response to request guild members</td></tr>
+        <tr><td><code>PRESENCE_UPDATE</code></td><td>GuildPresences <span class="opt-req">privileged</td><td>User status/activity changed</td></tr>
+    </tbody>
+</table>
+
+<h3>Roles</h3>
+<table>
+    <thead><tr><th>Event</th><th>Intent</th><th>Description</th></tr></thead>
+    <tbody>
+        <tr><td><code>GUILD_ROLE_CREATE</code></td><td>Guilds</td><td>Role created</td></tr>
+        <tr><td><code>GUILD_ROLE_UPDATE</code></td><td>Guilds</td><td>Role updated</td></tr>
+        <tr><td><code>GUILD_ROLE_DELETE</code></td><td>Guilds</td><td>Role deleted</td></tr>
+    </tbody>
+</table>
+
+<h3>Messages</h3>
+<table>
+    <thead><tr><th>Event</th><th>Intent</th><th>Description</th></tr></thead>
+    <tbody>
+        <tr><td><code>MESSAGE_CREATE</code></td><td>GuildMessages / DirectMessages</td><td>New message sent</td></tr>
+        <tr><td><code>MESSAGE_UPDATE</code></td><td>GuildMessages / DirectMessages</td><td>Message edited</td></tr>
+        <tr><td><code>MESSAGE_DELETE</code></td><td>GuildMessages / DirectMessages</td><td>Message deleted</td></tr>
+        <tr><td><code>MESSAGE_DELETE_BULK</code></td><td>GuildMessages / DirectMessages</td><td>Multiple messages deleted</td></tr>
+    </tbody>
+</table>
+
+<h3>Reactions</h3>
+<table>
+    <thead><tr><th>Event</th><th>Intent</th><th>Description</th></tr></thead>
+    <tbody>
+        <tr><td><code>MESSAGE_REACTION_ADD</code></td><td>GuildMessageReactions / DirectMessageReactions</td><td>Reaction added to message</td></tr>
+        <tr><td><code>MESSAGE_REACTION_REMOVE</code></td><td>GuildMessageReactions / DirectMessageReactions</td><td>Reaction removed</td></tr>
+        <tr><td><code>MESSAGE_REACTION_REMOVE_ALL</code></td><td>GuildMessageReactions / DirectMessageReactions</td><td>All reactions removed</td></tr>
+        <tr><td><code>MESSAGE_REACTION_REMOVE_EMOJI</code></td><td>GuildMessageReactions / DirectMessageReactions</td><td>All reactions for one emoji removed</td></tr>
+    </tbody>
+</table>
+
+<h3>Voice</h3>
+<table>
+    <thead><tr><th>Event</th><th>Intent</th><th>Description</th></tr></thead>
+    <tbody>
+        <tr><td><code>VOICE_STATE_UPDATE</code></td><td>GuildVoiceStates</td><td>Someone joined/left/moved voice channel</td></tr>
+        <tr><td><code>VOICE_SERVER_UPDATE</code></td><td>-</td><td>Guild's voice server changed (internal)</td></tr>
+    </tbody>
+</table>
+
+<h3>Interactions</h3>
+<table>
+    <thead><tr><th>Event</th><th>Intent</th><th>Description</th></tr></thead>
+    <tbody>
+        <tr><td><code>INTERACTION_CREATE</code></td><td>-</td><td>Slash command, button, select menu, modal, etc.</td></tr>
+        <tr><td><code>TYPING_START</code></td><td>GuildMessageTyping / DirectMessageTyping</td><td>User started typing</td></tr>
+    </tbody>
+</table>
+
+<h3>Moderation</h3>
+<table>
+    <thead><tr><th>Event</th><th>Intent</th><th>Description</th></tr></thead>
+    <tbody>
+        <tr><td><code>GUILD_BAN_ADD</code></td><td>GuildModeration</td><td>User was banned</td></tr>
+        <tr><td><code>GUILD_BAN_REMOVE</code></td><td>GuildModeration</td><td>User was unbanned</td></tr>
+        <tr><td><code>GUILD_AUDIT_LOG_ENTRY_CREATE</code></td><td>GuildModeration</td><td>Audit log entry created</td></tr>
+        <tr><td><code>AUTO_MODERATION_RULE_CREATE</code></td><td>AutoModerationConfiguration</td><td>Auto-mod rule created</td></tr>
+        <tr><td><code>AUTO_MODERATION_RULE_UPDATE</code></td><td>AutoModerationConfiguration</td><td>Auto-mod rule updated</td></tr>
+        <tr><td><code>AUTO_MODERATION_RULE_DELETE</code></td><td>AutoModerationConfiguration</td><td>Auto-mod rule deleted</td></tr>
+        <tr><td><code>AUTO_MODERATION_ACTION_EXECUTION</code></td><td>AutoModerationExecution</td><td>Auto-mod rule triggered</td></tr>
+    </tbody>
+</table>
+
+<h3>Misc</h3>
+<table>
+    <thead><tr><th>Event</th><th>Intent</th><th>Description</th></tr></thead>
+    <tbody>
+        <tr><td><code>GUILD_EMOJIS_UPDATE</code></td><td>GuildExpressions</td><td>Emojis updated</td></tr>
+        <tr><td><code>GUILD_STICKERS_UPDATE</code></td><td>GuildExpressions</td><td>Stickers updated</td></tr>
+        <tr><td><code>GUILD_INTEGRATIONS_UPDATE</code></td><td>GuildIntegrations</td><td>Integration updated</td></tr>
+        <tr><td><code>WEBHOOKS_UPDATE</code></td><td>GuildWebhooks</td><td>Channel webhooks updated</td></tr>
+        <tr><td><code>INVITE_CREATE</code></td><td>GuildInvites</td><td>Invite created</td></tr>
+        <tr><td><code>INVITE_DELETE</code></td><td>GuildInvites</td><td>Invite deleted</td></tr>
+        <tr><td><code>STAGE_INSTANCE_CREATE</code></td><td>Guilds</td><td>Stage instance created</td></tr>
+        <tr><td><code>STAGE_INSTANCE_UPDATE</code></td><td>Guilds</td><td>Stage instance updated</td></tr>
+        <tr><td><code>STAGE_INSTANCE_DELETE</code></td><td>Guilds</td><td>Stage instance deleted</td></tr>
+        <tr><td><code>GUILD_SCHEDULED_EVENT_CREATE</code></td><td>GuildScheduledEvents</td><td>Scheduled event created</td></tr>
+        <tr><td><code>GUILD_SCHEDULED_EVENT_UPDATE</code></td><td>GuildScheduledEvents</td><td>Scheduled event updated</td></tr>
+        <tr><td><code>GUILD_SCHEDULED_EVENT_DELETE</code></td><td>GuildScheduledEvents</td><td>Scheduled event deleted</td></tr>
+        <tr><td><code>GUILD_SCHEDULED_EVENT_USER_ADD</code></td><td>GuildScheduledEvents</td><td>User subscribed to event</td></tr>
+        <tr><td><code>GUILD_SCHEDULED_EVENT_USER_REMOVE</code></td><td>GuildScheduledEvents</td><td>User unsubscribed from event</td></tr>
+        <tr><td><code>MESSAGE_POLL_VOTE_ADD</code></td><td>GuildMessagePolls / DirectMessagePolls</td><td>User voted on poll</td></tr>
+        <tr><td><code>MESSAGE_POLL_VOTE_REMOVE</code></td><td>GuildMessagePolls / DirectMessagePolls</td><td>User removed poll vote</td></tr>
+    </tbody>
+</table>
+
+<hr>
+
+<h2>Intents reference</h2>
+<p>Each intent is a bit flag. Combine with bitwise OR. Privileged intents require approval in the Discord Developer Portal.</p>
+
+<table>
+    <thead><tr><th>Intent</th><th>Bit</th><th>Note</th></tr></thead>
+    <tbody>
+        <tr><td><code>Guilds</code></td><td>0</td><td>Channels, roles, threads, stages</td></tr>
+        <tr><td><code>GuildMembers</code></td><td>1</td><td><span class="opt-req">privileged</td></tr>
+        <tr><td><code>GuildModeration</code></td><td>2</td><td>Bans, audit log</td></tr>
+        <tr><td><code>GuildExpressions</code></td><td>3</td><td>Emojis, stickers</td></tr>
+        <tr><td><code>GuildIntegrations</code></td><td>4</td><td></td></tr>
+        <tr><td><code>GuildWebhooks</code></td><td>5</td><td></td></tr>
+        <tr><td><code>GuildInvites</code></td><td>6</td><td></td></tr>
+        <tr><td><code>GuildVoiceStates</code></td><td>7</td><td>Required for voice</td></tr>
+        <tr><td><code>GuildPresences</code></td><td>8</td><td><span class="opt-req">privileged</td></tr>
+        <tr><td><code>GuildMessages</code></td><td>9</td><td></td></tr>
+        <tr><td><code>GuildMessageReactions</code></td><td>10</td><td></td></tr>
+        <tr><td><code>GuildMessageTyping</code></td><td>11</td><td></td></tr>
+        <tr><td><code>DirectMessages</code></td><td>12</td><td></td></tr>
+        <tr><td><code>DirectMessageReactions</code></td><td>13</td><td></td></tr>
+        <tr><td><code>DirectMessageTyping</code></td><td>14</td><td></td></tr>
+        <tr><td><code>MessageContent</code></td><td>15</td><td><span class="opt-req">privileged - needed for content in guild messages</td></tr>
+        <tr><td><code>GuildScheduledEvents</code></td><td>16</td><td></td></tr>
+        <tr><td><code>AutoModerationConfiguration</code></td><td>20</td><td></td></tr>
+        <tr><td><code>AutoModerationExecution</code></td><td>21</td><td></td></tr>
+        <tr><td><code>GuildMessagePolls</code></td><td>24</td><td></td></tr>
+        <tr><td><code>DirectMessagePolls</code></td><td>25</td><td></td></tr>
+    </tbody>
+</table>
+
+<div class="callout callout-tip">
+    <strong>Tip:</strong> <code>INTERACTION_CREATE</code>, <code>READY</code>, <code>RESUMED</code>, and <code>USER_UPDATE</code> do not require any intent - they are always received.
+</div>

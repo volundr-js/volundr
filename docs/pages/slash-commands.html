@@ -1,0 +1,114 @@
+<h1>Slash Commands</h1>
+<p class="lead">Register and handle application commands.</p>
+
+<h2>Declarative routing</h2>
+<p>The recommended way. Register handlers with <code>client.command()</code> and let Volundr route interactions automatically:</p>
+<pre><code class="language-typescript">import { SlashCommandBuilder } from "@volundr/client";
+
+// Register the command with Discord
+const ping = new SlashCommandBuilder()
+    .setName("ping")
+    .setDescription("Replies with pong!")
+    .toJSON();
+
+await client.setGlobalCommands([ping]);
+
+// Handle it
+client.command("ping", (interaction) => {
+    interaction.reply("Pong!");
+});</code></pre>
+
+<h2>Command with options</h2>
+<pre><code class="language-typescript">const greet = new SlashCommandBuilder()
+    .setName("greet")
+    .setDescription("Greet someone")
+    .addUserOption(opt =>
+        opt.setName("user").setDescription("Who to greet").setRequired(true)
+    )
+    .addStringOption(opt =>
+        opt.setName("message").setDescription("Custom greeting")
+    )
+    .toJSON();
+
+client.command("greet", (interaction) => {
+    const user = interaction.options.getUser("user", interaction.client);
+    const msg = interaction.options.getString("message") ?? "Hello!";
+    interaction.reply(fmt`${msg} ${user}!`);
+});</code></pre>
+
+<h2>Subcommands</h2>
+<p>Use <code>"name/sub"</code> or <code>"name/group/sub"</code> syntax to route directly to subcommands:</p>
+<pre><code class="language-typescript">const config = new SlashCommandBuilder()
+    .setName("config")
+    .setDescription("Server configuration")
+    .addSubcommandGroup(group =>
+        group.setName("channel").setDescription("Channel settings")
+            .addSubcommand(sub =>
+                sub.setName("set").setDescription("Set a channel")
+                    .addChannelOption(opt =>
+                        opt.setName("channel").setDescription("The channel").setRequired(true)
+                    ),
+            )
+            .addSubcommand(sub =>
+                sub.setName("remove").setDescription("Remove channel setting")
+            ),
+    )
+    .toJSON();
+
+// Route directly to subcommands
+client.command("config/channel/set", (interaction) => {
+    const ch = interaction.options.getChannel("channel", interaction.client);
+    interaction.reply(fmt`Config channel set to ${ch}`);
+});
+
+client.command("config/channel/remove", (interaction) => {
+    interaction.reply("Config channel removed.");
+});</code></pre>
+
+<div class="callout callout-tip">
+    <strong>Fallback:</strong> If no subcommand handler matches, Volundr falls back to the base command handler (<code>client.command("config", ...)</code>). This lets you handle all subcommands in one place if you prefer.
+</div>
+
+<h2>Context menus</h2>
+<pre><code class="language-typescript">import { ContextMenuCommandBuilder } from "@volundr/client";
+import { ApplicationCommandType } from "@volundr/types";
+
+const cmd = new ContextMenuCommandBuilder()
+    .setName("Get User Info")
+    .setType(ApplicationCommandType.User)
+    .toJSON();
+
+await client.createGlobalCommand(cmd);
+
+client.contextMenu("Get User Info", (interaction) => {
+    interaction.reply(`User: ${interaction.getTargetUser()?.username}`);
+});</code></pre>
+
+<h2>Autocomplete</h2>
+<pre><code class="language-typescript">client.autocomplete("search", async (interaction) => {
+    const query = interaction.focused?.value ?? "";
+    const results = await searchDatabase(query);
+    await interaction.respond(
+        results.map(r => ({ name: r.label, value: r.id })),
+    );
+});</code></pre>
+
+<h2>Ephemeral replies</h2>
+<pre><code class="language-typescript">interaction.reply({
+    content: "Only you can see this!",
+    ephemeral: true,
+});</code></pre>
+
+<h2>Deferred replies</h2>
+<pre><code class="language-typescript">await interaction.deferReply();
+// ... do some work ...
+await interaction.editReply("Done!");</code></pre>
+
+<h2>Manual handling</h2>
+<p>You can also handle interactions manually via the event if you prefer:</p>
+<pre><code class="language-typescript">client.on("INTERACTION_CREATE", (interaction) => {
+    if (interaction.isChatInputCommand() && interaction.commandName === "ping") {
+        interaction.reply("Pong!");
+    }
+});</code></pre>
+<p>Both approaches work. Declarative routing just removes the boilerplate.</p>

@@ -1,0 +1,39 @@
+<h1>Sweepers</h1>
+<p class="lead">Automatically clean up old cache data to control memory usage.</p>
+
+<h2>Configuration</h2>
+<pre><code class="language-typescript">import { Client, messageLifetimeFilter } from "@volundr/client";
+
+const client = new Client({
+    token: "...",
+    intents: ...,
+    sweepers: {
+        messages: {
+            interval: 60_000,           // run every 60 seconds
+            filter: messageLifetimeFilter(30 * 60_000), // remove messages older than 30 min
+        },
+        presences: {
+            interval: 300_000,
+            filter: () => true,        // clear all presences every 5 min
+        },
+    },
+});</code></pre>
+
+<h2>Built-in filters</h2>
+<table>
+    <thead>
+        <tr><th>Filter</th><th>Description</th></tr>
+    </thead>
+    <tbody>
+        <tr><td><code>messageLifetimeFilter(ms)</code></td><td>Remove messages older than the specified duration</td></tr>
+        <tr><td><code>lifetimeFilter(ms)</code></td><td>Generic lifetime filter for any entity with a timestamp</td></tr>
+        <tr><td><code>() =&gt; true</code></td><td>Remove everything (clear the cache)</td></tr>
+    </tbody>
+</table>
+
+<h2>Sweepable caches</h2>
+<p>You can configure sweepers for: <code>messages</code>, <code>users</code>, <code>presences</code>, <code>voiceStates</code>, <code>members</code>, <code>threads</code>.</p>
+
+<div class="callout callout-tip">
+    <strong>Tip:</strong> For large bots (100+ guilds), always configure message sweepers. Messages are the biggest memory consumer.
+</div>

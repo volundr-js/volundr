@@ -1,0 +1,61 @@
+<h1>Völundr</h1>
+<p class="lead">A Discord SDK for TypeScript. Fast, predictable, zero magic.</p>
+
+<div class="req">Node.js 18+ &nbsp;•&nbsp; Discord API v10 &nbsp;•&nbsp; TypeScript 5+</div>
+
+<h2>Why Völundr?</h2>
+
+<p><strong>Predictable API.</strong> <code>.get()</code> reads from cache. <code>.fetch()</code> calls the API. <code>.send()</code> accepts the same input everywhere. You can guess the method before opening docs.</p>
+
+<p><strong>No abstraction hell.</strong> Three layers: gateway, REST, entities. No 20 intermediate managers. You always know what's happening.</p>
+
+<p><strong>Fast where it matters.</strong> 500k+ events/sec. Sub-microsecond latency. 2.4× less GC garbage than Node.js EventEmitter. But you'll never need to think about this - it just doesn't lag.</p>
+
+<p><strong>Scales.</strong> Cache sweepers, configurable limits, worker thread sharding, global rate limit coordination. Built for bots that run for months on hundreds of shards.</p>
+
+<h2>Mental Model</h2>
+<pre><code>Discord API
+     │
+  Gateway ──→ events (WebSocket, shards, compression)
+  REST    ──→ requests (rate limits, retries, buckets)
+     │
+  Client  ──→ entities + cache + builders
+     │
+  Your bot</code></pre>
+
+<p>Three layers. Gateway handles WebSocket events. REST handles HTTP requests. Client ties them together with rich entities, cache, and builder DSL.</p>
+
+<h2>Packages</h2>
+<table>
+    <thead>
+        <tr><th>Package</th><th>What it does</th></tr>
+    </thead>
+    <tbody>
+        <tr><td><code>@volundr/client</code></td><td>Everything you need - entities, builders, cache, collectors</td></tr>
+        <tr><td><code>@volundr/gateway</code></td><td>Gateway v10 - WebSocket, compression, sharding, voice</td></tr>
+        <tr><td><code>@volundr/rest</code></td><td>REST API - rate limits, retries, file uploads</td></tr>
+        <tr><td><code>@volundr/voice</code></td><td>Audio playback - FFmpeg, Opus, AudioResource</td></tr>
+        <tr><td><code>@volundr/lavalink</code></td><td>Lavalink v4 - search, play, filters, events</td></tr>
+        <tr><td><code>@volundr/types</code></td><td>TypeScript types for the Discord API</td></tr>
+        <tr><td><code>@volundr/threads</code></td><td>Worker thread pool for multi-core sharding</td></tr>
+        <tr><td><code>@volundr/logger</code></td><td>Structured logging</td></tr>
+    </tbody>
+</table>
+<p>Most bots only need <code>@volundr/client</code>. Everything else is optional.</p>
+
+<h2>What makes it different</h2>
+
+<p>Not a discord.js clone. Different design decisions from the ground up.</p>
+
+<ul>
+    <li><strong>Declarative routing.</strong> <code>client.command("ping", handler)</code> and <code>client.button(/^ticket-\d+$/, handler)</code> instead of manual <code>if/switch</code> on interaction names and custom IDs.</li>
+    <li><strong>Modern resource management.</strong> <code>await using client = new Client(...)</code> - automatic cleanup via <code>Symbol.asyncDispose</code>. Collectors support <code>Symbol.dispose</code>.</li>
+    <li><strong>Event streaming.</strong> <code>for await (const msg of client.stream("MESSAGE_CREATE"))</code> - consume events as async iterables with AbortSignal cancellation.</li>
+    <li><strong>Tagged template mentions.</strong> <code>fmt`Hello ${user}!`</code> auto-resolves entities to Discord mention syntax.</li>
+    <li><strong>Integrated builders.</strong> Functional helpers (<code>embed()</code>, <code>row()</code>, <code>button()</code>) and callback DSL (<code>msg =&gt; { msg.embed(...) }</code>) ship with the client - no separate package needed.</li>
+    <li><strong>Built-in thread pool.</strong> <code>ThreadPool</code> for multi-core shard processing using worker threads, no external sharder process.</li>
+    <li><strong>TypeScript-first.</strong> Type predicates (<code>interaction.isChatInputCommand()</code>), typed events, generics throughout. Not types bolted onto JavaScript.</li>
+    <li><strong>Single import.</strong> <code>@volundr/client</code> includes everything - entities, builders, cache, collectors, permissions, formatters. Most bots need one dependency.</li>
+</ul>
+
+<p>21,000+ lines of source. 486 tests. 130+ REST methods. 8 packages. Zero external runtime dependencies.</p>

@@ -1,0 +1,215 @@
+<h1>@volundr/gateway</h1>
+<p class="lead">Gateway v10 - WebSocket, compression, sharding, voice.</p>
+
+<div class="req">npm install @volundr/gateway</div>
+
+<p>You usually don't import this directly - <code>@volundr/client</code> handles it. Use this package when you want raw gateway access without the entity layer.</p>
+
+<h2>Standalone usage</h2>
+<pre><code class="language-typescript">import { Gateway, GatewayIntents } from "@volundr/gateway";
+
+const gateway = new Gateway({
+    token: "...",
+    intents: GatewayIntents.Guilds | GatewayIntents.GuildMessages,
+});
+
+gateway.on("MESSAGE_CREATE", (data) => {
+    // data is raw APIMessage, not an entity
+    console.log(data.content);
+});
+
+await gateway.connect();</code></pre>
+
+<hr>
+
+<h2>Gateway</h2>
+<p><code>new Gateway(options)</code></p>
+<details class="opt"><summary>GatewayOptions</summary><div class="opt-fields">
+    <div class="opt-field"><code>token</code> <span class="opt-type">string <span class="opt-req">required</div>
+    <div class="opt-field"><code>intents</code> <span class="opt-type">number <span class="opt-req">required</div>
+    <div class="opt-field"><code>rest</code> <span class="opt-type">RestClient</div>
+    <div class="opt-field"><code>largeThreshold</code> <span class="opt-type">number</div>
+    <div class="opt-field"><code>presence</code> <span class="opt-type">GatewayPresence</div>
+    <div class="opt-field"><code>shard</code> <span class="opt-type">[number, number]</div>
+    <div class="opt-field"><code>compress</code> <span class="opt-type">boolean</div>
+</div></details>
+
+<h3>Methods</h3>
+<table>
+    <thead><tr><th>Method</th><th>Returns</th><th>Description</th></tr></thead>
+    <tbody>
+        <tr><td><code>connect()</code></td><td><code>Promise&lt;void&gt;</code></td><td>Connect to Discord gateway</td></tr>
+        <tr><td><code>disconnect(code?)</code></td><td><code>void</code></td><td>Disconnect gracefully</td></tr>
+        <tr><td><code>getStatus()</code></td><td><code>GatewayStatus</code></td><td>Current connection status</td></tr>
+        <tr><td><code>setPresence(presence)</code></td><td><code>void</code></td><td>Update bot presence</td></tr>
+        <tr><td><code>sendVoiceStateUpdate(guildId, channelId, selfMute, selfDeaf)</code></td><td><code>void</code></td><td>Join/leave voice channel</td></tr>
+        <tr><td><code>requestGuildMembers(data)</code></td><td><code>void</code></td><td>Request guild members chunk</td></tr>
+    </tbody>
+</table>
+
+<h3>Events</h3>
+<table>
+    <thead><tr><th>Event</th><th>Payload</th><th>Description</th></tr></thead>
+    <tbody>
+        <tr><td><code>close</code></td><td><code>number</code></td><td>Connection closed with code</td></tr>
+        <tr><td><code>status</code></td><td><code>GatewayStatus</code></td><td>Status changed</td></tr>
+        <tr><td><code>error</code></td><td><code>Error</code></td><td>Error occurred</td></tr>
+        <tr><td><code>MESSAGE_CREATE</code></td><td><code>APIMessage</code></td><td>All Discord dispatch events are emitted by name</td></tr>
+    </tbody>
+</table>
+
+<p><code>GatewayStatus</code>: <code>"disconnected"</code> | <code>"connecting"</code> | <code>"connected"</code> | <code>"resuming"</code></p>
+
+<hr>
+
+<h2>ShardManager</h2>
+<p><code>new ShardManager(options)</code></p>
+<details class="opt"><summary>ShardManagerOptions</summary><div class="opt-fields">
+    <div class="opt-field"><code>token</code> <span class="opt-type">string <span class="opt-req">required</div>
+    <div class="opt-field"><code>intents</code> <span class="opt-type">number <span class="opt-req">required</div>
+    <div class="opt-field"><code>shardCount</code> <span class="opt-type">number | "auto"</div>
+    <div class="opt-field"><code>largeThreshold</code> <span class="opt-type">number</div>
+    <div class="opt-field"><code>presence</code> <span class="opt-type">GatewayPresence</div>
+    <div class="opt-field"><code>rest</code> <span class="opt-type">RestClient</div>
+    <div class="opt-field"><code>compress</code> <span class="opt-type">boolean</div>
+</div></details>
+
+<h3>Methods</h3>
+<table>
+    <thead><tr><th>Method</th><th>Returns</th><th>Description</th></tr></thead>
+    <tbody>
+        <tr><td><code>connect()</code></td><td><code>Promise&lt;void&gt;</code></td><td>Spawn all shards with auto-concurrency</td></tr>
+        <tr><td><code>disconnect()</code></td><td><code>void</code></td><td>Disconnect all shards</td></tr>
+        <tr><td><code>getShardCount()</code></td><td><code>number</code></td><td>Total shard count</td></tr>
+        <tr><td><code>getShard(guildId)</code></td><td><code>number</code></td><td>Get shard ID for a guild</td></tr>
+        <tr><td><code>getStatus()</code></td><td><code>Map&lt;number, GatewayStatus&gt;</code></td><td>Status of all shards</td></tr>
+        <tr><td><code>setPresence(presence)</code></td><td><code>void</code></td><td>Set presence on all shards</td></tr>
+        <tr><td><code>sendVoiceStateUpdate(...)</code></td><td><code>void</code></td><td>Routes to correct shard</td></tr>
+        <tr><td><code>requestGuildMembers(guildId, data)</code></td><td><code>void</code></td><td>Routes to correct shard</td></tr>
+        <tr><td><code>broadcastEval&lt;T&gt;(script, options?)</code></td><td><code>Promise&lt;T[]&gt;</code></td><td>Evaluate code on shards</td></tr>
+        <tr><td><code>respawnAll(options?)</code></td><td><code>Promise&lt;void&gt;</code></td><td>Respawn all shards with delays</td></tr>
+    </tbody>
+</table>
+
+<h3>Events</h3>
+<table>
+    <thead><tr><th>Event</th><th>Payload</th></tr></thead>
+    <tbody>
+        <tr><td><code>shardReady</code></td><td><code>{ shardId: number }</code></td></tr>
+        <tr><td><code>shardDisconnect</code></td><td><code>{ shardId: number, code: number }</code></td></tr>
+        <tr><td><code>shardError</code></td><td><code>{ shardId: number, error: Error }</code></td></tr>
+        <tr><td><code>allReady</code></td><td><code>void</code></td></tr>
+        <tr><td><code>error</code></td><td><code>Error</code></td></tr>
+    </tbody>
+</table>
+
+<hr>
+
+<h2>GatewayIntents</h2>
+<table>
+    <thead><tr><th>Intent</th><th>Value</th></tr></thead>
+    <tbody>
+        <tr><td><code>Guilds</code></td><td><code>1 &lt;&lt; 0</code></td></tr>
+        <tr><td><code>GuildMembers</code></td><td><code>1 &lt;&lt; 1</code> (privileged)</td></tr>
+        <tr><td><code>GuildModeration</code></td><td><code>1 &lt;&lt; 2</code></td></tr>
+        <tr><td><code>GuildExpressions</code></td><td><code>1 &lt;&lt; 3</code></td></tr>
+        <tr><td><code>GuildIntegrations</code></td><td><code>1 &lt;&lt; 4</code></td></tr>
+        <tr><td><code>GuildWebhooks</code></td><td><code>1 &lt;&lt; 5</code></td></tr>
+        <tr><td><code>GuildInvites</code></td><td><code>1 &lt;&lt; 6</code></td></tr>
+        <tr><td><code>GuildVoiceStates</code></td><td><code>1 &lt;&lt; 7</code></td></tr>
+        <tr><td><code>GuildPresences</code></td><td><code>1 &lt;&lt; 8</code> (privileged)</td></tr>
+        <tr><td><code>GuildMessages</code></td><td><code>1 &lt;&lt; 9</code></td></tr>
+        <tr><td><code>GuildMessageReactions</code></td><td><code>1 &lt;&lt; 10</code></td></tr>
+        <tr><td><code>GuildMessageTyping</code></td><td><code>1 &lt;&lt; 11</code></td></tr>
+        <tr><td><code>DirectMessages</code></td><td><code>1 &lt;&lt; 12</code></td></tr>
+        <tr><td><code>DirectMessageReactions</code></td><td><code>1 &lt;&lt; 13</code></td></tr>
+        <tr><td><code>DirectMessageTyping</code></td><td><code>1 &lt;&lt; 14</code></td></tr>
+        <tr><td><code>MessageContent</code></td><td><code>1 &lt;&lt; 15</code> (privileged)</td></tr>
+        <tr><td><code>GuildScheduledEvents</code></td><td><code>1 &lt;&lt; 16</code></td></tr>
+        <tr><td><code>AutoModerationConfiguration</code></td><td><code>1 &lt;&lt; 20</code></td></tr>
+        <tr><td><code>AutoModerationExecution</code></td><td><code>1 &lt;&lt; 21</code></td></tr>
+        <tr><td><code>GuildMessagePolls</code></td><td><code>1 &lt;&lt; 24</code></td></tr>
+        <tr><td><code>DirectMessagePolls</code></td><td><code>1 &lt;&lt; 25</code></td></tr>
+    </tbody>
+</table>
+
+<hr>
+
+<h2>Voice Classes</h2>
+
+<h3>VoiceConnection</h3>
+<p>Manages the full lifecycle of a voice channel connection.</p>
+<table>
+    <thead><tr><th>Method</th><th>Description</th></tr></thead>
+    <tbody>
+        <tr><td><code>joinChannel(channelId, selfMute?, selfDeaf?)</code></td><td>Join a voice channel</td></tr>
+        <tr><td><code>leaveChannel()</code></td><td>Leave current channel</td></tr>
+        <tr><td><code>disconnect()</code></td><td>Full disconnect + cleanup</td></tr>
+        <tr><td><code>getStatus()</code></td><td>Returns <code>"disconnected"</code> | <code>"connecting"</code> | <code>"connected"</code> | <code>"ready"</code></td></tr>
+        <tr><td><code>getAudioPlayer()</code></td><td>Returns <code>AudioPlayer | null</code> (available when ready)</td></tr>
+    </tbody>
+</table>
+
+<p>Events: <code>status</code>, <code>ready</code>, <code>close</code>, <code>error</code></p>
+
+<h3>AudioPlayer</h3>
+<p>Plays Opus audio streams over RTP with encryption.</p>
+<table>
+    <thead><tr><th>Method</th><th>Description</th></tr></thead>
+    <tbody>
+        <tr><td><code>play(input)</code></td><td>Play a <code>Readable</code> or <code>{ opusStream: Readable }</code></td></tr>
+        <tr><td><code>stop()</code></td><td>Stop playback, send silence frames</td></tr>
+        <tr><td><code>pause()</code></td><td>Pause playback</td></tr>
+        <tr><td><code>resume()</code></td><td>Resume from paused</td></tr>
+        <tr><td><code>getStatus()</code></td><td><code>"idle"</code> | <code>"playing"</code> | <code>"paused"</code></td></tr>
+        <tr><td><code>getFrameCount()</code></td><td>Total frames sent since last <code>play()</code></td></tr>
+    </tbody>
+</table>
+
+<p>Events: <code>status</code>, <code>error</code>, <code>idle</code></p>
+
+<h3>OggDemuxer</h3>
+<p>Transform stream: Ogg/Opus container → individual Opus frames.</p>
+<pre><code class="language-typescript">import { OggDemuxer } from "@volundr/gateway";
+
+fs.createReadStream("audio.opus")
+    .pipe(new OggDemuxer())
+    .on("data", (frame) => { /* Opus frame */ });</code></pre>
+
+<h3>VoiceUDP</h3>
+<p>Low-level UDP socket for RTP audio.</p>
+<table>
+    <thead><tr><th>Method</th><th>Description</th></tr></thead>
+    <tbody>
+        <tr><td><code>connect()</code></td><td>Create UDP socket</td></tr>
+        <tr><td><code>performIPDiscovery(ssrc)</code></td><td>Discover external IP/port</td></tr>
+        <tr><td><code>send(packet)</code></td><td>Send raw UDP packet</td></tr>
+        <tr><td><code>close()</code></td><td>Close socket</td></tr>
+    </tbody>
+</table>
+
+<hr>
+
+<h2>Other Exports</h2>
+<table>
+    <thead><tr><th>Export</th><th>Description</th></tr></thead>
+    <tbody>
+        <tr><td><code>GatewayOpcodes</code></td><td>Enum: Dispatch (0), Heartbeat (1), Identify (2), etc.</td></tr>
+        <tr><td><code>VoiceOpcodes</code></td><td>Enum: Identify (0), SelectProtocol (1), Ready (2), etc.</td></tr>
+        <tr><td><code>GATEWAY_VERSION</code></td><td><code>10</code></td></tr>
+        <tr><td><code>encryptOpusFrame(frame, secretKey, nonce, rtpHeader)</code></td><td>AEAD XChaCha20-Poly1305 encryption</td></tr>
+        <tr><td><code>VoiceWebSocket</code></td><td>Voice signaling WebSocket</td></tr>
+    </tbody>
+</table>
+
+<h3>GatewayPresence</h3>
+<details class="opt"><summary>GatewayPresence</summary><div class="opt-fields">
+    <div class="opt-field"><code>status</code> <span class="opt-type">"online" | "dnd" | "idle" | "invisible" | "offline"</div>
+    <div class="opt-field"><code>activities</code> <span class="opt-type">GatewayActivity[]</div>
+    <div class="opt-field"><code>afk</code> <span class="opt-type">boolean</div>
+</div></details>
+<details class="opt"><summary>GatewayActivity</summary><div class="opt-fields">
+    <div class="opt-field"><code>name</code> <span class="opt-type">string <span class="opt-req">required</div>
+    <div class="opt-field"><code>type</code> <span class="opt-type">number <span class="opt-req">required</div>
+    <div class="opt-field"><code>url</code> <span class="opt-type">string</div>
+</div></details>

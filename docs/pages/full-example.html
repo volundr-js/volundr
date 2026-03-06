@@ -1,0 +1,97 @@
+<h1>Full Example</h1>
+<p class="lead">A complete bot with slash commands, buttons, embeds, and event handling.</p>
+
+<h2>Project setup</h2>
+<pre><code class="language-bash">mkdir my-bot &amp;&amp; cd my-bot
+npm init -y
+npm install @volundr/client
+npm install -D tsx typescript</code></pre>
+
+<p>Create a <code>.env</code> file:</p>
+<pre><code class="language-bash">DISCORD_TOKEN=your-token-here</code></pre>
+
+<h2>Full bot code</h2>
+<p>Save this as <code>src/index.ts</code>:</p>
+
+<pre><code class="language-typescript">import "dotenv/config";
+import { Client, fmt, embed, row, button, SlashCommandBuilder } from "@volundr/client";
+import { GatewayIntents, ButtonStyle } from "@volundr/types";
+
+const client = new Client({
+    token: process.env.DISCORD_TOKEN!,
+    intents: GatewayIntents.Guilds
+           | GatewayIntents.GuildMessages
+           | GatewayIntents.MessageContent,
+});
+
+// Register slash commands on ready
+client.once("ready", async () => {
+    console.log(`Logged in as ${client.user!.tag}`);
+
+    await client.setGlobalCommands([
+        new SlashCommandBuilder()
+            .setName("ping")
+            .setDescription("Check bot latency")
+            .toJSON(),
+        new SlashCommandBuilder()
+            .setName("userinfo")
+            .setDescription("Show info about a user")
+            .addUserOption(opt =>
+                opt.setName("user").setDescription("Target user")
+            )
+            .toJSON(),
+    ]);
+});
+
+// Slash commands - declarative routing
+client.command("ping", async (interaction) => {
+    const start = Date.now();
+    await interaction.reply("Pinging...");
+    const latency = Date.now() - start;
+
+    await interaction.editReply({
+        embeds: [embed({
+            title: "Pong!",
+            description: `Latency: **${latency}ms**`,
+            color: 0x00ff88,
+        })],
+    });
+});
+
+client.command("userinfo", async (interaction) => {
+    const target = interaction.options.getUser("user", interaction.client) ?? interaction.user;
+
+    await interaction.reply({
+        embeds: [embed({
+            title: target.displayName,
+            thumbnail: target.displayAvatarURL(),
+            fields: [
+                { name: "ID", value: target.id, inline: true },
+                { name: "Created", value: target.createdAt.toDateString(), inline: true },
+            ],
+            color: 0x5865F2,
+        })],
+        components: [row(
+            button("avatar-link", "Avatar URL", ButtonStyle.Link, { url: target.displayAvatarURL({ size: 1024 }) }),
+        )],
+    });
+});
+
+// Message listener
+client.on("MESSAGE_CREATE", async (message) => {
+    if (message.author.bot) return;
+
+    if (message.content === "!hello") {
+        await message.reply(fmt`Hey ${message.author}!`);
+    }
+});
+
+// Connect
+client.connect();</code></pre>
+
+<h2>Run it</h2>
+<pre><code class="language-bash">npx tsx src/index.ts</code></pre>
+
+<div class="callout callout-tip">
+    <strong>What this covers:</strong> Client setup, intents, slash command registration, declarative command routing, embeds (functional helpers), buttons, <code>fmt</code> tagged template, message events, and <code>.reply()</code>.
+</div>

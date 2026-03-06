@@ -1,0 +1,96 @@
+<h1>@volundr/voice</h1>
+<p class="lead">Audio playback - FFmpeg, Opus, AudioResource.</p>
+
+<div class="req">npm install @volundr/voice</div>
+
+<h2>createAudioResource</h2>
+<p>The main factory function. Takes a file path, URL, or stream and returns an <code>AudioResource</code> ready to play.</p>
+
+<pre><code class="language-typescript">import { createAudioResource, StreamType } from "@volundr/voice";
+
+// File (FFmpeg transcodes automatically)
+const r1 = createAudioResource("./song.mp3");
+
+// URL
+const r2 = createAudioResource("https://example.com/audio.ogg");
+
+// Ogg/Opus stream (skip FFmpeg)
+const r3 = createAudioResource(oggStream, {
+    inputType: StreamType.OggOpus,
+});
+
+// Raw Opus (zero-copy, no processing)
+const r4 = createAudioResource(opusStream, {
+    inputType: StreamType.Opus,
+});
+
+// With metadata
+const r5 = createAudioResource("./song.mp3", {
+    metadata: { title: "My Song", requestedBy: "User#1234" },
+    volume: 0.8,
+});</code></pre>
+
+<details class="opt"><summary>CreateAudioResourceOptions&lt;T&gt;</summary><div class="opt-fields">
+    <div class="opt-field"><code>inputType</code> <span class="opt-type">StreamType - default: Arbitrary (FFmpeg)</div>
+    <div class="opt-field"><code>metadata</code> <span class="opt-type">T - custom metadata attached to the resource</div>
+    <div class="opt-field"><code>volume</code> <span class="opt-type">number - volume level (1.0 = normal, uses FFmpeg -af volume filter)</div>
+</div></details>
+
+<hr>
+
+<h2>StreamType</h2>
+<p>Determines how the input is processed.</p>
+<table>
+    <thead><tr><th>Value</th><th>Pipeline</th><th>When to use</th></tr></thead>
+    <tbody>
+        <tr><td><code>StreamType.Arbitrary</code></td><td>FFmpeg → OggDemuxer → Opus</td><td>Default. Any audio format (mp3, wav, flac, etc.)</td></tr>
+        <tr><td><code>StreamType.OggOpus</code></td><td>OggDemuxer → Opus</td><td>Already Ogg/Opus - skips FFmpeg entirely</td></tr>
+        <tr><td><code>StreamType.Opus</code></td><td>pass-through</td><td>Raw Opus frames - zero processing, zero-copy</td></tr>
+    </tbody>
+</table>
+
+<p>String inputs (file path / URL) always use FFmpeg regardless of <code>inputType</code>.</p>
+
+<hr>
+
+<h2>AudioResource&lt;T&gt;</h2>
+<table>
+    <thead><tr><th>Property / Method</th><th>Type</th><th>Description</th></tr></thead>
+    <tbody>
+        <tr><td><code>opusStream</code></td><td><code>Readable</code></td><td>The Opus frame stream (pipe to AudioPlayer)</td></tr>
+        <tr><td><code>metadata</code></td><td><code>T</code></td><td>Custom metadata</td></tr>
+        <tr><td><code>isDestroyed</code></td><td><code>boolean</code></td><td>Whether the resource has been cleaned up</td></tr>
+        <tr><td><code>destroy()</code></td><td><code>void</code></td><td>Kill FFmpeg process, destroy streams (idempotent)</td></tr>
+    </tbody>
+</table>
+
+<hr>
+
+<h2>Playing audio</h2>
+<pre><code class="language-typescript">import { createAudioResource } from "@volundr/voice";
+
+// Get VoiceConnection from client
+const conn = await guild.joinVoice("channel-id");
+const player = conn.getAudioPlayer();
+
+// Play a file
+const resource = createAudioResource("./music.mp3");
+player.play(resource);
+
+// Listen for end
+player.on("idle", () => {
+    console.log("Playback finished");
+});</code></pre>
+
+<hr>
+
+<h2>getFFmpegPath</h2>
+<p>Returns the detected FFmpeg binary path. Checks <code>ffmpeg-static</code> first, then system PATH.</p>
+<pre><code class="language-typescript">import { getFFmpegPath } from "@volundr/voice";
+
+const path = getFFmpegPath();
+console.log(path); // "/usr/bin/ffmpeg" or path from ffmpeg-static</code></pre>
+
+<div class="callout callout-warn">
+    <strong>Requirement:</strong> FFmpeg must be installed on your system, or install <code>ffmpeg-static</code> as an npm dependency. Völundr detects both automatically.
+</div>

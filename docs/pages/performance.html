@@ -1,0 +1,40 @@
+<h1>Performance</h1>
+<p class="lead">Real benchmarks, not marketing.</p>
+
+<h2>Benchmarks</h2>
+<p>Run them yourself: <code>npx tsx --expose-gc benchmarks/stress-test.ts</code></p>
+
+<table>
+    <thead>
+        <tr><th>Metric</th><th>Völundr</th><th>Node.js EventEmitter</th></tr>
+    </thead>
+    <tbody>
+        <tr><td>Event emit (100k × 5 listeners)</td><td><strong>4.2 ms</strong></td><td>6.5 ms</td></tr>
+        <tr><td>Event emit (100k × 200 listeners)</td><td><strong>122 ms</strong></td><td>188 ms</td></tr>
+        <tr><td>Single emit latency (p99)</td><td><strong>0.50 µs</strong></td><td>-</td></tr>
+        <tr><td><code>_patch()</code> throughput</td><td><strong>9.5M ops/s</strong></td><td>-</td></tr>
+        <tr><td>Burst 20k events</td><td><strong>40 ms</strong></td><td>-</td></tr>
+        <tr><td>GC garbage (50k burst)</td><td><strong>9 MB</strong></td><td>22 MB</td></tr>
+        <tr><td>Cache: 500k members</td><td><strong>259 bytes/entry</strong></td><td>-</td></tr>
+    </tbody>
+</table>
+
+<h2>Why it's fast</h2>
+
+<h3>Event pipeline</h3>
+<pre><code class="language-typescript">WebSocket → JSON.parse → _patch() → cache → emit</code></pre>
+<p>Zero intermediate copies. Entities are patched in-place - <code>MESSAGE_UPDATE</code> only touches changed fields.</p>
+
+<h3>Zero-allocation design</h3>
+<ul>
+    <li>Entities reuse objects. <code>_patch()</code> mutates in place instead of creating new instances.</li>
+    <li>Lazy initialization - <code>Date</code> objects and <code>Set</code> collections are only created when first accessed.</li>
+    <li>2.4× less GC garbage than Node.js EventEmitter under sustained load.</li>
+</ul>
+
+<h3>Memory efficiency</h3>
+<ul>
+    <li>259 bytes per cached member (vs 400+ in typical implementations).</li>
+    <li>Configurable sweepers prevent unbounded cache growth.</li>
+    <li>Worker thread sharding shares the V8 heap more efficiently than child processes.</li>
+</ul>

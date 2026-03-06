@@ -1,0 +1,85 @@
+<h1>Error Handling</h1>
+<p class="lead">How to handle API errors, rate limits, and disconnects.</p>
+
+<h2>REST errors</h2>
+<p>All REST calls can throw <code>DiscordAPIError</code> or <code>HTTPError</code>.</p>
+
+<pre><code class="language-typescript">import { DiscordAPIError, HTTPError } from "@volundr/rest";
+
+try {
+    await message.reply("Hello!");
+} catch (err) {
+    if (err instanceof DiscordAPIError) {
+        console.log(err.code);       // Discord error code (e.g. 50013)
+        console.log(err.message);    // "Missing Permissions"
+        console.log(err.status);     // HTTP status (e.g. 403)
+        console.log(err.method);     // "POST"
+        console.log(err.url);        // "/channels/123/messages"
+    }
+
+    if (err instanceof HTTPError) {
+        console.log(err.status);     // 500, 502, etc.
+    }
+}</code></pre>
+
+<h2>Common error codes</h2>
+<table>
+    <thead><tr><th>Code</th><th>Name</th><th>Meaning</th></tr></thead>
+    <tbody>
+        <tr><td><code>10003</code></td><td>UnknownChannel</td><td>Channel doesn't exist or bot can't see it</td></tr>
+        <tr><td><code>10008</code></td><td>UnknownMessage</td><td>Message was deleted</td></tr>
+        <tr><td><code>50001</code></td><td>MissingAccess</td><td>Bot can't access this resource</td></tr>
+        <tr><td><code>50013</code></td><td>MissingPermissions</td><td>Bot lacks required permissions</td></tr>
+        <tr><td><code>50035</code></td><td>InvalidFormBody</td><td>Bad request payload</td></tr>
+        <tr><td><code>30005</code></td><td>MaximumRoles</td><td>Guild hit 250 role limit</td></tr>
+        <tr><td><code>10014</code></td><td>UnknownEmoji</td><td>Emoji not found</td></tr>
+    </tbody>
+</table>
+
+<p>Full list is available as <code>RESTJSONErrorCodes</code> from <code>@volundr/rest</code>.</p>
+
+<h2>Rate limits</h2>
+<p>Völundr handles rate limits automatically. The REST client queues requests per route and respects <code>Retry-After</code> headers. You don't need to do anything - it just works.</p>
+
+<pre><code class="language-typescript">// These are safe - the client queues them automatically
+await Promise.all([
+    channel.send("Message 1"),
+    channel.send("Message 2"),
+    channel.send("Message 3"),
+]);</code></pre>
+
+<p>If you hit a global rate limit, all requests are paused until it expires. The REST client logs a warning when this happens.</p>
+
+<h2>Gateway reconnects</h2>
+<p>The gateway automatically reconnects on disconnect. It resumes the session when possible (keeping events), and starts a new session when not. This is all handled internally.</p>
+
+<pre><code class="language-typescript">// You can listen for lifecycle events
+client.on("ready", () => {
+    console.log("Connected!");
+});
+
+// The gateway emits debug info you can log
+client.gateway?.on("debug", (msg) => {
+    console.log("[GW]", msg);
+});</code></pre>
+
+<h2>Unhandled rejections</h2>
+<p>Always handle async errors in event listeners. Unhandled promise rejections will crash your bot in Node.js 22+.</p>
+
+<pre><code class="language-typescript">// Bad - unhandled rejection if reply fails
+client.on("MESSAGE_CREATE", (message) => {
+    message.reply("Hi"); // no await, no catch
+});
+
+// Good - catch errors
+client.on("MESSAGE_CREATE", async (message) => {
+    try {
+        await message.reply("Hi");
+    } catch (err) {
+        console.error("Failed to reply:", err);
+    }
+});</code></pre>
+
+<div class="callout callout-tip">
+    <strong>Tip:</strong> A global safety net: <code>process.on("unhandledRejection", console.error)</code>. This prevents crashes but don't rely on it - handle errors at the source.
+</div>

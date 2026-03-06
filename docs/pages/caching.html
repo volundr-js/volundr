@@ -1,0 +1,56 @@
+<h1>Caching</h1>
+<p class="lead">How Völundr manages data in memory.</p>
+
+<h2>How cache works</h2>
+<p>Völundr caches entities automatically as events arrive from the gateway. The cache is the single source of truth for your bot.</p>
+
+<h3>The two rules</h3>
+<ul>
+    <li><code>.get(id)</code> - reads from cache. Instant, never hits the API.</li>
+    <li><code>.fetch(id)</code> - calls the Discord API. Updates cache with the response.</li>
+</ul>
+
+<pre><code class="language-typescript">// From cache (instant, may be null)
+const guild = client.guilds.get("123456");
+
+// From API (always fresh, updates cache)
+const guild = await client.fetchGuild("123456");</code></pre>
+
+<h2>Cache structure</h2>
+<table>
+    <thead>
+        <tr><th>Collection</th><th>Entity</th><th>Scope</th></tr>
+    </thead>
+    <tbody>
+        <tr><td><code>client.guilds</code></td><td><code>Guild</code></td><td>Global</td></tr>
+        <tr><td><code>client.channels</code></td><td><code>Channel</code></td><td>Global (flat)</td></tr>
+        <tr><td><code>client.users</code></td><td><code>User</code></td><td>Global</td></tr>
+        <tr><td><code>guild.members</code></td><td><code>GuildMember</code></td><td>Per-guild</td></tr>
+        <tr><td><code>guild.roles</code></td><td><code>Role</code></td><td>Per-guild</td></tr>
+        <tr><td><code>guild.channels</code></td><td><code>Channel</code></td><td>Per-guild</td></tr>
+        <tr><td><code>guild.voiceStates</code></td><td><code>VoiceState</code></td><td>Per-guild</td></tr>
+        <tr><td><code>guild.presences</code></td><td><code>Presence</code></td><td>Per-guild</td></tr>
+    </tbody>
+</table>
+
+<h2>Collection</h2>
+<p>All caches use <code>Collection</code>, an extended <code>Map</code> with 25+ utility methods:</p>
+
+<pre><code class="language-typescript">// Filter, map, find
+client.guilds.filter(g => g.memberCount > 100);
+client.users.find(u => u.username === "Alice");
+guild.members.map(m => m.user.username);
+
+// first, last, random
+guild.roles.first();
+guild.members.random();
+
+// sort, partition, reduce
+guild.roles.sort((a, b) => b.position - a.position);</code></pre>
+
+<h2>LimitedCollection</h2>
+<p>For memory-sensitive caches, use <code>LimitedCollection</code> with a max size and eviction:</p>
+
+<pre><code class="language-typescript">import { LimitedCollection } from "@volundr/client";
+
+const cache = new LimitedCollection({ maxSize: 1000 });</code></pre>

@@ -1,0 +1,42 @@
+{
+  "name": "@volundr/gateway",
+  "version": "0.9.1",
+  "description": "Discord Gateway WebSocket client for Volundr",
+  "type": "module",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    }
+  },
+  "files": ["dist"],
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/volundr-js/volundr",
+    "directory": "packages/gateway"
+  },
+  "keywords": ["discord", "gateway", "websocket", "bot"],
+  "author": "brviictoor",
+  "license": "ISC",
+  "dependencies": {
+    "@noble/ciphers": "^1.2.1",
+    "@snazzah/davey": "^0.1.10",
+    "@volundr/logger": "workspace:*",
+    "@volundr/rest": "workspace:*",
+    "@volundr/types": "workspace:*",
+    "ws": "^8.18.1"
+  },
+  "devDependencies": {
+    "@types/node": "^25.3.2",
+    "@types/ws": "^8.18.1"
+  }
+}

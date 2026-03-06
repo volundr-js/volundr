@@ -1,0 +1,232 @@
+<h1>@volundr/lavalink</h1>
+<p class="lead">Lavalink v4 client - search, play, filters, events.</p>
+
+<div class="req">npm install @volundr/lavalink</div>
+
+<p>Full Lavalink v4 integration with automatic node balancing, session resume, and player management.</p>
+
+<h2>Quick start</h2>
+<pre><code class="language-typescript">import { Client } from "@volundr/client";
+
+const client = new Client({ token: "...", intents: 3276799 });
+
+client.lavalink.addNode({
+    name: "main",
+    host: "localhost",
+    port: 2333,
+    password: "youshallnotpass",
+});
+
+await client.login();
+client.lavalink.connectAll();
+
+// Play a track
+const player = client.lavalink.createPlayer(guildId);
+await player.connect(voiceChannelId, { selfDeaf: true });
+
+const result = await player.search("ytsearch:never gonna give you up");
+if (result.loadType === "search") {
+    await player.play(result.data[0]);
+}</code></pre>
+
+<hr>
+
+<h2>LavalinkManager</h2>
+<p><code>new LavalinkManager(client, options)</code></p>
+<details class="opt"><summary>LavalinkManagerOptions</summary><div class="opt-fields">
+    <div class="opt-field"><code>nodes</code> <span class="opt-type">LavalinkNodeOptions[] <span class="opt-req">required</div>
+    <div class="opt-field"><code>userId</code> <span class="opt-type">Snowflake</div>
+    <div class="opt-field"><code>clientName</code> <span class="opt-type">string</div>
+    <div class="opt-field"><code>nodeSelector</code> <span class="opt-type">"round-robin" | "least-players" | "least-load"</div>
+    <div class="opt-field"><code>autoDestroyOnDisconnect</code> <span class="opt-type">boolean</div>
+</div></details>
+
+<h3>Properties</h3>
+<table>
+    <thead><tr><th>Property</th><th>Type</th></tr></thead>
+    <tbody>
+        <tr><td><code>nodes</code></td><td><code>Map&lt;string, LavalinkNode&gt;</code></td></tr>
+        <tr><td><code>players</code></td><td><code>Map&lt;Snowflake, LavalinkPlayer&gt;</code></td></tr>
+    </tbody>
+</table>
+
+<h3>Methods</h3>
+<table>
+    <thead><tr><th>Method</th><th>Returns</th><th>Description</th></tr></thead>
+    <tbody>
+        <tr><td><code>addNode(options)</code></td><td><code>LavalinkNode</code></td><td>Register a Lavalink node</td></tr>
+        <tr><td><code>removeNode(name)</code></td><td><code>void</code></td><td>Remove and disconnect a node</td></tr>
+        <tr><td><code>connectAll()</code></td><td><code>void</code></td><td>Connect all registered nodes</td></tr>
+        <tr><td><code>disconnectAll()</code></td><td><code>Promise&lt;void&gt;</code></td><td>Disconnect all nodes and players</td></tr>
+        <tr><td><code>getPlayer(guildId)</code></td><td><code>LavalinkPlayer | undefined</code></td><td>Get player for guild</td></tr>
+        <tr><td><code>createPlayer(guildId, nodeName?)</code></td><td><code>LavalinkPlayer</code></td><td>Create player on best/named node</td></tr>
+        <tr><td><code>destroyPlayer(guildId)</code></td><td><code>Promise&lt;void&gt;</code></td><td>Destroy player for guild</td></tr>
+        <tr><td><code>recoverPlayers(node)</code></td><td><code>Promise&lt;LavalinkPlayerData[]&gt;</code></td><td>Recover from resumed session</td></tr>
+    </tbody>
+</table>
+
+<h3>Events</h3>
+<table>
+    <thead><tr><th>Event</th><th>Payload</th></tr></thead>
+    <tbody>
+        <tr><td><code>nodeReady</code></td><td><code>{ node, payload }</code></td></tr>
+        <tr><td><code>nodeClose</code></td><td><code>{ node, code, reason }</code></td></tr>
+        <tr><td><code>nodeError</code></td><td><code>{ node, error }</code></td></tr>
+        <tr><td><code>nodeStats</code></td><td><code>{ node, stats }</code></td></tr>
+        <tr><td><code>playerCreate</code></td><td><code>LavalinkPlayer</code></td></tr>
+        <tr><td><code>playerDestroy</code></td><td><code>LavalinkPlayer</code></td></tr>
+        <tr><td><code>playerDisconnect</code></td><td><code>LavalinkPlayer</code></td></tr>
+        <tr><td><code>rawEvent</code></td><td><code>{ node, event }</code></td></tr>
+    </tbody>
+</table>
+
+<hr>
+
+<h2>LavalinkNode</h2>
+<p><code>manager.addNode(options)</code></p>
+<details class="opt"><summary>LavalinkNodeOptions</summary><div class="opt-fields">
+    <div class="opt-field"><code>name</code> <span class="opt-type">string <span class="opt-req">required</div>
+    <div class="opt-field"><code>host</code> <span class="opt-type">string <span class="opt-req">required</div>
+    <div class="opt-field"><code>port</code> <span class="opt-type">number <span class="opt-req">required</div>
+    <div class="opt-field"><code>password</code> <span class="opt-type">string <span class="opt-req">required</div>
+    <div class="opt-field"><code>secure</code> <span class="opt-type">boolean</div>
+    <div class="opt-field"><code>sessionId</code> <span class="opt-type">string - resume previous session</div>
+    <div class="opt-field"><code>resumeTimeout</code> <span class="opt-type">number</div>
+</div></details>
+
+<h3>Methods</h3>
+<table>
+    <thead><tr><th>Method</th><th>Returns</th><th>Description</th></tr></thead>
+    <tbody>
+        <tr><td><code>connect()</code></td><td><code>void</code></td><td>Connect to Lavalink server</td></tr>
+        <tr><td><code>disconnect()</code></td><td><code>void</code></td><td>Disconnect from server</td></tr>
+        <tr><td><code>getStatus()</code></td><td><code>LavalinkNodeStatus</code></td><td><code>"disconnected"</code> | <code>"connecting"</code> | <code>"connected"</code> | <code>"reconnecting"</code></td></tr>
+        <tr><td><code>getStats()</code></td><td><code>LavalinkStatsPayload | null</code></td><td>Server statistics</td></tr>
+        <tr><td><code>getInfo()</code></td><td><code>LavalinkInfo | null</code></td><td>Server info (version, plugins, etc.)</td></tr>
+        <tr><td><code>getPenalty()</code></td><td><code>number</code></td><td>Load balancing penalty (lower = better)</td></tr>
+    </tbody>
+</table>
+
+<h3>Events</h3>
+<p><code>ready</code>, <code>playerUpdate</code>, <code>stats</code>, <code>event</code>, <code>status</code>, <code>error</code>, <code>close</code></p>
+
+<hr>
+
+<h2>LavalinkPlayer</h2>
+<p><code>manager.createPlayer(guildId)</code></p>
+
+<h3>Properties</h3>
+<table>
+    <thead><tr><th>Property</th><th>Type</th></tr></thead>
+    <tbody>
+        <tr><td><code>guildId</code></td><td><code>Snowflake</code></td></tr>
+        <tr><td><code>track</code></td><td><code>LavalinkTrack | null</code></td></tr>
+        <tr><td><code>volume</code></td><td><code>number</code> (0-1000, default 100)</td></tr>
+        <tr><td><code>paused</code></td><td><code>boolean</code></td></tr>
+        <tr><td><code>state</code></td><td><code>PlayerState</code></td></tr>
+        <tr><td><code>filters</code></td><td><code>LavalinkFilters</code></td></tr>
+        <tr><td><code>channelId</code></td><td><code>Snowflake | null</code></td></tr>
+    </tbody>
+</table>
+
+<h3>Methods</h3>
+<table>
+    <thead><tr><th>Method</th><th>Returns</th><th>Description</th></tr></thead>
+    <tbody>
+        <tr><td><code>connect(channelId, options?)</code></td><td><code>Promise&lt;void&gt;</code></td><td>Join voice channel</td></tr>
+        <tr><td><code>disconnect()</code></td><td><code>Promise&lt;void&gt;</code></td><td>Leave voice channel</td></tr>
+        <tr><td><code>search(identifier)</code></td><td><code>Promise&lt;LoadResult&gt;</code></td><td>Search for tracks</td></tr>
+        <tr><td><code>play(track, options?)</code></td><td><code>Promise&lt;void&gt;</code></td><td>Play a track</td></tr>
+        <tr><td><code>stop()</code></td><td><code>Promise&lt;void&gt;</code></td><td>Stop playback</td></tr>
+        <tr><td><code>setPaused(paused)</code></td><td><code>Promise&lt;void&gt;</code></td><td>Pause/resume</td></tr>
+        <tr><td><code>seek(position)</code></td><td><code>Promise&lt;void&gt;</code></td><td>Seek to position (ms)</td></tr>
+        <tr><td><code>setVolume(volume)</code></td><td><code>Promise&lt;void&gt;</code></td><td>Set volume (0-1000)</td></tr>
+        <tr><td><code>setFilters(filters)</code></td><td><code>Promise&lt;void&gt;</code></td><td>Apply audio filters</td></tr>
+        <tr><td><code>clearFilters()</code></td><td><code>Promise&lt;void&gt;</code></td><td>Remove all filters</td></tr>
+        <tr><td><code>getStatus()</code></td><td><code>PlayerStatus</code></td><td><code>"idle"</code> | <code>"playing"</code> | <code>"paused"</code> | <code>"destroyed"</code></td></tr>
+        <tr><td><code>getPosition()</code></td><td><code>number</code></td><td>Estimated position (ms)</td></tr>
+        <tr><td><code>destroy()</code></td><td><code>Promise&lt;void&gt;</code></td><td>Destroy player</td></tr>
+    </tbody>
+</table>
+
+<h3>Events</h3>
+<table>
+    <thead><tr><th>Event</th><th>Payload</th></tr></thead>
+    <tbody>
+        <tr><td><code>trackStart</code></td><td><code>{ type, guildId, track }</code></td></tr>
+        <tr><td><code>trackEnd</code></td><td><code>{ type, guildId, track, reason }</code></td></tr>
+        <tr><td><code>trackException</code></td><td><code>{ type, guildId, track, exception }</code></td></tr>
+        <tr><td><code>trackStuck</code></td><td><code>{ type, guildId, track, thresholdMs }</code></td></tr>
+        <tr><td><code>webSocketClosed</code></td><td><code>{ type, guildId, code, reason, byRemote }</code></td></tr>
+        <tr><td><code>playerUpdate</code></td><td><code>PlayerState</code></td></tr>
+        <tr><td><code>destroyed</code></td><td><code>void</code></td></tr>
+    </tbody>
+</table>
+
+<p><code>trackEnd.reason</code>: <code>"finished"</code> | <code>"loadFailed"</code> | <code>"stopped"</code> | <code>"replaced"</code> | <code>"cleanup"</code></p>
+
+<hr>
+
+<h2>LavalinkRest</h2>
+<p>Available via <code>node.rest</code>.</p>
+<table>
+    <thead><tr><th>Method</th><th>Returns</th><th>Description</th></tr></thead>
+    <tbody>
+        <tr><td><code>loadTracks(identifier)</code></td><td><code>Promise&lt;LoadResult&gt;</code></td><td>Load/search tracks</td></tr>
+        <tr><td><code>decodeTracks(encoded[])</code></td><td><code>Promise&lt;DecodedTrack[]&gt;</code></td><td>Decode encoded tracks</td></tr>
+        <tr><td><code>getPlayers(sessionId)</code></td><td><code>Promise&lt;LavalinkPlayerData[]&gt;</code></td><td>List all players</td></tr>
+        <tr><td><code>updatePlayer(sessionId, guildId, data)</code></td><td><code>Promise&lt;LavalinkPlayerData&gt;</code></td><td>Update player state</td></tr>
+        <tr><td><code>destroyPlayer(sessionId, guildId)</code></td><td><code>Promise&lt;void&gt;</code></td><td>Destroy player</td></tr>
+        <tr><td><code>updateSession(sessionId, data)</code></td><td><code>Promise&lt;void&gt;</code></td><td>Configure session resume</td></tr>
+        <tr><td><code>getInfo()</code></td><td><code>Promise&lt;LavalinkInfo&gt;</code></td><td>Server info</td></tr>
+        <tr><td><code>getStats()</code></td><td><code>Promise&lt;LavalinkStatsPayload&gt;</code></td><td>Server statistics</td></tr>
+        <tr><td><code>getVersion()</code></td><td><code>Promise&lt;string&gt;</code></td><td>Lavalink version</td></tr>
+    </tbody>
+</table>
+
+<hr>
+
+<h2>Key Types</h2>
+
+<h3>LoadResult</h3>
+<p>Discriminated union returned by <code>player.search()</code> and <code>rest.loadTracks()</code>.</p>
+<table>
+    <thead><tr><th>loadType</th><th>data</th></tr></thead>
+    <tbody>
+        <tr><td><code>"track"</code></td><td><code>LavalinkTrack</code></td></tr>
+        <tr><td><code>"playlist"</code></td><td><code>{ info: PlaylistInfo, tracks: LavalinkTrack[] }</code></td></tr>
+        <tr><td><code>"search"</code></td><td><code>LavalinkTrack[]</code></td></tr>
+        <tr><td><code>"empty"</code></td><td><code>{}</code></td></tr>
+        <tr><td><code>"error"</code></td><td><code>LavalinkException</code></td></tr>
+    </tbody>
+</table>
+
+<h3>LavalinkTrack</h3>
+<details class="opt"><summary>LavalinkTrack</summary><div class="opt-fields">
+    <div class="opt-field"><code>encoded</code> <span class="opt-type">string - base64 encoded track</div>
+    <div class="opt-field"><code>info.title</code> <span class="opt-type">string</div>
+    <div class="opt-field"><code>info.author</code> <span class="opt-type">string</div>
+    <div class="opt-field"><code>info.length</code> <span class="opt-type">number - duration in ms</div>
+    <div class="opt-field"><code>info.uri</code> <span class="opt-type">string | null</div>
+    <div class="opt-field"><code>info.artworkUrl</code> <span class="opt-type">string | null</div>
+    <div class="opt-field"><code>info.sourceName</code> <span class="opt-type">string</div>
+    <div class="opt-field"><code>info.isStream</code> <span class="opt-type">boolean</div>
+    <div class="opt-field"><code>info.isSeekable</code> <span class="opt-type">boolean</div>
+    <div class="opt-field"><code>info.identifier</code> <span class="opt-type">string</div>
+    <div class="opt-field"><code>info.isrc</code> <span class="opt-type">string | null</div>
+    <div class="opt-field"><code>info.position</code> <span class="opt-type">number</div>
+</div></details>
+
+<h3>LavalinkFilters</h3>
+<details class="opt"><summary>LavalinkFilters</summary><div class="opt-fields">
+    <div class="opt-field"><code>volume</code> <span class="opt-type">number</div>
+    <div class="opt-field"><code>equalizer</code> <span class="opt-type">EqualizerBand[]</div>
+    <div class="opt-field"><code>karaoke</code> <span class="opt-type">KaraokeSettings | null</div>
+    <div class="opt-field"><code>timescale</code> <span class="opt-type">TimescaleSettings | null</div>
+    <div class="opt-field"><code>tremolo</code> <span class="opt-type">TremoloSettings | null</div>
+    <div class="opt-field"><code>vibrato</code> <span class="opt-type">VibratoSettings | null</div>
+    <div class="opt-field"><code>rotation</code> <span class="opt-type">RotationSettings | null</div>
+    <div class="opt-field"><code>distortion</code> <span class="opt-type">DistortionSettings | null</div>
+    <div class="opt-field"><code>channelMix</code> <span class="opt-type">ChannelMixSettings | null</div>
+    <div class="opt-field"><code>lowPass</code> <span class="opt-type">LowPassSettings | null</div>
+</div></details>

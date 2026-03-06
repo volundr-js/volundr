@@ -1,0 +1,65 @@
+<h1>Collectors</h1>
+<p class="lead">Collect messages, button clicks, and reactions over time.</p>
+
+<h2>Message collector</h2>
+<pre><code class="language-typescript">const collector = channel.createMessageCollector({
+    filter: (msg) => msg.author.id === userId,
+    time: 30_000,
+    max: 5,
+});
+
+collector.on("collect", (msg) => {
+    console.log(msg.content);
+});
+
+collector.on("end", (collected) => {
+    console.log(`Got ${collected.size} messages`);
+});</code></pre>
+
+<h2>Component collector</h2>
+<pre><code class="language-typescript">const collector = message.createComponentCollector({
+    filter: (i) => i.user.id === userId,
+    time: 60_000,
+});
+
+collector.on("collect", (interaction) => {
+    if (interaction.customId === "next") {
+        interaction.update({ content: "Page 2" });
+    }
+});</code></pre>
+
+<h2>Await shorthand</h2>
+<pre><code class="language-typescript">// Wait for one button click (30s timeout)
+const clicks = await message.awaitComponents({
+    time: 30_000,
+    max: 1,
+});</code></pre>
+
+<h2>Reaction collector</h2>
+<pre><code class="language-typescript">const collector = message.createReactionCollector({
+    filter: (reaction, user) => reaction.emoji.name === "👍",
+    time: 60_000,
+});
+
+collector.on("collect", (reaction, user) => {
+    console.log(`${user.username} reacted!`);
+});</code></pre>
+
+<h2>Automatic cleanup with <code>using</code></h2>
+<p>Collectors implement <code>Symbol.dispose</code>, so you can use the <code>using</code> keyword for automatic cleanup:</p>
+<pre><code class="language-typescript">// Collector is automatically stopped when it goes out of scope
+{
+    using collector = channel.createMessageCollector({
+        filter: (msg) => msg.author.id === userId,
+        time: 30_000,
+    });
+
+    collector.on("collect", (msg) => {
+        console.log(msg.content);
+    });
+}
+// collector.stop("dispose") is called automatically here</code></pre>
+
+<div class="callout callout-tip">
+    <strong>Note:</strong> The <code>using</code> keyword requires TypeScript 5.2+ with <code>"lib": ["esnext"]</code>. It guarantees the collector is stopped even if an exception is thrown.
+</div>

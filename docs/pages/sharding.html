@@ -1,0 +1,32 @@
+<h1>Sharding</h1>
+<p class="lead">Scale your bot across multiple WebSocket connections.</p>
+
+<h2>Auto sharding</h2>
+<p>Völundr uses worker thread sharding - more memory-efficient than process-based sharding.</p>
+
+<pre><code class="language-typescript">const client = new Client({
+    token: "...",
+    intents: ...,
+    shardCount: "auto",  // Discord tells us how many shards
+});</code></pre>
+
+<h2>Manual shard count</h2>
+<pre><code class="language-typescript">const client = new Client({
+    token: "...",
+    intents: ...,
+    shardCount: 4,
+});</code></pre>
+
+<h2>Thread pool</h2>
+<p>For fine-grained control over worker threads:</p>
+
+<pre><code class="language-typescript">import { ThreadPool } from "@volundr/client";
+
+const pool = new ThreadPool({
+    workerPath: "./worker.js",
+    size: 4,
+});</code></pre>
+
+<div class="callout callout-tip">
+    <strong>When to shard:</strong> Discord requires sharding at 2,500 guilds. Below that, a single connection is fine.
+</div>

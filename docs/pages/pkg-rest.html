@@ -1,0 +1,139 @@
+<h1>@volundr/rest</h1>
+<p class="lead">REST API client - rate limits, retries, file uploads.</p>
+
+<div class="req">npm install @volundr/rest</div>
+
+<p>Use this package standalone when you only need HTTP access to Discord's API.</p>
+
+<h2>Standalone usage</h2>
+<pre><code class="language-typescript">import { RestClient, DiscordAPIError, HTTPError } from "@volundr/rest";
+
+const rest = new RestClient({ token: "..." });
+
+// GET
+const user = await rest.get("/users/123456");
+
+// POST
+await rest.post("/channels/123/messages", {
+    body: { content: "Hello!" },
+});
+
+// File upload
+await rest.post("/channels/123/messages", {
+    body: { content: "Here's a file" },
+    files: [{ name: "image.png", data: buffer }],
+});
+
+// Audit log reason
+await rest.delete("/channels/123/messages/456", {
+    reason: "Spam",
+});</code></pre>
+
+<hr>
+
+<h2>RestClient</h2>
+<p><code>new RestClient(options)</code></p>
+<details class="opt"><summary>RestClientOptions</summary><div class="opt-fields">
+    <div class="opt-field"><code>token</code> <span class="opt-type">string <span class="opt-req">required</div>
+    <div class="opt-field"><code>apiVersion</code> <span class="opt-type">number - default: 10</div>
+    <div class="opt-field"><code>baseUrl</code> <span class="opt-type">string - default: https://discord.com/api</div>
+    <div class="opt-field"><code>maxRetries</code> <span class="opt-type">number - default: 3</div>
+</div></details>
+
+<h3>Methods</h3>
+<table>
+    <thead><tr><th>Method</th><th>Returns</th><th>Description</th></tr></thead>
+    <tbody>
+        <tr><td><code>get&lt;T&gt;(route, options?)</code></td><td><code>Promise&lt;T&gt;</code></td><td>GET request</td></tr>
+        <tr><td><code>post&lt;T&gt;(route, options?)</code></td><td><code>Promise&lt;T&gt;</code></td><td>POST request</td></tr>
+        <tr><td><code>put&lt;T&gt;(route, options?)</code></td><td><code>Promise&lt;T&gt;</code></td><td>PUT request</td></tr>
+        <tr><td><code>patch&lt;T&gt;(route, options?)</code></td><td><code>Promise&lt;T&gt;</code></td><td>PATCH request</td></tr>
+        <tr><td><code>delete&lt;T&gt;(route, options?)</code></td><td><code>Promise&lt;T&gt;</code></td><td>DELETE request</td></tr>
+        <tr><td><code>exportBucketMap()</code></td><td><code>Map&lt;string, string&gt;</code></td><td>Export rate limit bucket state</td></tr>
+        <tr><td><code>importBucketMap(map)</code></td><td><code>void</code></td><td>Restore rate limit bucket state</td></tr>
+    </tbody>
+</table>
+
+<details class="opt"><summary>RequestOptions</summary><div class="opt-fields">
+    <div class="opt-field"><code>body</code> <span class="opt-type">unknown - auto JSON-stringified</div>
+    <div class="opt-field"><code>files</code> <span class="opt-type">FileAttachment[] - uses multipart/form-data</div>
+    <div class="opt-field"><code>query</code> <span class="opt-type">Record&lt;string, string&gt; - URL query parameters</div>
+    <div class="opt-field"><code>reason</code> <span class="opt-type">string - audit log reason (X-Audit-Log-Reason header)</div>
+    <div class="opt-field"><code>headers</code> <span class="opt-type">Record&lt;string, string&gt; - custom headers</div>
+</div></details>
+
+<hr>
+
+<h2>Error Handling</h2>
+
+<h3>DiscordAPIError</h3>
+<p>Thrown when Discord returns a 4xx error.</p>
+<table>
+    <thead><tr><th>Property</th><th>Type</th><th>Description</th></tr></thead>
+    <tbody>
+        <tr><td><code>status</code></td><td><code>number</code></td><td>HTTP status code</td></tr>
+        <tr><td><code>code</code></td><td><code>number</code></td><td>Discord error code</td></tr>
+        <tr><td><code>message</code></td><td><code>string</code></td><td>Error message</td></tr>
+        <tr><td><code>method</code></td><td><code>string</code></td><td>HTTP method</td></tr>
+        <tr><td><code>route</code></td><td><code>string</code></td><td>API route</td></tr>
+        <tr><td><code>errors</code></td><td><code>Record&lt;string, unknown&gt; | undefined</code></td><td>Validation errors</td></tr>
+    </tbody>
+</table>
+
+<h3>HTTPError</h3>
+<p>Thrown on 5xx/429 after exhausting retries.</p>
+<table>
+    <thead><tr><th>Property</th><th>Type</th><th>Description</th></tr></thead>
+    <tbody>
+        <tr><td><code>status</code></td><td><code>number</code></td><td>HTTP status code</td></tr>
+        <tr><td><code>method</code></td><td><code>string</code></td><td>HTTP method</td></tr>
+        <tr><td><code>route</code></td><td><code>string</code></td><td>API route</td></tr>
+    </tbody>
+</table>
+
+<pre><code class="language-typescript">try {
+    await rest.post("/channels/123/messages", {
+        body: { content: "" },
+    });
+} catch (err) {
+    if (err instanceof DiscordAPIError) {
+        console.log(err.code);    // 50006
+        console.log(err.message); // "Cannot send an empty message"
+    }
+}</code></pre>
+
+<hr>
+
+<h2>RESTJSONErrorCodes</h2>
+<p>Enum of all Discord REST error codes. Most common:</p>
+<table>
+    <thead><tr><th>Code</th><th>Name</th></tr></thead>
+    <tbody>
+        <tr><td><code>0</code></td><td>GeneralError</td></tr>
+        <tr><td><code>10003</code></td><td>UnknownChannel</td></tr>
+        <tr><td><code>10004</code></td><td>UnknownGuild</td></tr>
+        <tr><td><code>10007</code></td><td>UnknownMember</td></tr>
+        <tr><td><code>10008</code></td><td>UnknownMessage</td></tr>
+        <tr><td><code>10011</code></td><td>UnknownRole</td></tr>
+        <tr><td><code>10013</code></td><td>UnknownUser</td></tr>
+        <tr><td><code>10062</code></td><td>UnknownInteraction</td></tr>
+        <tr><td><code>50001</code></td><td>MissingAccess</td></tr>
+        <tr><td><code>50006</code></td><td>CannotSendAnEmptyMessage</td></tr>
+        <tr><td><code>50013</code></td><td>MissingPermissions</td></tr>
+        <tr><td><code>50035</code></td><td>InvalidFormBody</td></tr>
+        <tr><td><code>40060</code></td><td>InteractionHasAlreadyBeenAcknowledged</td></tr>
+    </tbody>
+</table>
+
+<hr>
+
+<h2>Other Exports</h2>
+<table>
+    <thead><tr><th>Export</th><th>Description</th></tr></thead>
+    <tbody>
+        <tr><td><code>buildFormData(body, files)</code></td><td>Build multipart FormData from JSON + files</td></tr>
+        <tr><td><code>FileAttachment</code></td><td>Type: <code>{ name: string, data: Buffer | Blob, contentType?: string }</code></td></tr>
+        <tr><td><code>HttpMethod</code></td><td>Type: <code>"GET" | "POST" | "PUT" | "PATCH" | "DELETE"</code></td></tr>
+        <tr><td><code>BucketState</code></td><td>Type: <code>{ bucketHash, remaining, limit, resetAt, resetAfter }</code></td></tr>
+    </tbody>
+</table>

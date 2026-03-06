@@ -1,0 +1,40 @@
+{
+  "name": "@volundr/client",
+  "version": "0.9.1",
+  "description": "Unified Discord client for Volundr",
+  "type": "module",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    }
+  },
+  "files": ["dist"],
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/volundr-js/volundr",
+    "directory": "packages/client"
+  },
+  "keywords": ["discord", "bot", "client", "api"],
+  "author": "brviictoor",
+  "license": "ISC",
+  "dependencies": {
+    "@volundr/gateway": "workspace:*",
+    "@volundr/logger": "workspace:*",
+    "@volundr/rest": "workspace:*",
+    "@volundr/threads": "workspace:*",
+    "@volundr/types": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/node": "^25.3.2"
+  }
+}

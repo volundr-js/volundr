@@ -1,0 +1,415 @@
+<h1>@volundr/client</h1>
+<p class="lead">The main package. Everything you need in one import.</p>
+
+<div class="req">npm install @volundr/client</div>
+
+<h2>What's included</h2>
+<ul>
+    <li><strong>Client</strong> - connects to Discord, emits events, manages cache, declarative interaction routing</li>
+    <li><strong>Entities</strong> - Guild, Message, User, Channel, Role, GuildMember, VoiceState, Presence, Interaction, etc.</li>
+    <li><strong>Builders</strong> - EmbedBuilder, SlashCommandBuilder, ButtonBuilder, ModalBuilder, Components V2, etc.</li>
+    <li><strong>Inline DSL</strong> - <code>embed()</code>, <code>row()</code>, <code>button()</code> helpers for quick message building</li>
+    <li><strong>Cache</strong> - Collection, LimitedCollection, Sweepers</li>
+    <li><strong>Collectors</strong> - MessageCollector, ComponentCollector, ReactionCollector (with <code>Symbol.dispose</code>)</li>
+    <li><strong>Formatters</strong> - <code>fmt</code> tagged template, <code>Formatters</code> utility (mentions, markdown, timestamps, escape)</li>
+    <li><strong>Utilities</strong> - SnowflakeUtil, Permissions, Colors, BitField, Resolvers, CDN, Locale</li>
+    <li><strong>WebhookClient</strong> - standalone webhook messaging without a full Client</li>
+    <li><strong>AttachmentBuilder</strong> - build file attachments from Buffer/Blob</li>
+</ul>
+
+<h2>Key exports</h2>
+<pre><code class="language-typescript">import {
+    // Core
+    Client, Collection, LimitedCollection,
+
+    // Entities
+    Guild, Message, User, GuildMember, Role,
+    TextChannel, VoiceChannel, DMChannel, ThreadChannel,
+    ForumChannel, CategoryChannel, AnnouncementChannel, StageChannel,
+    ChatInputInteraction, ButtonInteraction, SelectMenuInteraction,
+    ModalSubmitInteraction, AutocompleteInteraction, ContextMenuInteraction,
+    VoiceState, Presence, GuildEmoji, Invite, Webhook,
+
+    // Builders
+    EmbedBuilder, ActionRowBuilder, ButtonBuilder,
+    StringSelectBuilder, UserSelectBuilder, RoleSelectBuilder,
+    MentionableSelectBuilder, ChannelSelectBuilder,
+    TextInputBuilder, ModalBuilder, AttachmentBuilder,
+    SlashCommandBuilder, ContextMenuCommandBuilder,
+
+    // Components V2
+    TextDisplayBuilder, ThumbnailBuilder, SectionBuilder,
+    MediaGalleryBuilder, SeparatorBuilder, ContainerBuilder,
+
+    // Inline DSL
+    embed, field, row, button, linkButton, option,
+    InlineMessage,
+
+    // Formatters
+    Formatters, fmt,
+
+    // Utilities
+    SnowflakeUtil, Permissions, PermissionFlags, Colors,
+    CDN, Sweepers, WebhookClient, Partials,
+    resolveUserId, resolveChannelId, resolveGuildId, resolveRoleId,
+    createLocaleMap, paginate, paginateAll,
+} from "@volundr/client";</code></pre>
+
+<hr>
+
+<h2>Client - interaction routing</h2>
+<p>Register handlers declaratively. Volundr routes interactions automatically.</p>
+<table>
+    <thead><tr><th>Method</th><th>Description</th></tr></thead>
+    <tbody>
+        <tr><td><code>command(name, handler)</code></td><td>Handle slash commands. Supports <code>"name/sub"</code> and <code>"name/group/sub"</code> for subcommand routing.</td></tr>
+        <tr><td><code>autocomplete(name, handler)</code></td><td>Handle autocomplete for a command. Same subcommand syntax.</td></tr>
+        <tr><td><code>contextMenu(name, handler)</code></td><td>Handle user/message context menu commands.</td></tr>
+        <tr><td><code>button(match, handler)</code></td><td>Handle button clicks. <code>match</code> is a string or RegExp.</td></tr>
+        <tr><td><code>selectMenu(match, handler)</code></td><td>Handle select menu interactions. <code>match</code> is a string or RegExp.</td></tr>
+        <tr><td><code>modal(match, handler)</code></td><td>Handle modal submissions. <code>match</code> is a string or RegExp.</td></tr>
+    </tbody>
+</table>
+
+<h2>Client - event streaming</h2>
+<table>
+    <thead><tr><th>Method</th><th>Description</th></tr></thead>
+    <tbody>
+        <tr><td><code>stream(event, options?)</code></td><td>Returns an <code>AsyncGenerator</code> of events. Cancel with <code>{ signal: AbortSignal }</code>.</td></tr>
+    </tbody>
+</table>
+
+<h2>Client - resource management</h2>
+<table>
+    <thead><tr><th>Method</th><th>Description</th></tr></thead>
+    <tbody>
+        <tr><td><code>[Symbol.asyncDispose]()</code></td><td>Enables <code>await using client = new Client(...)</code> for automatic cleanup.</td></tr>
+        <tr><td><code>connect()</code></td><td>Connect to the Discord gateway.</td></tr>
+        <tr><td><code>disconnect()</code></td><td>Disconnect from all shards.</td></tr>
+    </tbody>
+</table>
+
+<h2>Formatters</h2>
+<table>
+    <thead><tr><th>Export</th><th>Description</th></tr></thead>
+    <tbody>
+        <tr><td><code>fmt</code></td><td>Tagged template. Auto-resolves User, Channel, Role, GuildMember, GuildEmoji, Date to Discord mention syntax.</td></tr>
+        <tr><td><code>Formatters.bold(text)</code></td><td>Wrap in <code>**bold**</code></td></tr>
+        <tr><td><code>Formatters.italic(text)</code></td><td>Wrap in <code>*italic*</code></td></tr>
+        <tr><td><code>Formatters.codeBlock(lang, text)</code></td><td>Wrap in fenced code block</td></tr>
+        <tr><td><code>Formatters.time(date, style?)</code></td><td>Discord timestamp (<code>&lt;t:unix:style&gt;</code>)</td></tr>
+        <tr><td><code>Formatters.userMention(id)</code></td><td>User mention string</td></tr>
+        <tr><td><code>Formatters.channelMention(id)</code></td><td>Channel mention string</td></tr>
+        <tr><td><code>Formatters.roleMention(id)</code></td><td>Role mention string</td></tr>
+        <tr><td><code>Formatters.escapeMarkdown(text)</code></td><td>Escape all markdown characters</td></tr>
+    </tbody>
+</table>
+
+<hr>
+
+<h2>Builders</h2>
+<p>All builders use a fluent API (<code>.setX().setY().addZ()</code>) and have a <code>.toJSON()</code> method.</p>
+
+<h3>EmbedBuilder</h3>
+<table>
+    <thead><tr><th>Method</th><th>Description</th></tr></thead>
+    <tbody>
+        <tr><td><code>setTitle(title)</code></td><td>Set title (max 256 chars)</td></tr>
+        <tr><td><code>setDescription(desc)</code></td><td>Set description (max 4096 chars)</td></tr>
+        <tr><td><code>setColor(color)</code></td><td>Set color (<code>0xFF0000</code>)</td></tr>
+        <tr><td><code>setURL(url)</code></td><td>Set title URL</td></tr>
+        <tr><td><code>setTimestamp(date?)</code></td><td>Set timestamp (defaults to now)</td></tr>
+        <tr><td><code>setFooter(footer)</code></td><td>Set footer <code>{ text, icon_url? }</code></td></tr>
+        <tr><td><code>setImage(url)</code></td><td>Set image URL</td></tr>
+        <tr><td><code>setThumbnail(url)</code></td><td>Set thumbnail URL</td></tr>
+        <tr><td><code>setAuthor(author)</code></td><td>Set author <code>{ name, icon_url?, url? }</code></td></tr>
+        <tr><td><code>addFields(...fields)</code></td><td>Add fields (max 25 total)</td></tr>
+        <tr><td><code>setFields(...fields)</code></td><td>Replace all fields</td></tr>
+    </tbody>
+</table>
+
+<h3>ActionRowBuilder</h3>
+<table>
+    <thead><tr><th>Method</th><th>Description</th></tr></thead>
+    <tbody>
+        <tr><td><code>addComponents(...components)</code></td><td>Add buttons, selects, or text inputs</td></tr>
+    </tbody>
+</table>
+
+<h3>ButtonBuilder</h3>
+<table>
+    <thead><tr><th>Method</th><th>Description</th></tr></thead>
+    <tbody>
+        <tr><td><code>setCustomId(id)</code></td><td>Set custom ID (max 100 chars)</td></tr>
+        <tr><td><code>setLabel(label)</code></td><td>Set label (max 80 chars)</td></tr>
+        <tr><td><code>setStyle(style)</code></td><td>Primary, Secondary, Success, Danger, Link</td></tr>
+        <tr><td><code>setEmoji(emoji)</code></td><td>Set emoji <code>{ id?, name?, animated? }</code></td></tr>
+        <tr><td><code>setURL(url)</code></td><td>Set URL (Link style only)</td></tr>
+        <tr><td><code>setDisabled(disabled?)</code></td><td>Disable the button</td></tr>
+    </tbody>
+</table>
+
+<h3>Select Menus</h3>
+<p><code>StringSelectBuilder</code>, <code>UserSelectBuilder</code>, <code>RoleSelectBuilder</code>, <code>MentionableSelectBuilder</code>, <code>ChannelSelectBuilder</code> - all share:</p>
+<table>
+    <thead><tr><th>Method</th><th>Description</th></tr></thead>
+    <tbody>
+        <tr><td><code>setCustomId(id)</code></td><td>Set custom ID</td></tr>
+        <tr><td><code>setPlaceholder(text)</code></td><td>Placeholder text (max 150 chars)</td></tr>
+        <tr><td><code>setMinValues(n)</code></td><td>Min selections</td></tr>
+        <tr><td><code>setMaxValues(n)</code></td><td>Max selections</td></tr>
+        <tr><td><code>setDisabled(disabled?)</code></td><td>Disable the select</td></tr>
+    </tbody>
+</table>
+<p><code>StringSelectBuilder</code> also has <code>addOptions(...options)</code> (max 25). <code>ChannelSelectBuilder</code> also has <code>setChannelTypes(...types)</code>.</p>
+
+<h3>TextInputBuilder</h3>
+<table>
+    <thead><tr><th>Method</th><th>Description</th></tr></thead>
+    <tbody>
+        <tr><td><code>setCustomId(id)</code></td><td>Set custom ID</td></tr>
+        <tr><td><code>setLabel(label)</code></td><td>Set label text</td></tr>
+        <tr><td><code>setStyle(style)</code></td><td>Short or Paragraph</td></tr>
+        <tr><td><code>setPlaceholder(text)</code></td><td>Placeholder</td></tr>
+        <tr><td><code>setMinLength(n)</code></td><td>Min length (0-4000)</td></tr>
+        <tr><td><code>setMaxLength(n)</code></td><td>Max length (1-4000)</td></tr>
+        <tr><td><code>setRequired(req?)</code></td><td>Required field</td></tr>
+        <tr><td><code>setValue(value)</code></td><td>Default value</td></tr>
+    </tbody>
+</table>
+
+<h3>ModalBuilder</h3>
+<table>
+    <thead><tr><th>Method</th><th>Description</th></tr></thead>
+    <tbody>
+        <tr><td><code>setCustomId(id)</code></td><td>Set modal custom ID</td></tr>
+        <tr><td><code>setTitle(title)</code></td><td>Set title (max 45 chars)</td></tr>
+        <tr><td><code>addComponents(...rows)</code></td><td>Add action rows (max 5)</td></tr>
+    </tbody>
+</table>
+
+<h3>SlashCommandBuilder</h3>
+<table>
+    <thead><tr><th>Method</th><th>Description</th></tr></thead>
+    <tbody>
+        <tr><td><code>setName(name)</code></td><td>Command name (1-32 chars, lowercase)</td></tr>
+        <tr><td><code>setDescription(desc)</code></td><td>Description (1-100 chars)</td></tr>
+        <tr><td><code>setNameLocalizations(map)</code></td><td>Localized names</td></tr>
+        <tr><td><code>setDescriptionLocalizations(map)</code></td><td>Localized descriptions</td></tr>
+        <tr><td><code>setDefaultMemberPermissions(perms)</code></td><td>Required permissions</td></tr>
+        <tr><td><code>setDMPermission(allowed)</code></td><td>Allow in DMs</td></tr>
+        <tr><td><code>setNSFW(nsfw?)</code></td><td>Mark as NSFW</td></tr>
+        <tr><td><code>addStringOption(fn)</code></td><td>Add string option</td></tr>
+        <tr><td><code>addIntegerOption(fn)</code></td><td>Add integer option</td></tr>
+        <tr><td><code>addBooleanOption(fn)</code></td><td>Add boolean option</td></tr>
+        <tr><td><code>addUserOption(fn)</code></td><td>Add user option</td></tr>
+        <tr><td><code>addChannelOption(fn)</code></td><td>Add channel option</td></tr>
+        <tr><td><code>addRoleOption(fn)</code></td><td>Add role option</td></tr>
+        <tr><td><code>addNumberOption(fn)</code></td><td>Add number option</td></tr>
+        <tr><td><code>addAttachmentOption(fn)</code></td><td>Add attachment option</td></tr>
+        <tr><td><code>addSubcommand(fn)</code></td><td>Add subcommand (max 25)</td></tr>
+        <tr><td><code>addSubcommandGroup(fn)</code></td><td>Add subcommand group (max 25)</td></tr>
+    </tbody>
+</table>
+
+<h3>ContextMenuCommandBuilder</h3>
+<table>
+    <thead><tr><th>Method</th><th>Description</th></tr></thead>
+    <tbody>
+        <tr><td><code>setName(name)</code></td><td>Command name</td></tr>
+        <tr><td><code>setType(type)</code></td><td>User or Message</td></tr>
+        <tr><td><code>setDefaultMemberPermissions(perms)</code></td><td>Required permissions</td></tr>
+        <tr><td><code>setDMPermission(allowed)</code></td><td>Allow in DMs</td></tr>
+    </tbody>
+</table>
+
+<h3>AttachmentBuilder</h3>
+<p><code>new AttachmentBuilder(data, options?)</code></p>
+<table>
+    <thead><tr><th>Method</th><th>Description</th></tr></thead>
+    <tbody>
+        <tr><td><code>setName(name)</code></td><td>Set filename (default: "file.dat")</td></tr>
+        <tr><td><code>setDescription(desc)</code></td><td>Set alt text / description</td></tr>
+        <tr><td><code>setSpoiler(spoiler?)</code></td><td>Mark as spoiler (prepends SPOILER_)</td></tr>
+    </tbody>
+</table>
+
+<h3>Components V2</h3>
+<table>
+    <thead><tr><th>Builder</th><th>Methods</th></tr></thead>
+    <tbody>
+        <tr><td><code>TextDisplayBuilder</code></td><td><code>setContent(text)</code></td></tr>
+        <tr><td><code>ThumbnailBuilder</code></td><td><code>setURL(url)</code>, <code>setDescription(desc)</code>, <code>setSpoiler()</code></td></tr>
+        <tr><td><code>SectionBuilder</code></td><td><code>addTextDisplay(text)</code>, <code>setThumbnailAccessory(thumb)</code>, <code>setButtonAccessory(btn)</code></td></tr>
+        <tr><td><code>MediaGalleryBuilder</code></td><td><code>addItem(url, description?, spoiler?)</code></td></tr>
+        <tr><td><code>SeparatorBuilder</code></td><td><code>setDivider(show?)</code>, <code>setSpacing(spacing)</code></td></tr>
+        <tr><td><code>ContainerBuilder</code></td><td><code>addComponents(...)</code>, <code>addTextDisplay(text)</code>, <code>addSeparator()</code>, <code>setAccentColor(color)</code>, <code>setSpoiler()</code></td></tr>
+    </tbody>
+</table>
+
+<hr>
+
+<h2>Inline Message DSL</h2>
+<p>Quick helpers for building messages without full builder classes.</p>
+
+<pre><code class="language-typescript">import { embed, field, row, button, linkButton, option } from "@volundr/client";
+
+// Plain object embed
+const e = embed({
+    title: "Hello",
+    description: "World",
+    color: 0xFF0000,
+    fields: [field("Name", "Value", true)],
+});
+
+// Quick action row
+const r = row(
+    button("confirm", "Confirm", ButtonStyle.Success),
+    linkButton("https://example.com", "Visit"),
+);
+
+// Select option
+const o = option("Choice A", "a", "Description");</code></pre>
+
+<h3>InlineMessage</h3>
+<p>Callback-based fluent builder for messages.</p>
+
+<pre><code class="language-typescript">import { InlineMessage } from "@volundr/client";
+
+channel.send((msg) => {
+    msg.content = "Hello!";
+    msg.embed((e) => {
+        e.title = "Title";
+        e.color = 0x00FF00;
+        e.field("Name", "Value");
+        e.footer("Footer text");
+    });
+    msg.row(button("ok", "OK"));
+});</code></pre>
+
+<hr>
+
+<h2>CDN</h2>
+<p>Static methods for Discord CDN image URLs.</p>
+<table>
+    <thead><tr><th>Method</th><th>Returns</th></tr></thead>
+    <tbody>
+        <tr><td><code>CDN.avatar(userId, hash, opts?)</code></td><td>User avatar URL</td></tr>
+        <tr><td><code>CDN.defaultAvatar(userId)</code></td><td>Default avatar URL</td></tr>
+        <tr><td><code>CDN.guildIcon(guildId, hash, opts?)</code></td><td>Guild icon URL</td></tr>
+        <tr><td><code>CDN.guildBanner(guildId, hash, opts?)</code></td><td>Guild banner URL</td></tr>
+        <tr><td><code>CDN.guildSplash(guildId, hash, opts?)</code></td><td>Guild splash URL</td></tr>
+        <tr><td><code>CDN.emoji(emojiId, animated?, opts?)</code></td><td>Custom emoji URL</td></tr>
+        <tr><td><code>CDN.memberAvatar(guildId, userId, hash, opts?)</code></td><td>Member avatar URL</td></tr>
+        <tr><td><code>CDN.roleIcon(roleId, hash, opts?)</code></td><td>Role icon URL</td></tr>
+        <tr><td><code>CDN.sticker(stickerId, format?)</code></td><td>Sticker URL</td></tr>
+        <tr><td><code>CDN.userBanner(userId, hash, opts?)</code></td><td>User banner URL</td></tr>
+    </tbody>
+</table>
+<details class="opt"><summary>ImageOptions</summary><div class="opt-fields">
+    <div class="opt-field"><code>size</code> <span class="opt-type">16 | 32 | 64 | 128 | 256 | 512 | 1024 | 2048 | 4096</div>
+    <div class="opt-field"><code>format</code> <span class="opt-type">"webp" | "png" | "jpg" | "gif"</div>
+</div></details>
+
+<hr>
+
+<h2>WebhookClient</h2>
+<p>Send messages via webhook without a full Client connection.</p>
+
+<pre><code class="language-typescript">import { WebhookClient } from "@volundr/client";
+
+// From URL
+const wh = new WebhookClient("https://discord.com/api/webhooks/123/token");
+
+// From ID + token
+const wh2 = new WebhookClient("123456", "webhook-token");</code></pre>
+
+<table>
+    <thead><tr><th>Method</th><th>Returns</th><th>Description</th></tr></thead>
+    <tbody>
+        <tr><td><code>send(options)</code></td><td><code>Promise&lt;APIMessage&gt;</code></td><td>Send a webhook message</td></tr>
+        <tr><td><code>editMessage(id, options)</code></td><td><code>Promise&lt;APIMessage&gt;</code></td><td>Edit a webhook message</td></tr>
+        <tr><td><code>deleteMessage(id)</code></td><td><code>Promise&lt;void&gt;</code></td><td>Delete a webhook message</td></tr>
+    </tbody>
+</table>
+<details class="opt"><summary>WebhookMessageOptions</summary><div class="opt-fields">
+    <div class="opt-field"><code>content</code> <span class="opt-type">string</div>
+    <div class="opt-field"><code>username</code> <span class="opt-type">string</div>
+    <div class="opt-field"><code>avatar_url</code> <span class="opt-type">string</div>
+    <div class="opt-field"><code>tts</code> <span class="opt-type">boolean</div>
+    <div class="opt-field"><code>embeds</code> <span class="opt-type">APIEmbed[]</div>
+    <div class="opt-field"><code>components</code> <span class="opt-type">APIActionRow[]</div>
+    <div class="opt-field"><code>thread_id</code> <span class="opt-type">Snowflake</div>
+    <div class="opt-field"><code>files</code> <span class="opt-type">FileAttachment[]</div>
+</div></details>
+
+<hr>
+
+<h2>Resolvers</h2>
+<p>Extract IDs from entities, raw API objects, or plain snowflakes.</p>
+<table>
+    <thead><tr><th>Function</th><th>Accepts</th></tr></thead>
+    <tbody>
+        <tr><td><code>resolveUserId(resolvable)</code></td><td>User | GuildMember | Message | Snowflake | APIUser</td></tr>
+        <tr><td><code>resolveChannelId(resolvable)</code></td><td>Channel | Snowflake | APIChannel</td></tr>
+        <tr><td><code>resolveGuildId(resolvable)</code></td><td>Guild | Snowflake | APIGuild</td></tr>
+        <tr><td><code>resolveRoleId(resolvable)</code></td><td>Role | Snowflake | APIRole</td></tr>
+        <tr><td><code>resolveEmojiId(resolvable)</code></td><td>GuildEmoji | string (unicode or &lt;:name:id&gt;)</td></tr>
+        <tr><td><code>resolveMessageId(resolvable)</code></td><td>Message | Snowflake</td></tr>
+    </tbody>
+</table>
+
+<hr>
+
+<h2>Locale</h2>
+<pre><code class="language-typescript">import { createLocaleMap, resolveLocale } from "@volundr/client";
+
+const t = createLocaleMap({
+    now_playing: {
+        "en-US": "Now Playing",
+        "pt-BR": "Tocando Agora",
+    },
+});
+
+t("now_playing", "pt-BR"); // "Tocando Agora"
+t("now_playing", "ja");    // "Now Playing" (fallback to en-US)</code></pre>
+
+<hr>
+
+<h2>Pagination</h2>
+<pre><code class="language-typescript">import { paginate, paginateAll } from "@volundr/client";
+
+// Async generator - process page by page
+for await (const page of paginate(
+    (opts) => client.listMembers(guildId, opts),
+    { limit: 100 },
+)) {
+    console.log(page.length); // up to 100 per page
+}
+
+// Collect everything into a flat array
+const allMembers = await paginateAll(
+    (opts) => client.listMembers(guildId, opts),
+);</code></pre>
+
+<hr>
+
+<h2>Utilities</h2>
+<pre><code class="language-typescript">// Snowflakes
+SnowflakeUtil.timestampFrom("175928847299117063");
+SnowflakeUtil.generate(Date.now());
+
+// Discord markdown
+Formatters.bold("hello");              // **hello**
+Formatters.userMention("123456");      // &lt;@123456&gt;
+Formatters.time(Date.now(), "R");      // &lt;t:1234567890:R&gt;
+Formatters.codeBlock("ts", "const x"); // ```ts\nconst x\n```
+
+// Permissions
+const perms = member.permissions;
+perms.has(PermissionFlags.ManageMessages);  // true/false
+perms.toArray();  // ["SendMessages", "ManageMessages", ...]
+
+// Colors
+Colors.Red;     // 0xED4245
+Colors.Blurple; // 0x5865F2</code></pre>

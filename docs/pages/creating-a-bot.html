@@ -1,0 +1,71 @@
+<h1>Creating a Bot</h1>
+<p class="lead">Set up your project and connect to Discord.</p>
+
+<h2>Prerequisites</h2>
+<ul>
+    <li><strong>Node.js 18+</strong></li>
+    <li><strong>A Discord bot token</strong> - create one at <a href="https://discord.com/developers/applications">discord.com/developers</a></li>
+    <li><strong>TypeScript 5+</strong> (recommended)</li>
+</ul>
+
+<h2>Project setup</h2>
+<pre><code class="language-bash">mkdir my-bot && cd my-bot
+npm init -y
+npm install @volundr/client
+npm install -D typescript tsx</code></pre>
+
+<h3>tsconfig.json</h3>
+<pre><code class="language-json">{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "Node16",
+    "moduleResolution": "Node16",
+    "strict": true,
+    "outDir": "dist"
+  },
+  "include": ["src"]
+}</code></pre>
+
+<h2>Bot token</h2>
+<p>Store your token in environment variables. Never commit it to source control.</p>
+
+<pre><code class="language-bash"># .env
+DISCORD_TOKEN=your-bot-token-here</code></pre>
+
+<div class="callout callout-warn">
+    <strong>Warning:</strong> If your token is ever exposed, regenerate it immediately in the Discord Developer Portal.
+</div>
+
+<h2>Client options</h2>
+<pre><code class="language-typescript">import { Client } from "@volundr/client";
+import { GatewayIntents } from "@volundr/gateway";
+
+const client = new Client({
+    token: process.env.DISCORD_TOKEN!,
+    intents:
+        GatewayIntents.Guilds |
+        GatewayIntents.GuildMessages |
+        GatewayIntents.MessageContent |
+        GatewayIntents.GuildMembers,
+});</code></pre>
+
+<h2>Intents</h2>
+<p>Intents control which events your bot receives. Only enable what you need.</p>
+
+<table>
+    <thead>
+        <tr><th>Intent</th><th>Events</th></tr>
+    </thead>
+    <tbody>
+        <tr><td><code>Guilds</code></td><td>Guild create/update/delete, channel changes, role changes</td></tr>
+        <tr><td><code>GuildMessages</code></td><td>Message create/update/delete in guild channels</td></tr>
+        <tr><td><code>MessageContent</code></td><td>Access to <code>message.content</code> (privileged)</td></tr>
+        <tr><td><code>GuildMembers</code></td><td>Member add/update/remove (privileged)</td></tr>
+        <tr><td><code>GuildVoiceStates</code></td><td>Voice state updates (required for voice)</td></tr>
+        <tr><td><code>DirectMessages</code></td><td>DM messages</td></tr>
+        <tr><td><code>GuildPresences</code></td><td>Presence updates (privileged)</td></tr>
+    </tbody>
+</table>
+
+<h2>Run your bot</h2>
+<pre><code class="language-bash">npx tsx src/index.ts</code></pre>

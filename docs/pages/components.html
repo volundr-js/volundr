@@ -1,0 +1,89 @@
+<h1>Components</h1>
+<p class="lead">Buttons, select menus, and modals.</p>
+
+<h2>Buttons</h2>
+<pre><code class="language-typescript">import { ActionRowBuilder, ButtonBuilder } from "@volundr/client";
+import { ButtonStyle } from "@volundr/types";
+
+const row = new ActionRowBuilder().addComponents(
+    new ButtonBuilder().setCustomId("yes").setLabel("Confirm").setStyle(ButtonStyle.Success),
+    new ButtonBuilder().setCustomId("no").setLabel("Cancel").setStyle(ButtonStyle.Danger),
+);
+
+channel.send({ content: "Are you sure?", components: [row.toJSON()] });</code></pre>
+
+<p>Or with the callback builder (zero imports):</p>
+<pre><code class="language-typescript">channel.send(msg => {
+    msg.content = "Are you sure?";
+    msg.row(
+        new ButtonBuilder().setCustomId("yes").setLabel("Confirm").setStyle(ButtonStyle.Success),
+        new ButtonBuilder().setCustomId("no").setLabel("Cancel").setStyle(ButtonStyle.Danger),
+    );
+});</code></pre>
+
+<h2>Handling button clicks</h2>
+<p>Declarative routing with <code>client.button()</code>. Accepts a string (exact match) or RegExp:</p>
+<pre><code class="language-typescript">client.button("yes", (interaction) => {
+    interaction.reply("Confirmed!");
+});
+
+client.button("no", (interaction) => {
+    interaction.reply("Cancelled.");
+});
+
+// RegExp matching for dynamic IDs
+client.button(/^ticket-(\d+)$/, (interaction) => {
+    const match = interaction.customIdMatches(/^ticket-(\d+)$/);
+    const ticketId = match?.[1];
+    interaction.reply(`Opening ticket ${ticketId}`);
+});</code></pre>
+
+<h2>Select menus</h2>
+<pre><code class="language-typescript">import { StringSelectBuilder } from "@volundr/client";
+
+const select = new StringSelectBuilder()
+    .setCustomId("color")
+    .setPlaceholder("Pick a color")
+    .addOptions(
+        { label: "Red", value: "red" },
+        { label: "Blue", value: "blue" },
+        { label: "Green", value: "green" },
+    );
+
+const row = new ActionRowBuilder().addComponents(select);
+channel.send({ content: "Choose:", components: [row.toJSON()] });</code></pre>
+
+<h2>Modals</h2>
+<pre><code class="language-typescript">import { ModalBuilder, ActionRowBuilder, TextInputBuilder } from "@volundr/client";
+import { TextInputStyle } from "@volundr/types";
+
+const modal = new ModalBuilder()
+    .setCustomId("feedback")
+    .setTitle("Feedback")
+    .addComponents(
+        new ActionRowBuilder().addComponents(
+            new TextInputBuilder()
+                .setCustomId("message")
+                .setLabel("Your feedback")
+                .setStyle(TextInputStyle.Paragraph)
+                .setRequired(true),
+        ),
+    );
+
+interaction.showModal(modal);</code></pre>
+
+<h2>Handling modal submit</h2>
+<pre><code class="language-typescript">client.modal("feedback", (interaction) => {
+    const text = interaction.getTextInputValue("message");
+    interaction.reply(`Thanks for the feedback: ${text}`);
+});</code></pre>
+
+<h2>Handling select menus</h2>
+<pre><code class="language-typescript">client.selectMenu("color", (interaction) => {
+    const selected = interaction.values[0];
+    interaction.reply(`You picked: ${selected}`);
+});</code></pre>
+
+<div class="callout callout-tip">
+    <strong>Pattern matching:</strong> All component handlers (<code>.button()</code>, <code>.selectMenu()</code>, <code>.modal()</code>) accept a string for exact match or a RegExp for pattern matching on the <code>custom_id</code>.
+</div>

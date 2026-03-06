@@ -1,0 +1,55 @@
+<h1>Voice</h1>
+<p class="lead">Connect to voice channels and play audio.</p>
+
+<h2>Connect</h2>
+<pre><code class="language-typescript">const connection = client.joinVoiceChannel(guildId, channelId, {
+    selfDeaf: true,
+});
+
+connection.on("ready", () => {
+    console.log("Connected to voice!");
+});</code></pre>
+
+<h2>Play audio</h2>
+<pre><code class="language-typescript">import { createAudioResource } from "@volundr/voice";
+
+// From file
+const resource = createAudioResource("./song.mp3", { volume: 0.8 });
+connection.getAudioPlayer()!.play(resource);
+
+// From URL
+const resource2 = createAudioResource("https://example.com/song.ogg");
+
+// Raw Opus stream (zero-copy)
+const resource3 = createAudioResource(opusStream, {
+    inputType: StreamType.Opus,
+});</code></pre>
+
+<h2>Stream types</h2>
+<table>
+    <thead>
+        <tr><th>Type</th><th>Pipeline</th></tr>
+    </thead>
+    <tbody>
+        <tr><td><code>Arbitrary</code></td><td>FFmpeg → OggDemuxer → Opus (default)</td></tr>
+        <tr><td><code>OggOpus</code></td><td>OggDemuxer → Opus (skip FFmpeg)</td></tr>
+        <tr><td><code>Opus</code></td><td>Pass-through (zero-copy)</td></tr>
+    </tbody>
+</table>
+
+<h2>Lavalink</h2>
+<pre><code class="language-typescript">import { LavalinkManager } from "@volundr/lavalink";
+
+const lavalink = new LavalinkManager(client, {
+    nodes: [{ host: "localhost", port: 2333, password: "youshallnotpass" }],
+});
+
+await lavalink.connect();
+
+const result = await lavalink.search("never gonna give you up");
+const player = lavalink.getPlayer(guildId);
+await player.play(result.tracks[0]);</code></pre>
+
+<div class="callout callout-tip">
+    <strong>Tip:</strong> For production music bots, use <code>@volundr/lavalink</code> instead of native audio. It offloads encoding to a dedicated server.
+</div>

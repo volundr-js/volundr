@@ -1,0 +1,2031 @@
+<h1>API Reference</h1>
+<p class="lead">Complete reference for all public classes, methods, and properties.</p>
+
+<!-- ── Client ── -->
+<h2>Client</h2>
+<p><code>new Client(options)</code></p>
+<details class="opt"><summary>ClientOptions</summary><div class="opt-fields">
+    <div class="opt-field"><code>token</code> <span class="opt-type">string <span class="opt-req">required</div>
+    <div class="opt-field"><code>intents</code> <span class="opt-type">number <span class="opt-req">required</div>
+    <div class="opt-field"><code>apiVersion</code> <span class="opt-type">number</div>
+    <div class="opt-field"><code>baseUrl</code> <span class="opt-type">string</div>
+    <div class="opt-field"><code>maxRetries</code> <span class="opt-type">number</div>
+    <div class="opt-field"><code>largeThreshold</code> <span class="opt-type">number</div>
+    <div class="opt-field"><code>presence</code> <span class="opt-type">GatewayPresence</div>
+    <div class="opt-field"><code>messageCacheLimit</code> <span class="opt-type">number</div>
+    <div class="opt-field"><code>shardCount</code> <span class="opt-type">number | "auto"</div>
+    <div class="opt-field"><code>pool</code> <span class="opt-type">boolean | ThreadPoolOptions</div>
+    <div class="opt-field"><code>compress</code> <span class="opt-type">boolean</div>
+    <div class="opt-field"><code>sweepers</code> <span class="opt-type">SweeperConfig</div>
+    <div class="opt-field"><code>partials</code> <span class="opt-type">PartialType[]</div>
+</div></details>
+
+<h3>Properties</h3>
+<table>
+    <thead><tr><th>Property</th><th>Type</th></tr></thead>
+    <tbody>
+        <tr><td><code>guilds</code></td><td><code>Collection&lt;Snowflake, Guild&gt;</code></td></tr>
+        <tr><td><code>channels</code></td><td><code>Collection&lt;Snowflake, Channel&gt;</code></td></tr>
+        <tr><td><code>users</code></td><td><code>Collection&lt;Snowflake, User&gt;</code></td></tr>
+        <tr><td><code>user</code></td><td><code>User | null</code></td></tr>
+        <tr><td><code>rest</code></td><td><code>RestClient</code></td></tr>
+        <tr><td><code>gateway</code></td><td><code>Gateway | null</code></td></tr>
+        <tr><td><code>readyTimestamp</code></td><td><code>number | null</code></td></tr>
+        <tr><td><code>application</code></td><td><code>{ id: Snowflake; flags: number } | null</code></td></tr>
+    </tbody>
+</table>
+
+<h3>Lifecycle</h3>
+<table>
+    <thead><tr><th>Method</th><th>Returns</th></tr></thead>
+    <tbody>
+        <tr><td><code>connect()</code></td><td><code>Promise&lt;void&gt;</code></td></tr>
+        <tr><td><code>disconnect()</code></td><td><code>void</code></td></tr>
+        <tr><td><code>isReady()</code></td><td><code>boolean</code></td></tr>
+        <tr><td><code>readyAt</code></td><td><code>Date | null</code></td></tr>
+        <tr><td><code>uptime</code></td><td><code>number | null</code></td></tr>
+        <tr><td><code>setPresence(presence)</code></td><td><code>void</code></td></tr>
+        <tr><td><code>generateInvite(options?)</code></td><td><code>string</code></td></tr>
+    </tbody>
+</table>
+
+<h3>REST - Messages</h3>
+<table>
+    <thead><tr><th>Method</th><th>Returns</th></tr></thead>
+    <tbody>
+        <tr><td><code>createMessage(channelId, options)</code>
+            <details class="opt"><summary>CreateMessageOptions</summary><div class="opt-fields">
+                <div class="opt-field"><code>content</code> <span class="opt-type">string</div>
+                <div class="opt-field"><code>embeds</code> <span class="opt-type">APIEmbed[]</div>
+                <div class="opt-field"><code>components</code> <span class="opt-type">APIActionRow[]</div>
+                <div class="opt-field"><code>flags</code> <span class="opt-type">number</div>
+                <div class="opt-field"><code>tts</code> <span class="opt-type">boolean</div>
+                <div class="opt-field"><code>reply_to</code> <span class="opt-type">Snowflake</div>
+                <div class="opt-field"><code>files</code> <span class="opt-type">FileAttachment[]</div>
+                <div class="opt-field"><code>allowed_mentions</code> <span class="opt-type">APIAllowedMentions</div>
+            </div></details>
+        </td><td><code>Promise&lt;APIMessage&gt;</code></td></tr>
+        <tr><td><code>editMessage(channelId, messageId, options)</code>
+            <details class="opt"><summary>EditMessageOptions</summary><div class="opt-fields">
+                <div class="opt-field"><code>content</code> <span class="opt-type">string</div>
+                <div class="opt-field"><code>embeds</code> <span class="opt-type">APIEmbed[]</div>
+                <div class="opt-field"><code>components</code> <span class="opt-type">APIActionRow[]</div>
+                <div class="opt-field"><code>flags</code> <span class="opt-type">number</div>
+                <div class="opt-field"><code>files</code> <span class="opt-type">FileAttachment[]</div>
+                <div class="opt-field"><code>allowed_mentions</code> <span class="opt-type">APIAllowedMentions</div>
+            </div></details>
+        </td><td><code>Promise&lt;APIMessage&gt;</code></td></tr>
+        <tr><td><code>deleteMessage(channelId, messageId, reason?)</code></td><td><code>Promise&lt;void&gt;</code></td></tr>
+        <tr><td><code>fetchMessages(channelId, options?)</code>
+            <details class="opt"><summary>FetchMessagesOptions</summary><div class="opt-fields">
+                <div class="opt-field"><code>limit</code> <span class="opt-type">number</div>
+                <div class="opt-field"><code>before</code> <span class="opt-type">Snowflake</div>
+                <div class="opt-field"><code>after</code> <span class="opt-type">Snowflake</div>
+                <div class="opt-field"><code>around</code> <span class="opt-type">Snowflake</div>
+            </div></details>
+        </td><td><code>Promise&lt;APIMessage[]&gt;</code></td></tr>
+        <tr><td><code>bulkDeleteMessages(channelId, ids, reason?)</code></td><td><code>Promise&lt;void&gt;</code></td></tr>
+        <tr><td><code>pinMessage(channelId, messageId, reason?)</code></td><td><code>Promise&lt;void&gt;</code></td></tr>
+        <tr><td><code>unpinMessage(channelId, messageId, reason?)</code></td><td><code>Promise&lt;void&gt;</code></td></tr>
+        <tr><td><code>fetchPinnedMessages(channelId)</code></td><td><code>Promise&lt;APIMessage[]&gt;</code></td></tr>
+        <tr><td><code>addReaction(channelId, messageId, emoji)</code></td><td><code>Promise&lt;void&gt;</code></td></tr>
+        <tr><td><code>removeReaction(channelId, messageId, emoji, userId?)</code></td><td><code>Promise&lt;void&gt;</code></td></tr>
+        <tr><td><code>removeAllReactions(channelId, messageId)</code></td><td><code>Promise&lt;void&gt;</code></td></tr>
+        <tr><td><code>triggerTyping(channelId)</code></td><td><code>Promise&lt;void&gt;</code></td></tr>
+    </tbody>
+</table>
+
+<h3>REST - Guilds</h3>
+<table>
+    <thead><tr><th>Method</th><th>Returns</th></tr></thead>
+    <tbody>
+        <tr><td><code>fetchGuild(guildId)</code></td><td><code>Promise&lt;APIGuild&gt;</code></td></tr>
+        <tr><td><code>editGuild(guildId, data, reason?)</code></td><td><code>Promise&lt;APIGuild&gt;</code></td></tr>
+        <tr><td><code>leaveGuild(guildId)</code></td><td><code>Promise&lt;void&gt;</code></td></tr>
+        <tr><td><code>deleteGuild(guildId)</code></td><td><code>Promise&lt;void&gt;</code></td></tr>
+        <tr><td><code>fetchGuildChannels(guildId)</code></td><td><code>Promise&lt;APIChannel[]&gt;</code></td></tr>
+        <tr><td><code>fetchGuildRoles(guildId)</code></td><td><code>Promise&lt;APIRole[]&gt;</code></td></tr>
+        <tr><td><code>searchGuildMembers(guildId, query, limit?)</code></td><td><code>Promise&lt;APIGuildMember[]&gt;</code></td></tr>
+        <tr><td><code>getAuditLog(guildId, options?)</code>
+            <details class="opt"><summary>GetAuditLogOptions</summary><div class="opt-fields">
+                <div class="opt-field"><code>user_id</code> <span class="opt-type">Snowflake</div>
+                <div class="opt-field"><code>action_type</code> <span class="opt-type">number</div>
+                <div class="opt-field"><code>before</code> <span class="opt-type">Snowflake</div>
+                <div class="opt-field"><code>after</code> <span class="opt-type">Snowflake</div>
+                <div class="opt-field"><code>limit</code> <span class="opt-type">number</div>
+            </div></details>
+        </td><td><code>Promise&lt;APIAuditLog&gt;</code></td></tr>
+    </tbody>
+</table>
+
+<h3>REST - Members &amp; Bans</h3>
+<table>
+    <thead><tr><th>Method</th><th>Returns</th></tr></thead>
+    <tbody>
+        <tr><td><code>fetchMember(guildId, userId)</code></td><td><code>Promise&lt;APIGuildMember&gt;</code></td></tr>
+        <tr><td><code>editMember(guildId, userId, data, reason?)</code>
+            <details class="opt"><summary>EditMemberOptions</summary><div class="opt-fields">
+                <div class="opt-field"><code>nick</code> <span class="opt-type">string | null</div>
+                <div class="opt-field"><code>roles</code> <span class="opt-type">Snowflake[]</div>
+                <div class="opt-field"><code>mute</code> <span class="opt-type">boolean</div>
+                <div class="opt-field"><code>deaf</code> <span class="opt-type">boolean</div>
+                <div class="opt-field"><code>channel_id</code> <span class="opt-type">Snowflake | null</div>
+                <div class="opt-field"><code>communication_disabled_until</code> <span class="opt-type">string | null</div>
+            </div></details>
+        </td><td><code>Promise&lt;APIGuildMember&gt;</code></td></tr>
+        <tr><td><code>kickMember(guildId, userId, reason?)</code></td><td><code>Promise&lt;void&gt;</code></td></tr>
+        <tr><td><code>banMember(guildId, userId, options?)</code>
+            <details class="opt"><summary>BanOptions</summary><div class="opt-fields">
+                <div class="opt-field"><code>reason</code> <span class="opt-type">string</div>
+                <div class="opt-field"><code>delete_message_seconds</code> <span class="opt-type">number</div>
+            </div></details>
+        </td><td><code>Promise&lt;void&gt;</code></td></tr>
+        <tr><td><code>unbanMember(guildId, userId, reason?)</code></td><td><code>Promise&lt;void&gt;</code></td></tr>
+        <tr><td><code>listMembers(guildId, options?)</code>
+            <details class="opt"><summary>ListMembersOptions</summary><div class="opt-fields">
+                <div class="opt-field"><code>limit</code> <span class="opt-type">number</div>
+                <div class="opt-field"><code>after</code> <span class="opt-type">Snowflake</div>
+            </div></details>
+        </td><td><code>Promise&lt;APIGuildMember[]&gt;</code></td></tr>
+        <tr><td><code>pruneMembers(guildId, options?, reason?)</code>
+            <details class="opt"><summary>PruneMembersOptions</summary><div class="opt-fields">
+                <div class="opt-field"><code>days</code> <span class="opt-type">number</div>
+                <div class="opt-field"><code>compute_prune_count</code> <span class="opt-type">boolean</div>
+                <div class="opt-field"><code>include_roles</code> <span class="opt-type">Snowflake[]</div>
+            </div></details>
+        </td><td><code>Promise&lt;PruneResult&gt;</code></td></tr>
+        <tr><td><code>getBan(guildId, userId)</code></td><td><code>Promise&lt;GuildBan&gt;</code></td></tr>
+        <tr><td><code>getBans(guildId)</code></td><td><code>Promise&lt;GuildBan[]&gt;</code></td></tr>
+    </tbody>
+</table>
+
+<h3>REST - Channels</h3>
+<table>
+    <thead><tr><th>Method</th><th>Returns</th></tr></thead>
+    <tbody>
+        <tr><td><code>fetchChannel(channelId)</code></td><td><code>Promise&lt;APIChannel&gt;</code></td></tr>
+        <tr><td><code>createChannel(guildId, data, reason?)</code>
+            <details class="opt"><summary>CreateChannelOptions</summary><div class="opt-fields">
+                <div class="opt-field"><code>name</code> <span class="opt-type">string <span class="opt-req">required</div>
+                <div class="opt-field"><code>type</code> <span class="opt-type">ChannelType</div>
+                <div class="opt-field"><code>topic</code> <span class="opt-type">string</div>
+                <div class="opt-field"><code>position</code> <span class="opt-type">number</div>
+                <div class="opt-field"><code>parent_id</code> <span class="opt-type">Snowflake</div>
+                <div class="opt-field"><code>nsfw</code> <span class="opt-type">boolean</div>
+                <div class="opt-field"><code>rate_limit_per_user</code> <span class="opt-type">number</div>
+                <div class="opt-field"><code>bitrate</code> <span class="opt-type">number</div>
+                <div class="opt-field"><code>user_limit</code> <span class="opt-type">number</div>
+            </div></details>
+        </td><td><code>Promise&lt;APIChannel&gt;</code></td></tr>
+        <tr><td><code>editChannel(channelId, data, reason?)</code>
+            <details class="opt"><summary>EditChannelOptions</summary><div class="opt-fields">
+                <div class="opt-field"><code>name</code> <span class="opt-type">string</div>
+                <div class="opt-field"><code>position</code> <span class="opt-type">number | null</div>
+                <div class="opt-field"><code>parent_id</code> <span class="opt-type">Snowflake | null</div>
+                <div class="opt-field"><code>permission_overwrites</code> <span class="opt-type">APIOverwrite[]</div>
+            </div></details>
+        </td><td><code>Promise&lt;APIChannel&gt;</code></td></tr>
+        <tr><td><code>deleteChannel(channelId, reason?)</code></td><td><code>Promise&lt;void&gt;</code></td></tr>
+        <tr><td><code>editPermissionOverwrite(channelId, targetId, data, reason?)</code></td><td><code>Promise&lt;void&gt;</code></td></tr>
+        <tr><td><code>deletePermissionOverwrite(channelId, targetId, reason?)</code></td><td><code>Promise&lt;void&gt;</code></td></tr>
+    </tbody>
+</table>
+
+<h3>REST - Roles</h3>
+<table>
+    <thead><tr><th>Method</th><th>Returns</th></tr></thead>
+    <tbody>
+        <tr><td><code>createRole(guildId, data?, reason?)</code>
+            <details class="opt"><summary>CreateRoleOptions</summary><div class="opt-fields">
+                <div class="opt-field"><code>name</code> <span class="opt-type">string</div>
+                <div class="opt-field"><code>color</code> <span class="opt-type">number</div>
+                <div class="opt-field"><code>permissions</code> <span class="opt-type">string</div>
+                <div class="opt-field"><code>hoist</code> <span class="opt-type">boolean</div>
+                <div class="opt-field"><code>mentionable</code> <span class="opt-type">boolean</div>
+            </div></details>
+        </td><td><code>Promise&lt;APIRole&gt;</code></td></tr>
+        <tr><td><code>editRole(guildId, roleId, data, reason?)</code>
+            <details class="opt"><summary>EditRoleOptions</summary><div class="opt-fields">
+                <div class="opt-field"><code>name</code> <span class="opt-type">string</div>
+                <div class="opt-field"><code>color</code> <span class="opt-type">number</div>
+                <div class="opt-field"><code>permissions</code> <span class="opt-type">string | bigint</div>
+                <div class="opt-field"><code>hoist</code> <span class="opt-type">boolean</div>
+                <div class="opt-field"><code>mentionable</code> <span class="opt-type">boolean</div>
+                <div class="opt-field"><code>icon</code> <span class="opt-type">string | null</div>
+                <div class="opt-field"><code>unicode_emoji</code> <span class="opt-type">string | null</div>
+            </div></details>
+        </td><td><code>Promise&lt;APIRole&gt;</code></td></tr>
+        <tr><td><code>deleteRole(guildId, roleId, reason?)</code></td><td><code>Promise&lt;void&gt;</code></td></tr>
+        <tr><td><code>addRole(guildId, userId, roleId, reason?)</code></td><td><code>Promise&lt;void&gt;</code></td></tr>
+        <tr><td><code>removeRole(guildId, userId, roleId, reason?)</code></td><td><code>Promise&lt;void&gt;</code></td></tr>
+    </tbody>
+</table>
+
+<h3>REST - Users &amp; DMs</h3>
+<table>
+    <thead><tr><th>Method</th><th>Returns</th></tr></thead>
+    <tbody>
+        <tr><td><code>fetchUser(userId)</code></td><td><code>Promise&lt;APIUser&gt;</code></td></tr>
+        <tr><td><code>fetchCurrentUser()</code></td><td><code>Promise&lt;APIUser&gt;</code></td></tr>
+        <tr><td><code>editCurrentUser(data)</code></td><td><code>Promise&lt;APIUser&gt;</code></td></tr>
+        <tr><td><code>createDM(userId)</code></td><td><code>Promise&lt;APIChannel&gt;</code></td></tr>
+    </tbody>
+</table>
+
+<h3>REST - Invites</h3>
+<table>
+    <thead><tr><th>Method</th><th>Returns</th></tr></thead>
+    <tbody>
+        <tr><td><code>getGuildInvites(guildId)</code></td><td><code>Promise&lt;APIInviteMetadata[]&gt;</code></td></tr>
+        <tr><td><code>createInvite(channelId, options?, reason?)</code></td><td><code>Promise&lt;APIInvite&gt;</code></td></tr>
+        <tr><td><code>getInvite(code)</code></td><td><code>Promise&lt;APIInvite&gt;</code></td></tr>
+        <tr><td><code>deleteInvite(code, reason?)</code></td><td><code>Promise&lt;APIInvite&gt;</code></td></tr>
+    </tbody>
+</table>
+
+<h3>REST - Webhooks</h3>
+<table>
+    <thead><tr><th>Method</th><th>Returns</th></tr></thead>
+    <tbody>
+        <tr><td><code>createWebhook(channelId, options, reason?)</code></td><td><code>Promise&lt;APIWebhook&gt;</code></td></tr>
+        <tr><td><code>getChannelWebhooks(channelId)</code></td><td><code>Promise&lt;APIWebhook[]&gt;</code></td></tr>
+        <tr><td><code>getGuildWebhooks(guildId)</code></td><td><code>Promise&lt;APIWebhook[]&gt;</code></td></tr>
+        <tr><td><code>getWebhook(webhookId)</code></td><td><code>Promise&lt;APIWebhook&gt;</code></td></tr>
+        <tr><td><code>editWebhook(webhookId, options, reason?)</code></td><td><code>Promise&lt;APIWebhook&gt;</code></td></tr>
+        <tr><td><code>deleteWebhook(webhookId, reason?)</code></td><td><code>Promise&lt;void&gt;</code></td></tr>
+        <tr><td><code>executeWebhook(webhookId, token, options)</code>
+            <details class="opt"><summary>WebhookMessageOptions</summary><div class="opt-fields">
+                <div class="opt-field"><code>content</code> <span class="opt-type">string</div>
+                <div class="opt-field"><code>username</code> <span class="opt-type">string</div>
+                <div class="opt-field"><code>avatar_url</code> <span class="opt-type">string</div>
+                <div class="opt-field"><code>tts</code> <span class="opt-type">boolean</div>
+                <div class="opt-field"><code>embeds</code> <span class="opt-type">APIEmbed[]</div>
+                <div class="opt-field"><code>components</code> <span class="opt-type">APIActionRow[]</div>
+                <div class="opt-field"><code>thread_id</code> <span class="opt-type">Snowflake</div>
+                <div class="opt-field"><code>files</code> <span class="opt-type">FileAttachment[]</div>
+            </div></details>
+        </td><td><code>Promise&lt;APIMessage | void&gt;</code></td></tr>
+    </tbody>
+</table>
+
+<h3>REST - Emojis &amp; Stickers</h3>
+<table>
+    <thead><tr><th>Method</th><th>Returns</th></tr></thead>
+    <tbody>
+        <tr><td><code>getGuildEmojis(guildId)</code></td><td><code>Promise&lt;APIEmoji[]&gt;</code></td></tr>
+        <tr><td><code>createGuildEmoji(guildId, data, reason?)</code></td><td><code>Promise&lt;APIEmoji&gt;</code></td></tr>
+        <tr><td><code>editGuildEmoji(guildId, emojiId, data, reason?)</code></td><td><code>Promise&lt;APIEmoji&gt;</code></td></tr>
+        <tr><td><code>deleteGuildEmoji(guildId, emojiId, reason?)</code></td><td><code>Promise&lt;void&gt;</code></td></tr>
+        <tr><td><code>getGuildStickers(guildId)</code></td><td><code>Promise&lt;APISticker[]&gt;</code></td></tr>
+        <tr><td><code>createGuildSticker(guildId, data, reason?)</code></td><td><code>Promise&lt;APISticker&gt;</code></td></tr>
+        <tr><td><code>deleteGuildSticker(guildId, stickerId, reason?)</code></td><td><code>Promise&lt;void&gt;</code></td></tr>
+    </tbody>
+</table>
+
+<h3>REST - Threads</h3>
+<table>
+    <thead><tr><th>Method</th><th>Returns</th></tr></thead>
+    <tbody>
+        <tr><td><code>startThreadFromMessage(channelId, messageId, data, reason?)</code></td><td><code>Promise&lt;APIChannel&gt;</code></td></tr>
+        <tr><td><code>startThreadWithoutMessage(channelId, data, reason?)</code></td><td><code>Promise&lt;APIChannel&gt;</code></td></tr>
+        <tr><td><code>joinThread(channelId)</code></td><td><code>Promise&lt;void&gt;</code></td></tr>
+        <tr><td><code>leaveThread(channelId)</code></td><td><code>Promise&lt;void&gt;</code></td></tr>
+        <tr><td><code>addThreadMember(channelId, userId)</code></td><td><code>Promise&lt;void&gt;</code></td></tr>
+        <tr><td><code>removeThreadMember(channelId, userId)</code></td><td><code>Promise&lt;void&gt;</code></td></tr>
+        <tr><td><code>fetchActiveThreads(guildId)</code></td><td><code>Promise&lt;{ threads, members }&gt;</code></td></tr>
+    </tbody>
+</table>
+
+<h3>REST - Application Commands</h3>
+<table>
+    <thead><tr><th>Method</th><th>Returns</th></tr></thead>
+    <tbody>
+        <tr><td><code>getGlobalCommands()</code></td><td><code>Promise&lt;APIApplicationCommand[]&gt;</code></td></tr>
+        <tr><td><code>createGlobalCommand(data)</code></td><td><code>Promise&lt;APIApplicationCommand&gt;</code></td></tr>
+        <tr><td><code>setGlobalCommands(commands)</code></td><td><code>Promise&lt;APIApplicationCommand[]&gt;</code></td></tr>
+        <tr><td><code>editGlobalCommand(commandId, data)</code></td><td><code>Promise&lt;APIApplicationCommand&gt;</code></td></tr>
+        <tr><td><code>deleteGlobalCommand(commandId)</code></td><td><code>Promise&lt;void&gt;</code></td></tr>
+        <tr><td><code>getGuildCommands(guildId)</code></td><td><code>Promise&lt;APIApplicationCommand[]&gt;</code></td></tr>
+        <tr><td><code>setGuildCommands(guildId, commands)</code></td><td><code>Promise&lt;APIApplicationCommand[]&gt;</code></td></tr>
+    </tbody>
+</table>
+
+<h3>REST - Interactions</h3>
+<table>
+    <thead><tr><th>Method</th><th>Returns</th></tr></thead>
+    <tbody>
+        <tr><td><code>respondInteraction(interactionId, token, response)</code></td><td><code>Promise&lt;void&gt;</code></td></tr>
+        <tr><td><code>editInteractionResponse(token, data)</code></td><td><code>Promise&lt;APIMessage&gt;</code></td></tr>
+        <tr><td><code>deleteInteractionResponse(token)</code></td><td><code>Promise&lt;void&gt;</code></td></tr>
+        <tr><td><code>sendFollowup(token, options)</code></td><td><code>Promise&lt;APIMessage&gt;</code></td></tr>
+    </tbody>
+</table>
+
+<h3>REST - Scheduled Events, Stage, Auto Moderation</h3>
+<table>
+    <thead><tr><th>Method</th><th>Returns</th></tr></thead>
+    <tbody>
+        <tr><td><code>getGuildScheduledEvents(guildId)</code></td><td><code>Promise&lt;APIGuildScheduledEvent[]&gt;</code></td></tr>
+        <tr><td><code>createGuildScheduledEvent(guildId, data, reason?)</code></td><td><code>Promise&lt;APIGuildScheduledEvent&gt;</code></td></tr>
+        <tr><td><code>createStageInstance(channelId, topic, reason?)</code></td><td><code>Promise&lt;APIStageInstance&gt;</code></td></tr>
+        <tr><td><code>getAutoModerationRules(guildId)</code></td><td><code>Promise&lt;APIAutoModerationRule[]&gt;</code></td></tr>
+        <tr><td><code>createAutoModerationRule(guildId, data, reason?)</code></td><td><code>Promise&lt;APIAutoModerationRule&gt;</code></td></tr>
+    </tbody>
+</table>
+
+<h3>Voice</h3>
+<table>
+    <thead><tr><th>Method</th><th>Returns</th></tr></thead>
+    <tbody>
+        <tr><td><code>joinVoiceChannel(guildId, channelId, options?)</code></td><td><code>VoiceConnection</code></td></tr>
+        <tr><td><code>leaveVoiceChannel(guildId)</code></td><td><code>void</code></td></tr>
+        <tr><td><code>getVoiceConnection(guildId)</code></td><td><code>VoiceConnection | undefined</code></td></tr>
+    </tbody>
+</table>
+
+<h3>Collectors</h3>
+<table>
+    <thead><tr><th>Method</th><th>Returns</th></tr></thead>
+    <tbody>
+        <tr><td><code>createMessageCollector(channelId, options?)</code>
+            <details class="opt"><summary>CollectorOptions</summary><div class="opt-fields">
+                <div class="opt-field"><code>filter</code> <span class="opt-type">(msg: Message) =&gt; boolean</div>
+                <div class="opt-field"><code>max</code> <span class="opt-type">number</div>
+                <div class="opt-field"><code>time</code> <span class="opt-type">number</div>
+                <div class="opt-field"><code>idle</code> <span class="opt-type">number</div>
+                <div class="opt-field"><code>dispose</code> <span class="opt-type">boolean</div>
+            </div></details>
+        </td><td><code>MessageCollector</code></td></tr>
+        <tr><td><code>awaitMessages(channelId, options?)</code>
+            <details class="opt"><summary>CollectorOptions</summary><div class="opt-fields">
+                <div class="opt-field"><code>filter</code> <span class="opt-type">(msg: Message) =&gt; boolean</div>
+                <div class="opt-field"><code>max</code> <span class="opt-type">number</div>
+                <div class="opt-field"><code>time</code> <span class="opt-type">number</div>
+                <div class="opt-field"><code>idle</code> <span class="opt-type">number</div>
+                <div class="opt-field"><code>dispose</code> <span class="opt-type">boolean</div>
+            </div></details>
+        </td><td><code>Promise&lt;Collection&lt;Snowflake, Message&gt;&gt;</code></td></tr>
+        <tr><td><code>createComponentCollector(messageId, options?)</code>
+            <details class="opt"><summary>ComponentCollectorOptions</summary><div class="opt-fields">
+                <div class="opt-field"><code>filter</code> <span class="opt-type">(i: Interaction) =&gt; boolean</div>
+                <div class="opt-field"><code>max</code> <span class="opt-type">number</div>
+                <div class="opt-field"><code>time</code> <span class="opt-type">number</div>
+                <div class="opt-field"><code>idle</code> <span class="opt-type">number</div>
+                <div class="opt-field"><code>dispose</code> <span class="opt-type">boolean</div>
+                <div class="opt-field"><code>componentType</code> <span class="opt-type">number</div>
+                <div class="opt-field"><code>maxUsers</code> <span class="opt-type">number</div>
+                <div class="opt-field"><code>maxComponents</code> <span class="opt-type">number</div>
+            </div></details>
+        </td><td><code>ComponentCollector</code></td></tr>
+        <tr><td><code>awaitComponents(messageId, options?)</code>
+            <details class="opt"><summary>ComponentCollectorOptions</summary><div class="opt-fields">
+                <div class="opt-field"><code>filter</code> <span class="opt-type">(i: Interaction) =&gt; boolean</div>
+                <div class="opt-field"><code>max</code> <span class="opt-type">number</div>
+                <div class="opt-field"><code>time</code> <span class="opt-type">number</div>
+                <div class="opt-field"><code>idle</code> <span class="opt-type">number</div>
+                <div class="opt-field"><code>componentType</code> <span class="opt-type">number</div>
+                <div class="opt-field"><code>maxUsers</code> <span class="opt-type">number</div>
+            </div></details>
+        </td><td><code>Promise&lt;Collection&gt;</code></td></tr>
+        <tr><td><code>createReactionCollector(messageId, options?)</code>
+            <details class="opt"><summary>ReactionCollectorOptions</summary><div class="opt-fields">
+                <div class="opt-field"><code>filter</code> <span class="opt-type">(data) =&gt; boolean</div>
+                <div class="opt-field"><code>max</code> <span class="opt-type">number</div>
+                <div class="opt-field"><code>time</code> <span class="opt-type">number</div>
+                <div class="opt-field"><code>idle</code> <span class="opt-type">number</div>
+                <div class="opt-field"><code>dispose</code> <span class="opt-type">boolean</div>
+                <div class="opt-field"><code>maxEmojis</code> <span class="opt-type">number</div>
+                <div class="opt-field"><code>maxUsers</code> <span class="opt-type">number</div>
+            </div></details>
+        </td><td><code>ReactionCollector</code></td></tr>
+        <tr><td><code>awaitReactions(messageId, options?)</code>
+            <details class="opt"><summary>ReactionCollectorOptions</summary><div class="opt-fields">
+                <div class="opt-field"><code>filter</code> <span class="opt-type">(data) =&gt; boolean</div>
+                <div class="opt-field"><code>max</code> <span class="opt-type">number</div>
+                <div class="opt-field"><code>time</code> <span class="opt-type">number</div>
+                <div class="opt-field"><code>idle</code> <span class="opt-type">number</div>
+                <div class="opt-field"><code>maxEmojis</code> <span class="opt-type">number</div>
+                <div class="opt-field"><code>maxUsers</code> <span class="opt-type">number</div>
+            </div></details>
+        </td><td><code>Promise&lt;Collection&gt;</code></td></tr>
+        <tr><td><code>awaitModalSubmit(options)</code>
+            <details class="opt"><summary>Options</summary><div class="opt-fields">
+                <div class="opt-field"><code>filter</code> <span class="opt-type">(i: Interaction) =&gt; boolean</div>
+                <div class="opt-field"><code>time</code> <span class="opt-type">number</div>
+            </div></details>
+        </td><td><code>Promise&lt;ModalSubmitInteraction&gt;</code></td></tr>
+        <tr><td><code>requestGuildMembers(guildId, options?)</code>
+            <details class="opt"><summary>RequestGuildMembersOptions</summary><div class="opt-fields">
+                <div class="opt-field"><code>query</code> <span class="opt-type">string</div>
+                <div class="opt-field"><code>limit</code> <span class="opt-type">number</div>
+                <div class="opt-field"><code>presences</code> <span class="opt-type">boolean</div>
+                <div class="opt-field"><code>user_ids</code> <span class="opt-type">Snowflake | Snowflake[]</div>
+                <div class="opt-field"><code>nonce</code> <span class="opt-type">string</div>
+            </div></details>
+        </td><td><code>void</code></td></tr>
+        <tr><td><code>fetchMembers(guildId, options?)</code>
+            <details class="opt"><summary>FetchMembersOptions</summary><div class="opt-fields">
+                <div class="opt-field"><code>query</code> <span class="opt-type">string</div>
+                <div class="opt-field"><code>limit</code> <span class="opt-type">number</div>
+                <div class="opt-field"><code>presences</code> <span class="opt-type">boolean</div>
+                <div class="opt-field"><code>user_ids</code> <span class="opt-type">Snowflake | Snowflake[]</div>
+                <div class="opt-field"><code>timeout</code> <span class="opt-type">number</div>
+            </div></details>
+        </td><td><code>Promise&lt;Collection&lt;Snowflake, GuildMember&gt;&gt;</code></td></tr>
+    </tbody>
+</table>
+
+<hr>
+
+<!-- ── Message ── -->
+<h2>Message</h2>
+
+<h3>Properties</h3>
+<table>
+    <thead><tr><th>Property</th><th>Type</th></tr></thead>
+    <tbody>
+        <tr><td><code>id</code></td><td><code>Snowflake</code></td></tr>
+        <tr><td><code>channelId</code></td><td><code>Snowflake</code></td></tr>
+        <tr><td><code>guildId</code></td><td><code>Snowflake | null</code></td></tr>
+        <tr><td><code>content</code></td><td><code>string</code></td></tr>
+        <tr><td><code>author</code></td><td><code>User</code></td></tr>
+        <tr><td><code>member</code></td><td><code>GuildMember | null</code></td></tr>
+        <tr><td><code>embeds</code></td><td><code>APIEmbed[]</code></td></tr>
+        <tr><td><code>attachments</code></td><td><code>APIAttachment[]</code></td></tr>
+        <tr><td><code>components</code></td><td><code>APIMessageComponent[]</code></td></tr>
+        <tr><td><code>reactions</code></td><td><code>APIReaction[]</code></td></tr>
+        <tr><td><code>mentions</code></td><td><code>APIUser[]</code></td></tr>
+        <tr><td><code>mentionRoleIds</code></td><td><code>Snowflake[]</code></td></tr>
+        <tr><td><code>mentionEveryone</code></td><td><code>boolean</code></td></tr>
+        <tr><td><code>pinned</code></td><td><code>boolean</code></td></tr>
+        <tr><td><code>tts</code></td><td><code>boolean</code></td></tr>
+        <tr><td><code>type</code></td><td><code>MessageType</code></td></tr>
+        <tr><td><code>flags</code></td><td><code>number</code></td></tr>
+        <tr><td><code>webhookId</code></td><td><code>Snowflake | undefined</code></td></tr>
+        <tr><td><code>referencedMessage</code></td><td><code>Message | null</code></td></tr>
+        <tr><td><code>stickerItems</code></td><td><code>APIStickerItem[]</code></td></tr>
+        <tr><td><code>timestamp</code></td><td><code>Date</code> (lazy)</td></tr>
+        <tr><td><code>editedTimestamp</code></td><td><code>Date | null</code> (lazy)</td></tr>
+        <tr><td><code>channel</code></td><td><code>Channel | undefined</code></td></tr>
+        <tr><td><code>guild</code></td><td><code>Guild | undefined</code></td></tr>
+        <tr><td><code>url</code></td><td><code>string</code> (jump link)</td></tr>
+        <tr><td><code>cleanContent</code></td><td><code>string</code></td></tr>
+    </tbody>
+</table>
+
+<h3>Methods</h3>
+<table>
+    <thead><tr><th>Method</th><th>Returns</th></tr></thead>
+    <tbody>
+        <tr><td><code>reply(options)</code>
+            <details class="opt"><summary>CreateMessageOptions</summary><div class="opt-fields">
+                <div class="opt-field"><code>content</code> <span class="opt-type">string</div>
+                <div class="opt-field"><code>embeds</code> <span class="opt-type">APIEmbed[]</div>
+                <div class="opt-field"><code>components</code> <span class="opt-type">APIActionRow[]</div>
+                <div class="opt-field"><code>flags</code> <span class="opt-type">number</div>
+                <div class="opt-field"><code>tts</code> <span class="opt-type">boolean</div>
+                <div class="opt-field"><code>files</code> <span class="opt-type">FileAttachment[]</div>
+                <div class="opt-field"><code>allowed_mentions</code> <span class="opt-type">APIAllowedMentions</div>
+            </div></details>
+        </td><td><code>Promise&lt;Message&gt;</code></td></tr>
+        <tr><td><code>edit(options)</code>
+            <details class="opt"><summary>EditMessageOptions</summary><div class="opt-fields">
+                <div class="opt-field"><code>content</code> <span class="opt-type">string</div>
+                <div class="opt-field"><code>embeds</code> <span class="opt-type">APIEmbed[]</div>
+                <div class="opt-field"><code>components</code> <span class="opt-type">APIActionRow[]</div>
+                <div class="opt-field"><code>flags</code> <span class="opt-type">number</div>
+                <div class="opt-field"><code>files</code> <span class="opt-type">FileAttachment[]</div>
+                <div class="opt-field"><code>allowed_mentions</code> <span class="opt-type">APIAllowedMentions</div>
+            </div></details>
+        </td><td><code>Promise&lt;Message&gt;</code></td></tr>
+        <tr><td><code>delete(reason?)</code></td><td><code>Promise&lt;void&gt;</code></td></tr>
+        <tr><td><code>react(emoji)</code></td><td><code>Promise&lt;void&gt;</code></td></tr>
+        <tr><td><code>removeReaction(emoji, userId?)</code></td><td><code>Promise&lt;void&gt;</code></td></tr>
+        <tr><td><code>removeAllReactions()</code></td><td><code>Promise&lt;void&gt;</code></td></tr>
+        <tr><td><code>removeReactionEmoji(emoji)</code></td><td><code>Promise&lt;void&gt;</code></td></tr>
+        <tr><td><code>fetchReactions(emoji, options?)</code></td><td><code>Promise&lt;APIUser[]&gt;</code></td></tr>
+        <tr><td><code>pin(reason?)</code></td><td><code>Promise&lt;void&gt;</code></td></tr>
+        <tr><td><code>unpin(reason?)</code></td><td><code>Promise&lt;void&gt;</code></td></tr>
+        <tr><td><code>crosspost()</code></td><td><code>Promise&lt;Message&gt;</code></td></tr>
+        <tr><td><code>suppressEmbeds(suppress?)</code></td><td><code>Promise&lt;Message&gt;</code></td></tr>
+        <tr><td><code>createThread(options, reason?)</code></td><td><code>Promise&lt;APIChannel&gt;</code></td></tr>
+        <tr><td><code>createComponentCollector(options?)</code>
+            <details class="opt"><summary>ComponentCollectorOptions</summary><div class="opt-fields">
+                <div class="opt-field"><code>filter</code> <span class="opt-type">(i: Interaction) =&gt; boolean</div>
+                <div class="opt-field"><code>max</code> <span class="opt-type">number</div>
+                <div class="opt-field"><code>time</code> <span class="opt-type">number</div>
+                <div class="opt-field"><code>idle</code> <span class="opt-type">number</div>
+                <div class="opt-field"><code>componentType</code> <span class="opt-type">number</div>
+                <div class="opt-field"><code>maxUsers</code> <span class="opt-type">number</div>
+                <div class="opt-field"><code>maxComponents</code> <span class="opt-type">number</div>
+            </div></details>
+        </td><td><code>ComponentCollector</code></td></tr>
+        <tr><td><code>awaitComponents(options?)</code>
+            <details class="opt"><summary>ComponentCollectorOptions</summary><div class="opt-fields">
+                <div class="opt-field"><code>filter</code> <span class="opt-type">(i: Interaction) =&gt; boolean</div>
+                <div class="opt-field"><code>max</code> <span class="opt-type">number</div>
+                <div class="opt-field"><code>time</code> <span class="opt-type">number</div>
+                <div class="opt-field"><code>componentType</code> <span class="opt-type">number</div>
+                <div class="opt-field"><code>maxUsers</code> <span class="opt-type">number</div>
+            </div></details>
+        </td><td><code>Promise&lt;Collection&gt;</code></td></tr>
+        <tr><td><code>createReactionCollector(options?)</code>
+            <details class="opt"><summary>ReactionCollectorOptions</summary><div class="opt-fields">
+                <div class="opt-field"><code>filter</code> <span class="opt-type">(data) =&gt; boolean</div>
+                <div class="opt-field"><code>max</code> <span class="opt-type">number</div>
+                <div class="opt-field"><code>time</code> <span class="opt-type">number</div>
+                <div class="opt-field"><code>idle</code> <span class="opt-type">number</div>
+                <div class="opt-field"><code>maxEmojis</code> <span class="opt-type">number</div>
+                <div class="opt-field"><code>maxUsers</code> <span class="opt-type">number</div>
+            </div></details>
+        </td><td><code>ReactionCollector</code></td></tr>
+        <tr><td><code>awaitReactions(options?)</code>
+            <details class="opt"><summary>ReactionCollectorOptions</summary><div class="opt-fields">
+                <div class="opt-field"><code>filter</code> <span class="opt-type">(data) =&gt; boolean</div>
+                <div class="opt-field"><code>max</code> <span class="opt-type">number</div>
+                <div class="opt-field"><code>time</code> <span class="opt-type">number</div>
+                <div class="opt-field"><code>maxEmojis</code> <span class="opt-type">number</div>
+                <div class="opt-field"><code>maxUsers</code> <span class="opt-type">number</div>
+            </div></details>
+        </td><td><code>Promise&lt;Collection&gt;</code></td></tr>
+        <tr><td><code>fetch()</code></td><td><code>Promise&lt;Message&gt;</code></td></tr>
+        <tr><td><code>inGuild()</code></td><td><code>boolean</code></td></tr>
+        <tr><td><code>inDM()</code></td><td><code>boolean</code></td></tr>
+        <tr><td><code>toJSON()</code></td><td><code>APIMessage</code></td></tr>
+    </tbody>
+</table>
+
+<hr>
+
+<!-- ── Guild ── -->
+<h2>Guild</h2>
+
+<h3>Properties</h3>
+<table>
+    <thead><tr><th>Property</th><th>Type</th></tr></thead>
+    <tbody>
+        <tr><td><code>id</code></td><td><code>Snowflake</code></td></tr>
+        <tr><td><code>name</code></td><td><code>string</code></td></tr>
+        <tr><td><code>icon</code></td><td><code>string | null</code></td></tr>
+        <tr><td><code>banner</code></td><td><code>string | null</code></td></tr>
+        <tr><td><code>splash</code></td><td><code>string | null</code></td></tr>
+        <tr><td><code>ownerId</code></td><td><code>Snowflake</code></td></tr>
+        <tr><td><code>memberCount</code></td><td><code>number</code></td></tr>
+        <tr><td><code>large</code></td><td><code>boolean</code></td></tr>
+        <tr><td><code>features</code></td><td><code>string[]</code></td></tr>
+        <tr><td><code>verificationLevel</code></td><td><code>number</code></td></tr>
+        <tr><td><code>premiumTier</code></td><td><code>number</code></td></tr>
+        <tr><td><code>premiumSubscriptionCount</code></td><td><code>number</code></td></tr>
+        <tr><td><code>vanityURLCode</code></td><td><code>string | null</code></td></tr>
+        <tr><td><code>description</code></td><td><code>string | null</code></td></tr>
+        <tr><td><code>preferredLocale</code></td><td><code>string</code></td></tr>
+        <tr><td><code>afkChannelId</code></td><td><code>Snowflake | null</code></td></tr>
+        <tr><td><code>afkTimeout</code></td><td><code>number</code></td></tr>
+        <tr><td><code>systemChannelId</code></td><td><code>Snowflake | null</code></td></tr>
+        <tr><td><code>rulesChannelId</code></td><td><code>Snowflake | null</code></td></tr>
+        <tr><td><code>members</code></td><td><code>Collection&lt;Snowflake, GuildMember&gt;</code></td></tr>
+        <tr><td><code>channels</code></td><td><code>Collection&lt;Snowflake, GuildChannel&gt;</code></td></tr>
+        <tr><td><code>roles</code></td><td><code>Collection&lt;Snowflake, Role&gt;</code></td></tr>
+        <tr><td><code>voiceStates</code></td><td><code>Collection&lt;Snowflake, VoiceState&gt;</code></td></tr>
+        <tr><td><code>presences</code></td><td><code>Collection&lt;Snowflake, Presence&gt;</code></td></tr>
+        <tr><td><code>me</code></td><td><code>GuildMember | undefined</code></td></tr>
+        <tr><td><code>owner</code></td><td><code>GuildMember | undefined</code></td></tr>
+    </tbody>
+</table>
+
+<h3>Methods</h3>
+<table>
+    <thead><tr><th>Method</th><th>Returns</th></tr></thead>
+    <tbody>
+        <tr><td><code>fetch()</code></td><td><code>Promise&lt;Guild&gt;</code></td></tr>
+        <tr><td><code>edit(data, reason?)</code>
+            <details class="opt"><summary>EditGuildOptions</summary><div class="opt-fields">
+                <div class="opt-field"><code>name</code> <span class="opt-type">string</div>
+                <div class="opt-field"><code>icon</code> <span class="opt-type">string | null</div>
+                <div class="opt-field"><code>banner</code> <span class="opt-type">string | null</div>
+                <div class="opt-field"><code>splash</code> <span class="opt-type">string | null</div>
+                <div class="opt-field"><code>afk_channel_id</code> <span class="opt-type">Snowflake | null</div>
+                <div class="opt-field"><code>afk_timeout</code> <span class="opt-type">number</div>
+                <div class="opt-field"><code>verification_level</code> <span class="opt-type">number</div>
+                <div class="opt-field"><code>default_message_notifications</code> <span class="opt-type">number</div>
+                <div class="opt-field"><code>explicit_content_filter</code> <span class="opt-type">number</div>
+                <div class="opt-field"><code>system_channel_id</code> <span class="opt-type">Snowflake | null</div>
+                <div class="opt-field"><code>rules_channel_id</code> <span class="opt-type">Snowflake | null</div>
+            </div></details>
+        </td><td><code>Promise&lt;Guild&gt;</code></td></tr>
+        <tr><td><code>leave()</code></td><td><code>Promise&lt;void&gt;</code></td></tr>
+        <tr><td><code>fetchMember(userId)</code></td><td><code>Promise&lt;GuildMember&gt;</code></td></tr>
+        <tr><td><code>fetchChannels()</code></td><td><code>Promise&lt;GuildChannel[]&gt;</code></td></tr>
+        <tr><td><code>fetchRoles()</code></td><td><code>Promise&lt;Role[]&gt;</code></td></tr>
+        <tr><td><code>fetchBans()</code></td><td><code>Promise&lt;GuildBan[]&gt;</code></td></tr>
+        <tr><td><code>fetchInvites()</code></td><td><code>Promise&lt;APIInviteMetadata[]&gt;</code></td></tr>
+        <tr><td><code>fetchEmojis()</code></td><td><code>Promise&lt;APIEmoji[]&gt;</code></td></tr>
+        <tr><td><code>fetchAuditLogs(options?)</code>
+            <details class="opt"><summary>GetAuditLogOptions</summary><div class="opt-fields">
+                <div class="opt-field"><code>user_id</code> <span class="opt-type">Snowflake</div>
+                <div class="opt-field"><code>action_type</code> <span class="opt-type">number</div>
+                <div class="opt-field"><code>before</code> <span class="opt-type">Snowflake</div>
+                <div class="opt-field"><code>after</code> <span class="opt-type">Snowflake</div>
+                <div class="opt-field"><code>limit</code> <span class="opt-type">number</div>
+            </div></details>
+        </td><td><code>Promise&lt;APIAuditLog&gt;</code></td></tr>
+        <tr><td><code>fetchWebhooks()</code></td><td><code>Promise&lt;APIWebhook[]&gt;</code></td></tr>
+        <tr><td><code>createChannel(data, reason?)</code>
+            <details class="opt"><summary>CreateChannelOptions</summary><div class="opt-fields">
+                <div class="opt-field"><code>name</code> <span class="opt-type">string <span class="opt-req">required</div>
+                <div class="opt-field"><code>type</code> <span class="opt-type">ChannelType</div>
+                <div class="opt-field"><code>topic</code> <span class="opt-type">string</div>
+                <div class="opt-field"><code>position</code> <span class="opt-type">number</div>
+                <div class="opt-field"><code>parent_id</code> <span class="opt-type">Snowflake</div>
+                <div class="opt-field"><code>nsfw</code> <span class="opt-type">boolean</div>
+                <div class="opt-field"><code>rate_limit_per_user</code> <span class="opt-type">number</div>
+                <div class="opt-field"><code>bitrate</code> <span class="opt-type">number</div>
+                <div class="opt-field"><code>user_limit</code> <span class="opt-type">number</div>
+            </div></details>
+        </td><td><code>Promise&lt;GuildChannel&gt;</code></td></tr>
+        <tr><td><code>createRole(data?, reason?)</code>
+            <details class="opt"><summary>CreateRoleOptions</summary><div class="opt-fields">
+                <div class="opt-field"><code>name</code> <span class="opt-type">string</div>
+                <div class="opt-field"><code>color</code> <span class="opt-type">number</div>
+                <div class="opt-field"><code>permissions</code> <span class="opt-type">string</div>
+                <div class="opt-field"><code>hoist</code> <span class="opt-type">boolean</div>
+                <div class="opt-field"><code>mentionable</code> <span class="opt-type">boolean</div>
+            </div></details>
+        </td><td><code>Promise&lt;Role&gt;</code></td></tr>
+        <tr><td><code>ban(userId, options?)</code>
+            <details class="opt"><summary>BanOptions</summary><div class="opt-fields">
+                <div class="opt-field"><code>reason</code> <span class="opt-type">string</div>
+                <div class="opt-field"><code>delete_message_seconds</code> <span class="opt-type">number</div>
+            </div></details>
+        </td><td><code>Promise&lt;void&gt;</code></td></tr>
+        <tr><td><code>unban(userId, reason?)</code></td><td><code>Promise&lt;void&gt;</code></td></tr>
+        <tr><td><code>kick(userId, reason?)</code></td><td><code>Promise&lt;void&gt;</code></td></tr>
+        <tr><td><code>setName(name, reason?)</code></td><td><code>Promise&lt;Guild&gt;</code></td></tr>
+        <tr><td><code>setIcon(icon, reason?)</code></td><td><code>Promise&lt;Guild&gt;</code></td></tr>
+        <tr><td><code>iconURL(options?)</code>
+            <details class="opt"><summary>ImageURLOptions</summary><div class="opt-fields">
+                <div class="opt-field"><code>size</code> <span class="opt-type">16 | 32 | 64 | 128 | 256 | 512 | 1024 | 2048 | 4096</div>
+                <div class="opt-field"><code>format</code> <span class="opt-type">"webp" | "png" | "jpg" | "gif"</div>
+            </div></details>
+        </td><td><code>string | null</code></td></tr>
+        <tr><td><code>bannerURL(options?)</code>
+            <details class="opt"><summary>ImageURLOptions</summary><div class="opt-fields">
+                <div class="opt-field"><code>size</code> <span class="opt-type">16 | 32 | … | 4096</div>
+                <div class="opt-field"><code>format</code> <span class="opt-type">"webp" | "png" | "jpg" | "gif"</div>
+            </div></details>
+        </td><td><code>string | null</code></td></tr>
+        <tr><td><code>splashURL(options?)</code>
+            <details class="opt"><summary>ImageURLOptions</summary><div class="opt-fields">
+                <div class="opt-field"><code>size</code> <span class="opt-type">16 | 32 | … | 4096</div>
+                <div class="opt-field"><code>format</code> <span class="opt-type">"webp" | "png" | "jpg" | "gif"</div>
+            </div></details>
+        </td><td><code>string | null</code></td></tr>
+        <tr><td><code>joinVoiceChannel(channelId, options?)</code></td><td><code>VoiceConnection</code></td></tr>
+        <tr><td><code>leaveVoiceChannel()</code></td><td><code>void</code></td></tr>
+        <tr><td><code>toJSON()</code></td><td><code>APIGuild</code></td></tr>
+    </tbody>
+</table>
+
+<hr>
+
+<!-- ── User ── -->
+<h2>User</h2>
+<table>
+    <thead><tr><th>Property / Method</th><th>Type / Returns</th></tr></thead>
+    <tbody>
+        <tr><td><code>id</code></td><td><code>Snowflake</code></td></tr>
+        <tr><td><code>username</code></td><td><code>string</code></td></tr>
+        <tr><td><code>globalName</code></td><td><code>string | null</code></td></tr>
+        <tr><td><code>discriminator</code></td><td><code>string</code></td></tr>
+        <tr><td><code>avatar</code></td><td><code>string | null</code></td></tr>
+        <tr><td><code>banner</code></td><td><code>string | null</code></td></tr>
+        <tr><td><code>bot</code></td><td><code>boolean</code></td></tr>
+        <tr><td><code>flags</code></td><td><code>number</code></td></tr>
+        <tr><td><code>accentColor</code></td><td><code>number | null</code></td></tr>
+        <tr><td><code>displayName</code></td><td><code>string</code> (globalName or username)</td></tr>
+        <tr><td><code>tag</code></td><td><code>string</code></td></tr>
+        <tr><td><code>avatarURL(options?)</code>
+            <details class="opt"><summary>ImageURLOptions</summary><div class="opt-fields">
+                <div class="opt-field"><code>size</code> <span class="opt-type">16 | 32 | 64 | 128 | 256 | 512 | 1024 | 2048 | 4096</div>
+                <div class="opt-field"><code>format</code> <span class="opt-type">"webp" | "png" | "jpg" | "gif"</div>
+            </div></details>
+        </td><td><code>string | null</code></td></tr>
+        <tr><td><code>displayAvatarURL(options?)</code>
+            <details class="opt"><summary>ImageURLOptions</summary><div class="opt-fields">
+                <div class="opt-field"><code>size</code> <span class="opt-type">16 | 32 | … | 4096</div>
+                <div class="opt-field"><code>format</code> <span class="opt-type">"webp" | "png" | "jpg" | "gif"</div>
+            </div></details>
+        </td><td><code>string</code></td></tr>
+        <tr><td><code>bannerURL(options?)</code>
+            <details class="opt"><summary>ImageURLOptions</summary><div class="opt-fields">
+                <div class="opt-field"><code>size</code> <span class="opt-type">16 | 32 | … | 4096</div>
+                <div class="opt-field"><code>format</code> <span class="opt-type">"webp" | "png" | "jpg" | "gif"</div>
+            </div></details>
+        </td><td><code>string | null</code></td></tr>
+        <tr><td><code>send(options)</code>
+            <details class="opt"><summary>CreateMessageOptions</summary><div class="opt-fields">
+                <div class="opt-field"><code>content</code> <span class="opt-type">string</div>
+                <div class="opt-field"><code>embeds</code> <span class="opt-type">APIEmbed[]</div>
+                <div class="opt-field"><code>components</code> <span class="opt-type">APIActionRow[]</div>
+                <div class="opt-field"><code>files</code> <span class="opt-type">FileAttachment[]</div>
+                <div class="opt-field"><code>tts</code> <span class="opt-type">boolean</div>
+            </div></details>
+        </td><td><code>Promise&lt;Message&gt;</code></td></tr>
+        <tr><td><code>fetch()</code></td><td><code>Promise&lt;User&gt;</code></td></tr>
+        <tr><td><code>toJSON()</code></td><td><code>APIUser</code></td></tr>
+    </tbody>
+</table>
+
+<hr>
+
+<!-- ── GuildMember ── -->
+<h2>GuildMember</h2>
+<table>
+    <thead><tr><th>Property / Method</th><th>Type / Returns</th></tr></thead>
+    <tbody>
+        <tr><td><code>id</code></td><td><code>Snowflake</code></td></tr>
+        <tr><td><code>guildId</code></td><td><code>Snowflake</code></td></tr>
+        <tr><td><code>user</code></td><td><code>User</code></td></tr>
+        <tr><td><code>nickname</code></td><td><code>string | null</code></td></tr>
+        <tr><td><code>avatar</code></td><td><code>string | null</code></td></tr>
+        <tr><td><code>roleIds</code></td><td><code>Snowflake[]</code></td></tr>
+        <tr><td><code>deaf</code></td><td><code>boolean</code></td></tr>
+        <tr><td><code>mute</code></td><td><code>boolean</code></td></tr>
+        <tr><td><code>pending</code></td><td><code>boolean</code></td></tr>
+        <tr><td><code>joinedAt</code></td><td><code>Date</code> (lazy)</td></tr>
+        <tr><td><code>premiumSince</code></td><td><code>Date | null</code> (lazy)</td></tr>
+        <tr><td><code>communicationDisabledUntil</code></td><td><code>Date | null</code> (lazy)</td></tr>
+        <tr><td><code>guild</code></td><td><code>Guild | undefined</code></td></tr>
+        <tr><td><code>roles</code></td><td><code>Collection&lt;Snowflake, Role&gt;</code></td></tr>
+        <tr><td><code>displayName</code></td><td><code>string</code></td></tr>
+        <tr><td><code>permissions</code></td><td><code>Permissions</code></td></tr>
+        <tr><td><code>highestRole</code></td><td><code>Role</code></td></tr>
+        <tr><td><code>manageable</code></td><td><code>boolean</code></td></tr>
+        <tr><td><code>kickable</code></td><td><code>boolean</code></td></tr>
+        <tr><td><code>bannable</code></td><td><code>boolean</code></td></tr>
+        <tr><td><code>isCommunicationDisabled</code></td><td><code>boolean</code></td></tr>
+        <tr><td><code>displayAvatarURL(options?)</code>
+            <details class="opt"><summary>ImageURLOptions</summary><div class="opt-fields">
+                <div class="opt-field"><code>size</code> <span class="opt-type">16 | 32 | … | 4096</div>
+                <div class="opt-field"><code>format</code> <span class="opt-type">"webp" | "png" | "jpg" | "gif"</div>
+            </div></details>
+        </td><td><code>string</code></td></tr>
+        <tr><td><code>getPermissionsIn(channel)</code></td><td><code>Permissions</code></td></tr>
+        <tr><td><code>hasPermission(flag)</code></td><td><code>boolean</code></td></tr>
+        <tr><td><code>edit(data, reason?)</code>
+            <details class="opt"><summary>EditMemberOptions</summary><div class="opt-fields">
+                <div class="opt-field"><code>nick</code> <span class="opt-type">string | null</div>
+                <div class="opt-field"><code>roles</code> <span class="opt-type">Snowflake[]</div>
+                <div class="opt-field"><code>mute</code> <span class="opt-type">boolean</div>
+                <div class="opt-field"><code>deaf</code> <span class="opt-type">boolean</div>
+                <div class="opt-field"><code>channel_id</code> <span class="opt-type">Snowflake | null</div>
+                <div class="opt-field"><code>communication_disabled_until</code> <span class="opt-type">string | null</div>
+            </div></details>
+        </td><td><code>Promise&lt;GuildMember&gt;</code></td></tr>
+        <tr><td><code>kick(reason?)</code></td><td><code>Promise&lt;void&gt;</code></td></tr>
+        <tr><td><code>ban(options?)</code>
+            <details class="opt"><summary>BanOptions</summary><div class="opt-fields">
+                <div class="opt-field"><code>reason</code> <span class="opt-type">string</div>
+                <div class="opt-field"><code>delete_message_seconds</code> <span class="opt-type">number</div>
+            </div></details>
+        </td><td><code>Promise&lt;void&gt;</code></td></tr>
+        <tr><td><code>addRole(roleId, reason?)</code></td><td><code>Promise&lt;void&gt;</code></td></tr>
+        <tr><td><code>removeRole(roleId, reason?)</code></td><td><code>Promise&lt;void&gt;</code></td></tr>
+        <tr><td><code>setNickname(nick, reason?)</code></td><td><code>Promise&lt;GuildMember&gt;</code></td></tr>
+        <tr><td><code>timeout(until, reason?)</code></td><td><code>Promise&lt;GuildMember&gt;</code></td></tr>
+        <tr><td><code>fetch()</code></td><td><code>Promise&lt;GuildMember&gt;</code></td></tr>
+        <tr><td><code>toJSON()</code></td><td><code>APIGuildMember</code></td></tr>
+    </tbody>
+</table>
+
+<hr>
+
+<!-- ── Role ── -->
+<h2>Role</h2>
+<table>
+    <thead><tr><th>Property / Method</th><th>Type / Returns</th></tr></thead>
+    <tbody>
+        <tr><td><code>id</code></td><td><code>Snowflake</code></td></tr>
+        <tr><td><code>guildId</code></td><td><code>Snowflake</code></td></tr>
+        <tr><td><code>name</code></td><td><code>string</code></td></tr>
+        <tr><td><code>color</code></td><td><code>number</code></td></tr>
+        <tr><td><code>hoist</code></td><td><code>boolean</code></td></tr>
+        <tr><td><code>position</code></td><td><code>number</code></td></tr>
+        <tr><td><code>permissions</code></td><td><code>Permissions</code></td></tr>
+        <tr><td><code>managed</code></td><td><code>boolean</code></td></tr>
+        <tr><td><code>mentionable</code></td><td><code>boolean</code></td></tr>
+        <tr><td><code>icon</code></td><td><code>string | null</code></td></tr>
+        <tr><td><code>unicodeEmoji</code></td><td><code>string | null</code></td></tr>
+        <tr><td><code>tags</code></td><td><code>APIRoleTags | undefined</code></td></tr>
+        <tr><td><code>guild</code></td><td><code>Guild | undefined</code></td></tr>
+        <tr><td><code>hexColor</code></td><td><code>string</code></td></tr>
+        <tr><td><code>isEveryone</code></td><td><code>boolean</code></td></tr>
+        <tr><td><code>comparePositionTo(role)</code></td><td><code>number</code></td></tr>
+        <tr><td><code>edit(data, reason?)</code>
+            <details class="opt"><summary>EditRoleOptions</summary><div class="opt-fields">
+                <div class="opt-field"><code>name</code> <span class="opt-type">string</div>
+                <div class="opt-field"><code>color</code> <span class="opt-type">number</div>
+                <div class="opt-field"><code>permissions</code> <span class="opt-type">string | bigint</div>
+                <div class="opt-field"><code>hoist</code> <span class="opt-type">boolean</div>
+                <div class="opt-field"><code>mentionable</code> <span class="opt-type">boolean</div>
+                <div class="opt-field"><code>icon</code> <span class="opt-type">string | null</div>
+                <div class="opt-field"><code>unicode_emoji</code> <span class="opt-type">string | null</div>
+            </div></details>
+        </td><td><code>Promise&lt;Role&gt;</code></td></tr>
+        <tr><td><code>delete(reason?)</code></td><td><code>Promise&lt;void&gt;</code></td></tr>
+        <tr><td><code>setName(name, reason?)</code></td><td><code>Promise&lt;Role&gt;</code></td></tr>
+        <tr><td><code>setColor(color, reason?)</code></td><td><code>Promise&lt;Role&gt;</code></td></tr>
+        <tr><td><code>setPermissions(permissions, reason?)</code></td><td><code>Promise&lt;Role&gt;</code></td></tr>
+        <tr><td><code>setHoist(hoist, reason?)</code></td><td><code>Promise&lt;Role&gt;</code></td></tr>
+        <tr><td><code>setMentionable(mentionable, reason?)</code></td><td><code>Promise&lt;Role&gt;</code></td></tr>
+        <tr><td><code>setPosition(position, reason?)</code></td><td><code>Promise&lt;Role&gt;</code></td></tr>
+        <tr><td><code>toJSON()</code></td><td><code>APIRole</code></td></tr>
+    </tbody>
+</table>
+
+<hr>
+
+<!-- ── Channels ── -->
+<h2>Channels</h2>
+
+<h3>BaseChannel</h3>
+<table>
+    <thead><tr><th>Property / Method</th><th>Type / Returns</th></tr></thead>
+    <tbody>
+        <tr><td><code>id</code></td><td><code>Snowflake</code></td></tr>
+        <tr><td><code>type</code></td><td><code>ChannelType</code></td></tr>
+        <tr><td><code>name</code></td><td><code>string | null</code></td></tr>
+        <tr><td><code>fetch()</code></td><td><code>Promise&lt;Channel&gt;</code></td></tr>
+        <tr><td><code>delete(reason?)</code></td><td><code>Promise&lt;void&gt;</code></td></tr>
+        <tr><td><code>isTextBased()</code></td><td><code>this is TextBasedChannel</code></td></tr>
+        <tr><td><code>isVoiceBased()</code></td><td><code>this is VoiceBasedChannel</code></td></tr>
+        <tr><td><code>isDMBased()</code></td><td><code>this is DMChannel</code></td></tr>
+        <tr><td><code>isThread()</code></td><td><code>this is ThreadChannel</code></td></tr>
+    </tbody>
+</table>
+
+<h3>GuildChannel <small>(extends BaseChannel)</small></h3>
+<table>
+    <thead><tr><th>Property / Method</th><th>Type / Returns</th></tr></thead>
+    <tbody>
+        <tr><td><code>guildId</code></td><td><code>Snowflake</code></td></tr>
+        <tr><td><code>position</code></td><td><code>number</code></td></tr>
+        <tr><td><code>parentId</code></td><td><code>Snowflake | null</code></td></tr>
+        <tr><td><code>permissionOverwrites</code></td><td><code>APIOverwrite[]</code></td></tr>
+        <tr><td><code>guild</code></td><td><code>Guild | undefined</code></td></tr>
+        <tr><td><code>parent</code></td><td><code>GuildChannel | undefined</code></td></tr>
+        <tr><td><code>edit(data, reason?)</code>
+            <details class="opt"><summary>EditChannelOptions</summary><div class="opt-fields">
+                <div class="opt-field"><code>name</code> <span class="opt-type">string</div>
+                <div class="opt-field"><code>position</code> <span class="opt-type">number | null</div>
+                <div class="opt-field"><code>parent_id</code> <span class="opt-type">Snowflake | null</div>
+                <div class="opt-field"><code>permission_overwrites</code> <span class="opt-type">APIOverwrite[]</div>
+            </div></details>
+        </td><td><code>Promise&lt;this&gt;</code></td></tr>
+        <tr><td><code>setName(name, reason?)</code></td><td><code>Promise&lt;this&gt;</code></td></tr>
+        <tr><td><code>setPosition(position, reason?)</code></td><td><code>Promise&lt;this&gt;</code></td></tr>
+        <tr><td><code>setParent(parentId, reason?)</code></td><td><code>Promise&lt;this&gt;</code></td></tr>
+        <tr><td><code>createInvite(options?, reason?)</code></td><td><code>Promise&lt;APIInvite&gt;</code></td></tr>
+        <tr><td><code>permissionsFor(member)</code></td><td><code>Permissions</code></td></tr>
+    </tbody>
+</table>
+
+<h3>TextChannel <small>(extends GuildChannel)</small></h3>
+<table>
+    <thead><tr><th>Property / Method</th><th>Type / Returns</th></tr></thead>
+    <tbody>
+        <tr><td><code>topic</code></td><td><code>string | null</code></td></tr>
+        <tr><td><code>nsfw</code></td><td><code>boolean</code></td></tr>
+        <tr><td><code>rateLimitPerUser</code></td><td><code>number</code></td></tr>
+        <tr><td><code>lastMessageId</code></td><td><code>Snowflake | null</code></td></tr>
+        <tr><td><code>send(options)</code>
+            <details class="opt"><summary>CreateMessageOptions</summary><div class="opt-fields">
+                <div class="opt-field"><code>content</code> <span class="opt-type">string</div>
+                <div class="opt-field"><code>embeds</code> <span class="opt-type">APIEmbed[]</div>
+                <div class="opt-field"><code>components</code> <span class="opt-type">APIActionRow[]</div>
+                <div class="opt-field"><code>files</code> <span class="opt-type">FileAttachment[]</div>
+                <div class="opt-field"><code>reply_to</code> <span class="opt-type">Snowflake</div>
+                <div class="opt-field"><code>tts</code> <span class="opt-type">boolean</div>
+            </div></details>
+        </td><td><code>Promise&lt;Message&gt;</code></td></tr>
+        <tr><td><code>fetchMessages(options?)</code>
+            <details class="opt"><summary>FetchMessagesOptions</summary><div class="opt-fields">
+                <div class="opt-field"><code>limit</code> <span class="opt-type">number</div>
+                <div class="opt-field"><code>before</code> <span class="opt-type">Snowflake</div>
+                <div class="opt-field"><code>after</code> <span class="opt-type">Snowflake</div>
+                <div class="opt-field"><code>around</code> <span class="opt-type">Snowflake</div>
+            </div></details>
+        </td><td><code>Promise&lt;Message[]&gt;</code></td></tr>
+        <tr><td><code>bulkDelete(messagesOrCount, filterOld?)</code></td><td><code>Promise&lt;void&gt;</code></td></tr>
+        <tr><td><code>setTopic(topic, reason?)</code></td><td><code>Promise&lt;this&gt;</code></td></tr>
+        <tr><td><code>setNSFW(nsfw, reason?)</code></td><td><code>Promise&lt;this&gt;</code></td></tr>
+        <tr><td><code>setRateLimitPerUser(limit, reason?)</code></td><td><code>Promise&lt;this&gt;</code></td></tr>
+        <tr><td><code>sendTyping()</code></td><td><code>Promise&lt;void&gt;</code></td></tr>
+        <tr><td><code>createThread(options, reason?)</code></td><td><code>Promise&lt;Channel&gt;</code></td></tr>
+        <tr><td><code>fetchPinnedMessages()</code></td><td><code>Promise&lt;Message[]&gt;</code></td></tr>
+        <tr><td><code>createMessageCollector(options?)</code>
+            <details class="opt"><summary>CollectorOptions</summary><div class="opt-fields">
+                <div class="opt-field"><code>filter</code> <span class="opt-type">(msg: Message) =&gt; boolean</div>
+                <div class="opt-field"><code>max</code> <span class="opt-type">number</div>
+                <div class="opt-field"><code>time</code> <span class="opt-type">number</div>
+                <div class="opt-field"><code>idle</code> <span class="opt-type">number</div>
+            </div></details>
+        </td><td><code>MessageCollector</code></td></tr>
+        <tr><td><code>awaitMessages(options?)</code>
+            <details class="opt"><summary>CollectorOptions</summary><div class="opt-fields">
+                <div class="opt-field"><code>filter</code> <span class="opt-type">(msg: Message) =&gt; boolean</div>
+                <div class="opt-field"><code>max</code> <span class="opt-type">number</div>
+                <div class="opt-field"><code>time</code> <span class="opt-type">number</div>
+            </div></details>
+        </td><td><code>Promise&lt;Collection&gt;</code></td></tr>
+    </tbody>
+</table>
+
+<h3>VoiceChannel <small>(extends GuildChannel)</small></h3>
+<table>
+    <thead><tr><th>Property / Method</th><th>Type / Returns</th></tr></thead>
+    <tbody>
+        <tr><td><code>bitrate</code></td><td><code>number</code></td></tr>
+        <tr><td><code>userLimit</code></td><td><code>number</code></td></tr>
+        <tr><td><code>rtcRegion</code></td><td><code>string | null</code></td></tr>
+        <tr><td><code>members</code></td><td><code>Collection&lt;Snowflake, GuildMember&gt;</code></td></tr>
+        <tr><td><code>join(options?)</code></td><td><code>VoiceConnection</code></td></tr>
+        <tr><td><code>leave()</code></td><td><code>void</code></td></tr>
+        <tr><td><code>send(options)</code></td><td><code>Promise&lt;Message&gt;</code></td></tr>
+        <tr><td><code>setBitrate(bitrate, reason?)</code></td><td><code>Promise&lt;this&gt;</code></td></tr>
+        <tr><td><code>setUserLimit(limit, reason?)</code></td><td><code>Promise&lt;this&gt;</code></td></tr>
+    </tbody>
+</table>
+
+<h3>DMChannel</h3>
+<table>
+    <thead><tr><th>Property / Method</th><th>Type / Returns</th></tr></thead>
+    <tbody>
+        <tr><td><code>recipientId</code></td><td><code>Snowflake | null</code></td></tr>
+        <tr><td><code>recipient</code></td><td><code>User | undefined</code></td></tr>
+        <tr><td><code>send(options)</code></td><td><code>Promise&lt;Message&gt;</code></td></tr>
+        <tr><td><code>fetchMessages(options?)</code></td><td><code>Promise&lt;Message[]&gt;</code></td></tr>
+    </tbody>
+</table>
+
+<h3>ThreadChannel</h3>
+<table>
+    <thead><tr><th>Property / Method</th><th>Type / Returns</th></tr></thead>
+    <tbody>
+        <tr><td><code>guildId</code></td><td><code>Snowflake</code></td></tr>
+        <tr><td><code>parentId</code></td><td><code>Snowflake | null</code></td></tr>
+        <tr><td><code>ownerId</code></td><td><code>Snowflake | null</code></td></tr>
+        <tr><td><code>archived</code></td><td><code>boolean</code></td></tr>
+        <tr><td><code>locked</code></td><td><code>boolean</code></td></tr>
+        <tr><td><code>send(options)</code></td><td><code>Promise&lt;Message&gt;</code></td></tr>
+        <tr><td><code>fetchMessages(options?)</code></td><td><code>Promise&lt;Message[]&gt;</code></td></tr>
+        <tr><td><code>archive(reason?)</code></td><td><code>Promise&lt;this&gt;</code></td></tr>
+        <tr><td><code>unarchive(reason?)</code></td><td><code>Promise&lt;this&gt;</code></td></tr>
+        <tr><td><code>lock(reason?)</code></td><td><code>Promise&lt;this&gt;</code></td></tr>
+        <tr><td><code>unlock(reason?)</code></td><td><code>Promise&lt;this&gt;</code></td></tr>
+        <tr><td><code>join()</code></td><td><code>Promise&lt;void&gt;</code></td></tr>
+        <tr><td><code>leave()</code></td><td><code>Promise&lt;void&gt;</code></td></tr>
+        <tr><td><code>addMember(userId)</code></td><td><code>Promise&lt;void&gt;</code></td></tr>
+        <tr><td><code>removeMember(userId)</code></td><td><code>Promise&lt;void&gt;</code></td></tr>
+    </tbody>
+</table>
+
+<h3>Other channels</h3>
+<table>
+    <thead><tr><th>Class</th><th>Key additions</th></tr></thead>
+    <tbody>
+        <tr><td><code>CategoryChannel</code></td><td><code>children: Collection&lt;Snowflake, GuildChannel&gt;</code></td></tr>
+        <tr><td><code>AnnouncementChannel</code></td><td>Same as TextChannel</td></tr>
+        <tr><td><code>ForumChannel</code></td><td><code>availableTags</code>, <code>createPost(options, reason?)</code>
+            <details class="opt"><summary>CreateForumPostOptions</summary><div class="opt-fields">
+                <div class="opt-field"><code>name</code> <span class="opt-type">string <span class="opt-req">required</div>
+                <div class="opt-field"><code>message</code> <span class="opt-type">{ content?, embeds?, components?, flags? } <span class="opt-req">required</div>
+                <div class="opt-field"><code>auto_archive_duration</code> <span class="opt-type">number</div>
+                <div class="opt-field"><code>rate_limit_per_user</code> <span class="opt-type">number</div>
+                <div class="opt-field"><code>applied_tags</code> <span class="opt-type">Snowflake[]</div>
+            </div></details>
+        </td></tr>
+        <tr><td><code>StageChannel</code></td><td><code>createStageInstance(topic, reason?)</code>, <code>deleteStageInstance(reason?)</code></td></tr>
+    </tbody>
+</table>
+
+<hr>
+
+<!-- ── Interactions ── -->
+<h2>Interactions</h2>
+
+<h3>BaseInteraction</h3>
+<table>
+    <thead><tr><th>Property / Method</th><th>Type / Returns</th></tr></thead>
+    <tbody>
+        <tr><td><code>id</code></td><td><code>Snowflake</code></td></tr>
+        <tr><td><code>type</code></td><td><code>InteractionType</code></td></tr>
+        <tr><td><code>token</code></td><td><code>string</code></td></tr>
+        <tr><td><code>guildId</code></td><td><code>Snowflake | null</code></td></tr>
+        <tr><td><code>channelId</code></td><td><code>Snowflake | null</code></td></tr>
+        <tr><td><code>user</code></td><td><code>User</code></td></tr>
+        <tr><td><code>member</code></td><td><code>GuildMember | null</code></td></tr>
+        <tr><td><code>locale</code></td><td><code>LocaleString | undefined</code></td></tr>
+        <tr><td><code>guild</code></td><td><code>Guild | undefined</code></td></tr>
+        <tr><td><code>channel</code></td><td><code>Channel | undefined</code></td></tr>
+        <tr><td><code>isReplied</code></td><td><code>boolean</code></td></tr>
+        <tr><td><code>isDeferred</code></td><td><code>boolean</code></td></tr>
+        <tr><td><code>reply(options)</code>
+            <details class="opt"><summary>InteractionReplyOptions</summary><div class="opt-fields">
+                <div class="opt-field"><code>content</code> <span class="opt-type">string</div>
+                <div class="opt-field"><code>embeds</code> <span class="opt-type">APIEmbed[]</div>
+                <div class="opt-field"><code>components</code> <span class="opt-type">APIActionRow[]</div>
+                <div class="opt-field"><code>flags</code> <span class="opt-type">number</div>
+                <div class="opt-field"><code>tts</code> <span class="opt-type">boolean</div>
+                <div class="opt-field"><code>ephemeral</code> <span class="opt-type">boolean</div>
+                <div class="opt-field"><code>files</code> <span class="opt-type">FileAttachment[]</div>
+            </div></details>
+        </td><td><code>Promise&lt;void&gt;</code></td></tr>
+        <tr><td><code>deferReply(options?)</code>
+            <details class="opt"><summary>Options</summary><div class="opt-fields">
+                <div class="opt-field"><code>ephemeral</code> <span class="opt-type">boolean</div>
+            </div></details>
+        </td><td><code>Promise&lt;void&gt;</code></td></tr>
+        <tr><td><code>editReply(options)</code>
+            <details class="opt"><summary>EditMessageOptions</summary><div class="opt-fields">
+                <div class="opt-field"><code>content</code> <span class="opt-type">string</div>
+                <div class="opt-field"><code>embeds</code> <span class="opt-type">APIEmbed[]</div>
+                <div class="opt-field"><code>components</code> <span class="opt-type">APIActionRow[]</div>
+                <div class="opt-field"><code>files</code> <span class="opt-type">FileAttachment[]</div>
+            </div></details>
+        </td><td><code>Promise&lt;Message&gt;</code></td></tr>
+        <tr><td><code>deleteReply()</code></td><td><code>Promise&lt;void&gt;</code></td></tr>
+        <tr><td><code>followUp(options)</code>
+            <details class="opt"><summary>InteractionReplyOptions</summary><div class="opt-fields">
+                <div class="opt-field"><code>content</code> <span class="opt-type">string</div>
+                <div class="opt-field"><code>embeds</code> <span class="opt-type">APIEmbed[]</div>
+                <div class="opt-field"><code>components</code> <span class="opt-type">APIActionRow[]</div>
+                <div class="opt-field"><code>ephemeral</code> <span class="opt-type">boolean</div>
+                <div class="opt-field"><code>files</code> <span class="opt-type">FileAttachment[]</div>
+            </div></details>
+        </td><td><code>Promise&lt;Message&gt;</code></td></tr>
+        <tr><td><code>showModal(modal)</code></td><td><code>Promise&lt;void&gt;</code></td></tr>
+        <tr><td><code>deferUpdate()</code></td><td><code>Promise&lt;void&gt;</code></td></tr>
+        <tr><td><code>update(options)</code>
+            <details class="opt"><summary>InteractionReplyOptions</summary><div class="opt-fields">
+                <div class="opt-field"><code>content</code> <span class="opt-type">string</div>
+                <div class="opt-field"><code>embeds</code> <span class="opt-type">APIEmbed[]</div>
+                <div class="opt-field"><code>components</code> <span class="opt-type">APIActionRow[]</div>
+                <div class="opt-field"><code>files</code> <span class="opt-type">FileAttachment[]</div>
+            </div></details>
+        </td><td><code>Promise&lt;void&gt;</code></td></tr>
+        <tr><td><code>fetchReply()</code></td><td><code>Promise&lt;Message&gt;</code></td></tr>
+        <tr><td><code>inGuild()</code></td><td><code>boolean</code></td></tr>
+    </tbody>
+</table>
+
+<h3>Type guards</h3>
+<table>
+    <thead><tr><th>Method</th><th>Narrows to</th></tr></thead>
+    <tbody>
+        <tr><td><code>isChatInputCommand()</code></td><td><code>ChatInputInteraction</code></td></tr>
+        <tr><td><code>isContextMenuCommand()</code></td><td><code>ContextMenuInteraction</code></td></tr>
+        <tr><td><code>isButton()</code></td><td><code>ButtonInteraction</code></td></tr>
+        <tr><td><code>isSelectMenu()</code></td><td><code>SelectMenuInteraction</code></td></tr>
+        <tr><td><code>isModalSubmit()</code></td><td><code>ModalSubmitInteraction</code></td></tr>
+        <tr><td><code>isAutocomplete()</code></td><td><code>AutocompleteInteraction</code></td></tr>
+    </tbody>
+</table>
+
+<h3>ChatInputInteraction</h3>
+<table>
+    <thead><tr><th>Property / Method</th><th>Type / Returns</th></tr></thead>
+    <tbody>
+        <tr><td><code>commandName</code></td><td><code>string</code></td></tr>
+        <tr><td><code>commandId</code></td><td><code>Snowflake</code></td></tr>
+        <tr><td><code>options</code></td><td><code>InteractionOptions</code></td></tr>
+    </tbody>
+</table>
+
+<h3>InteractionOptions</h3>
+<table>
+    <thead><tr><th>Method</th><th>Returns</th></tr></thead>
+    <tbody>
+        <tr><td><code>getString(name, required?)</code></td><td><code>string | null</code></td></tr>
+        <tr><td><code>getInteger(name, required?)</code></td><td><code>number | null</code></td></tr>
+        <tr><td><code>getNumber(name, required?)</code></td><td><code>number | null</code></td></tr>
+        <tr><td><code>getBoolean(name, required?)</code></td><td><code>boolean | null</code></td></tr>
+        <tr><td><code>getUserId(name)</code></td><td><code>Snowflake | null</code></td></tr>
+        <tr><td><code>getChannelId(name)</code></td><td><code>Snowflake | null</code></td></tr>
+        <tr><td><code>getRoleId(name)</code></td><td><code>Snowflake | null</code></td></tr>
+        <tr><td><code>getUser(name, client)</code></td><td><code>User | null</code></td></tr>
+        <tr><td><code>getMember(name, client)</code></td><td><code>GuildMember | null</code></td></tr>
+        <tr><td><code>getChannel(name, client)</code></td><td><code>Channel | null</code></td></tr>
+        <tr><td><code>getRole(name, client)</code></td><td><code>Role | null</code></td></tr>
+        <tr><td><code>getAttachment(name)</code></td><td><code>APIAttachment | null</code></td></tr>
+        <tr><td><code>getSubcommand()</code></td><td><code>string | null</code></td></tr>
+        <tr><td><code>getSubcommandGroup()</code></td><td><code>string | null</code></td></tr>
+        <tr><td><code>getFocused()</code></td><td><code>{ name, value } | null</code></td></tr>
+    </tbody>
+</table>
+
+<h3>ButtonInteraction / SelectMenuInteraction</h3>
+<table>
+    <thead><tr><th>Property / Method</th><th>Type / Returns</th></tr></thead>
+    <tbody>
+        <tr><td><code>customId</code></td><td><code>string</code></td></tr>
+        <tr><td><code>values</code> (SelectMenu only)</td><td><code>string[]</code></td></tr>
+        <tr><td><code>deferUpdate()</code></td><td><code>Promise&lt;void&gt;</code></td></tr>
+        <tr><td><code>update(options)</code></td><td><code>Promise&lt;void&gt;</code></td></tr>
+    </tbody>
+</table>
+
+<h3>ModalSubmitInteraction</h3>
+<table>
+    <thead><tr><th>Property / Method</th><th>Type / Returns</th></tr></thead>
+    <tbody>
+        <tr><td><code>customId</code></td><td><code>string</code></td></tr>
+        <tr><td><code>getTextInputValue(customId)</code></td><td><code>string | null</code></td></tr>
+    </tbody>
+</table>
+
+<h3>AutocompleteInteraction</h3>
+<table>
+    <thead><tr><th>Property / Method</th><th>Type / Returns</th></tr></thead>
+    <tbody>
+        <tr><td><code>commandName</code></td><td><code>string</code></td></tr>
+        <tr><td><code>options</code></td><td><code>InteractionOptions</code></td></tr>
+        <tr><td><code>focused</code></td><td><code>{ name, value } | null</code></td></tr>
+        <tr><td><code>respond(choices)</code></td><td><code>Promise&lt;void&gt;</code></td></tr>
+    </tbody>
+</table>
+
+<h3>ContextMenuInteraction</h3>
+<table>
+    <thead><tr><th>Property / Method</th><th>Type / Returns</th></tr></thead>
+    <tbody>
+        <tr><td><code>commandName</code></td><td><code>string</code></td></tr>
+        <tr><td><code>commandType</code></td><td><code>number</code> (2 = User, 3 = Message)</td></tr>
+        <tr><td><code>targetId</code></td><td><code>Snowflake | null</code></td></tr>
+        <tr><td><code>getTargetUser()</code></td><td><code>User | null</code></td></tr>
+        <tr><td><code>getTargetMessage()</code></td><td><code>Message | null</code></td></tr>
+        <tr><td><code>isUserContextMenu()</code></td><td><code>boolean</code></td></tr>
+        <tr><td><code>isMessageContextMenu()</code></td><td><code>boolean</code></td></tr>
+    </tbody>
+</table>
+
+<hr>
+
+<!-- ── Builders ── -->
+<h2>Builders</h2>
+
+<h3>EmbedBuilder</h3>
+<table>
+    <thead><tr><th>Method</th><th>Returns</th></tr></thead>
+    <tbody>
+        <tr><td><code>setTitle(title)</code> <small>max 256</small></td><td><code>this</code></td></tr>
+        <tr><td><code>setDescription(description)</code> <small>max 4096</small></td><td><code>this</code></td></tr>
+        <tr><td><code>setColor(color)</code> <small>0x000000–0xFFFFFF</small></td><td><code>this</code></td></tr>
+        <tr><td><code>setURL(url)</code></td><td><code>this</code></td></tr>
+        <tr><td><code>setTimestamp(date?)</code></td><td><code>this</code></td></tr>
+        <tr><td><code>setFooter(footer)</code> <small>text max 2048</small></td><td><code>this</code></td></tr>
+        <tr><td><code>setImage(url)</code></td><td><code>this</code></td></tr>
+        <tr><td><code>setThumbnail(url)</code></td><td><code>this</code></td></tr>
+        <tr><td><code>setAuthor(author)</code> <small>name max 256</small></td><td><code>this</code></td></tr>
+        <tr><td><code>addFields(...fields)</code> <small>max 25, name 256, value 1024</small></td><td><code>this</code></td></tr>
+        <tr><td><code>setFields(...fields)</code></td><td><code>this</code></td></tr>
+        <tr><td><code>toJSON()</code></td><td><code>APIEmbed</code></td></tr>
+    </tbody>
+</table>
+
+<h3>SlashCommandBuilder</h3>
+<table>
+    <thead><tr><th>Method</th><th>Returns</th></tr></thead>
+    <tbody>
+        <tr><td><code>setName(name)</code> <small>1–32 chars</small></td><td><code>this</code></td></tr>
+        <tr><td><code>setDescription(description)</code> <small>1–100 chars</small></td><td><code>this</code></td></tr>
+        <tr><td><code>setNameLocalizations(localizations)</code></td><td><code>this</code></td></tr>
+        <tr><td><code>setDescriptionLocalizations(localizations)</code></td><td><code>this</code></td></tr>
+        <tr><td><code>setDefaultMemberPermissions(permissions)</code></td><td><code>this</code></td></tr>
+        <tr><td><code>setDMPermission(allowed)</code></td><td><code>this</code></td></tr>
+        <tr><td><code>setNSFW(nsfw?)</code></td><td><code>this</code></td></tr>
+        <tr><td><code>addStringOption(fn)</code></td><td><code>this</code></td></tr>
+        <tr><td><code>addIntegerOption(fn)</code></td><td><code>this</code></td></tr>
+        <tr><td><code>addBooleanOption(fn)</code></td><td><code>this</code></td></tr>
+        <tr><td><code>addUserOption(fn)</code></td><td><code>this</code></td></tr>
+        <tr><td><code>addChannelOption(fn)</code></td><td><code>this</code></td></tr>
+        <tr><td><code>addRoleOption(fn)</code></td><td><code>this</code></td></tr>
+        <tr><td><code>addMentionableOption(fn)</code></td><td><code>this</code></td></tr>
+        <tr><td><code>addNumberOption(fn)</code></td><td><code>this</code></td></tr>
+        <tr><td><code>addAttachmentOption(fn)</code></td><td><code>this</code></td></tr>
+        <tr><td><code>addSubcommand(fn)</code></td><td><code>this</code></td></tr>
+        <tr><td><code>addSubcommandGroup(fn)</code></td><td><code>this</code></td></tr>
+        <tr><td><code>toJSON()</code></td><td><code>CreateApplicationCommandData</code></td></tr>
+    </tbody>
+</table>
+
+<h3>SlashCommandOptionBuilder</h3>
+<table>
+    <thead><tr><th>Method</th><th>Returns</th></tr></thead>
+    <tbody>
+        <tr><td><code>setName(name)</code></td><td><code>this</code></td></tr>
+        <tr><td><code>setDescription(description)</code></td><td><code>this</code></td></tr>
+        <tr><td><code>setRequired(required?)</code></td><td><code>this</code></td></tr>
+        <tr><td><code>addChoices(...choices)</code> <small>max 25</small></td><td><code>this</code></td></tr>
+        <tr><td><code>setAutocomplete(autocomplete?)</code></td><td><code>this</code></td></tr>
+        <tr><td><code>addChannelTypes(...types)</code></td><td><code>this</code></td></tr>
+        <tr><td><code>setMinLength(min)</code> / <code>setMaxLength(max)</code></td><td><code>this</code></td></tr>
+        <tr><td><code>setMinValue(min)</code> / <code>setMaxValue(max)</code></td><td><code>this</code></td></tr>
+    </tbody>
+</table>
+
+<h3>ButtonBuilder</h3>
+<table>
+    <thead><tr><th>Method</th><th>Returns</th></tr></thead>
+    <tbody>
+        <tr><td><code>setCustomId(id)</code> <small>max 100</small></td><td><code>this</code></td></tr>
+        <tr><td><code>setLabel(label)</code> <small>max 80</small></td><td><code>this</code></td></tr>
+        <tr><td><code>setStyle(style)</code></td><td><code>this</code></td></tr>
+        <tr><td><code>setEmoji(emoji)</code></td><td><code>this</code></td></tr>
+        <tr><td><code>setURL(url)</code></td><td><code>this</code></td></tr>
+        <tr><td><code>setDisabled(disabled?)</code></td><td><code>this</code></td></tr>
+        <tr><td><code>toJSON()</code></td><td><code>APIButton</code></td></tr>
+    </tbody>
+</table>
+
+<h3>StringSelectBuilder</h3>
+<table>
+    <thead><tr><th>Method</th><th>Returns</th></tr></thead>
+    <tbody>
+        <tr><td><code>setCustomId(id)</code></td><td><code>this</code></td></tr>
+        <tr><td><code>setPlaceholder(placeholder)</code> <small>max 150</small></td><td><code>this</code></td></tr>
+        <tr><td><code>setMinValues(min)</code></td><td><code>this</code></td></tr>
+        <tr><td><code>setMaxValues(max)</code></td><td><code>this</code></td></tr>
+        <tr><td><code>addOptions(...options)</code> <small>max 25</small></td><td><code>this</code></td></tr>
+        <tr><td><code>setDisabled(disabled?)</code></td><td><code>this</code></td></tr>
+        <tr><td><code>toJSON()</code></td><td><code>APIStringSelect</code></td></tr>
+    </tbody>
+</table>
+
+<h3>TextInputBuilder</h3>
+<table>
+    <thead><tr><th>Method</th><th>Returns</th></tr></thead>
+    <tbody>
+        <tr><td><code>setCustomId(id)</code></td><td><code>this</code></td></tr>
+        <tr><td><code>setLabel(label)</code></td><td><code>this</code></td></tr>
+        <tr><td><code>setStyle(style)</code> <small>Short or Paragraph</small></td><td><code>this</code></td></tr>
+        <tr><td><code>setPlaceholder(placeholder)</code></td><td><code>this</code></td></tr>
+        <tr><td><code>setMinLength(min)</code> / <code>setMaxLength(max)</code></td><td><code>this</code></td></tr>
+        <tr><td><code>setRequired(required?)</code></td><td><code>this</code></td></tr>
+        <tr><td><code>setValue(value)</code></td><td><code>this</code></td></tr>
+        <tr><td><code>toJSON()</code></td><td><code>APITextInput</code></td></tr>
+    </tbody>
+</table>
+
+<h3>ModalBuilder</h3>
+<table>
+    <thead><tr><th>Method</th><th>Returns</th></tr></thead>
+    <tbody>
+        <tr><td><code>setCustomId(id)</code></td><td><code>this</code></td></tr>
+        <tr><td><code>setTitle(title)</code> <small>max 45</small></td><td><code>this</code></td></tr>
+        <tr><td><code>addComponents(...rows)</code> <small>max 5</small></td><td><code>this</code></td></tr>
+        <tr><td><code>toJSON()</code></td><td><code>APIModal</code></td></tr>
+    </tbody>
+</table>
+
+<h3>ActionRowBuilder</h3>
+<table>
+    <thead><tr><th>Method</th><th>Returns</th></tr></thead>
+    <tbody>
+        <tr><td><code>addComponents(...components)</code></td><td><code>this</code></td></tr>
+        <tr><td><code>toJSON()</code></td><td><code>APIActionRow</code></td></tr>
+    </tbody>
+</table>
+
+<h3>ContextMenuCommandBuilder</h3>
+<table>
+    <thead><tr><th>Method</th><th>Returns</th></tr></thead>
+    <tbody>
+        <tr><td><code>setName(name)</code></td><td><code>this</code></td></tr>
+        <tr><td><code>setType(type)</code> <small>User or Message</small></td><td><code>this</code></td></tr>
+        <tr><td><code>setDefaultMemberPermissions(permissions)</code></td><td><code>this</code></td></tr>
+        <tr><td><code>setDMPermission(allowed)</code></td><td><code>this</code></td></tr>
+        <tr><td><code>toJSON()</code></td><td><code>CreateApplicationCommandData</code></td></tr>
+    </tbody>
+</table>
+
+<h3>AttachmentBuilder</h3>
+<table>
+    <thead><tr><th>Method</th><th>Returns</th></tr></thead>
+    <tbody>
+        <tr><td><code>constructor(data, options?)</code></td><td>-</td></tr>
+        <tr><td><code>setName(name)</code></td><td><code>this</code></td></tr>
+        <tr><td><code>setDescription(description)</code></td><td><code>this</code></td></tr>
+        <tr><td><code>setSpoiler(spoiler?)</code></td><td><code>this</code></td></tr>
+        <tr><td><code>toJSON()</code></td><td><code>{ name, data, description? }</code></td></tr>
+    </tbody>
+</table>
+
+<hr>
+
+<!-- ── Collection ── -->
+<h2>Collection&lt;K, V&gt;</h2>
+<p>Extends native <code>Map&lt;K, V&gt;</code>.</p>
+
+<table>
+    <thead><tr><th>Method</th><th>Returns</th></tr></thead>
+    <tbody>
+        <tr><td><code>find(fn)</code></td><td><code>V | undefined</code></td></tr>
+        <tr><td><code>findKey(fn)</code></td><td><code>K | undefined</code></td></tr>
+        <tr><td><code>filter(fn)</code></td><td><code>Collection&lt;K, V&gt;</code></td></tr>
+        <tr><td><code>map(fn)</code></td><td><code>T[]</code></td></tr>
+        <tr><td><code>mapValues(fn)</code></td><td><code>Collection&lt;K, T&gt;</code></td></tr>
+        <tr><td><code>some(fn)</code></td><td><code>boolean</code></td></tr>
+        <tr><td><code>every(fn)</code></td><td><code>boolean</code></td></tr>
+        <tr><td><code>sweep(fn)</code></td><td><code>number</code> (removed count)</td></tr>
+        <tr><td><code>reduce(fn, initialValue)</code></td><td><code>T</code></td></tr>
+        <tr><td><code>first(count?)</code></td><td><code>V | V[] | undefined</code></td></tr>
+        <tr><td><code>last(count?)</code></td><td><code>V | V[] | undefined</code></td></tr>
+        <tr><td><code>at(index)</code></td><td><code>V | undefined</code></td></tr>
+        <tr><td><code>random(count?)</code></td><td><code>V | V[] | undefined</code></td></tr>
+        <tr><td><code>sort(compareFn?)</code></td><td><code>Collection&lt;K, V&gt;</code></td></tr>
+        <tr><td><code>clone()</code></td><td><code>Collection&lt;K, V&gt;</code></td></tr>
+        <tr><td><code>concat(...collections)</code></td><td><code>Collection&lt;K, V&gt;</code></td></tr>
+        <tr><td><code>partition(fn)</code></td><td><code>[Collection, Collection]</code></td></tr>
+        <tr><td><code>each(fn)</code></td><td><code>this</code></td></tr>
+        <tr><td><code>tap(fn)</code></td><td><code>this</code></td></tr>
+        <tr><td><code>hasAll(...keys)</code></td><td><code>boolean</code></td></tr>
+        <tr><td><code>hasAny(...keys)</code></td><td><code>boolean</code></td></tr>
+        <tr><td><code>difference(other)</code></td><td><code>Collection&lt;K, V&gt;</code></td></tr>
+        <tr><td><code>intersect(other)</code></td><td><code>Collection&lt;K, V&gt;</code></td></tr>
+        <tr><td><code>flatMap(fn)</code></td><td><code>T[]</code></td></tr>
+        <tr><td><code>reverse()</code></td><td><code>Collection&lt;K, V&gt;</code></td></tr>
+        <tr><td><code>ensure(key, defaultValueFn)</code></td><td><code>V</code></td></tr>
+        <tr><td><code>equals(other)</code></td><td><code>boolean</code></td></tr>
+        <tr><td><code>array()</code></td><td><code>V[]</code></td></tr>
+        <tr><td><code>keyArray()</code></td><td><code>K[]</code></td></tr>
+        <tr><td><code>toJSON()</code></td><td><code>V[]</code></td></tr>
+    </tbody>
+</table>
+
+<hr>
+
+<!-- ── Permissions ── -->
+<h2>Permissions</h2>
+
+<h3>Class</h3>
+<table>
+    <thead><tr><th>Method</th><th>Returns</th></tr></thead>
+    <tbody>
+        <tr><td><code>constructor(bitfield?)</code></td><td>-</td></tr>
+        <tr><td><code>bitfield</code></td><td><code>bigint</code> (readonly)</td></tr>
+        <tr><td><code>has(flag)</code></td><td><code>boolean</code> (Admin = all)</td></tr>
+        <tr><td><code>any(...flags)</code></td><td><code>boolean</code></td></tr>
+        <tr><td><code>add(...flags)</code></td><td><code>Permissions</code></td></tr>
+        <tr><td><code>remove(...flags)</code></td><td><code>Permissions</code></td></tr>
+        <tr><td><code>toArray()</code></td><td><code>string[]</code></td></tr>
+        <tr><td><code>serialize()</code></td><td><code>Record&lt;string, boolean&gt;</code></td></tr>
+        <tr><td><code>missing(...required)</code></td><td><code>string[]</code></td></tr>
+        <tr><td><code>equals(other)</code></td><td><code>boolean</code></td></tr>
+    </tbody>
+</table>
+
+<h3>PermissionFlags</h3>
+<p>All flags as <code>bigint</code> constants:</p>
+<p><code>CreateInstantInvite</code> · <code>KickMembers</code> · <code>BanMembers</code> · <code>Administrator</code> · <code>ManageChannels</code> · <code>ManageGuild</code> · <code>AddReactions</code> · <code>ViewAuditLog</code> · <code>PrioritySpeaker</code> · <code>Stream</code> · <code>ViewChannel</code> · <code>SendMessages</code> · <code>SendTTSMessages</code> · <code>ManageMessages</code> · <code>EmbedLinks</code> · <code>AttachFiles</code> · <code>ReadMessageHistory</code> · <code>MentionEveryone</code> · <code>UseExternalEmojis</code> · <code>Connect</code> · <code>Speak</code> · <code>MuteMembers</code> · <code>DeafenMembers</code> · <code>MoveMembers</code> · <code>UseVAD</code> · <code>ChangeNickname</code> · <code>ManageNicknames</code> · <code>ManageRoles</code> · <code>ManageWebhooks</code> · <code>ManageGuildExpressions</code> · <code>UseApplicationCommands</code> · <code>RequestToSpeak</code> · <code>ManageEvents</code> · <code>ManageThreads</code> · <code>CreatePublicThreads</code> · <code>CreatePrivateThreads</code> · <code>UseExternalStickers</code> · <code>SendMessagesInThreads</code> · <code>UseEmbeddedActivities</code> · <code>ModerateMembers</code> · <code>UseSoundboard</code> · <code>UseExternalSounds</code> · <code>SendVoiceMessages</code> · <code>SendPolls</code> · <code>UseExternalApps</code></p>
+
+<hr>
+
+<!-- ── Voice ── -->
+<h2>VoiceConnection</h2>
+<table>
+    <thead><tr><th>Property / Method</th><th>Type / Returns</th></tr></thead>
+    <tbody>
+        <tr><td><code>guildId</code></td><td><code>Snowflake</code> (readonly)</td></tr>
+        <tr><td><code>joinChannel(channelId, selfMute?, selfDeaf?)</code></td><td><code>void</code></td></tr>
+        <tr><td><code>leaveChannel()</code></td><td><code>void</code></td></tr>
+        <tr><td><code>disconnect()</code></td><td><code>void</code></td></tr>
+        <tr><td><code>getStatus()</code></td><td><code>"disconnected" | "connecting" | "connected" | "ready"</code></td></tr>
+        <tr><td><code>getAudioPlayer()</code></td><td><code>AudioPlayer | null</code></td></tr>
+    </tbody>
+</table>
+
+<h3>Events</h3>
+<table>
+    <thead><tr><th>Event</th><th>Payload</th></tr></thead>
+    <tbody>
+        <tr><td><code>status</code></td><td><code>VoiceConnectionStatus</code></td></tr>
+        <tr><td><code>ready</code></td><td><code>VoiceReadyData</code></td></tr>
+        <tr><td><code>close</code></td><td><code>number</code> (close code)</td></tr>
+        <tr><td><code>error</code></td><td><code>Error</code></td></tr>
+    </tbody>
+</table>
+
+<h2>AudioPlayer</h2>
+<table>
+    <thead><tr><th>Method</th><th>Returns</th></tr></thead>
+    <tbody>
+        <tr><td><code>play(input)</code> <small>Readable | { opusStream: Readable }</small></td><td><code>void</code></td></tr>
+        <tr><td><code>stop()</code></td><td><code>void</code></td></tr>
+        <tr><td><code>pause()</code></td><td><code>void</code></td></tr>
+        <tr><td><code>resume()</code></td><td><code>void</code></td></tr>
+        <tr><td><code>getStatus()</code></td><td><code>"idle" | "playing" | "paused"</code></td></tr>
+    </tbody>
+</table>
+
+<h3>Events</h3>
+<table>
+    <thead><tr><th>Event</th><th>Payload</th></tr></thead>
+    <tbody>
+        <tr><td><code>status</code></td><td><code>AudioPlayerStatus</code></td></tr>
+        <tr><td><code>error</code></td><td><code>Error</code></td></tr>
+        <tr><td><code>idle</code></td><td>- (playback ended)</td></tr>
+    </tbody>
+</table>
+
+<hr>
+
+<!-- ── Common Types ── -->
+<h2>Common Types</h2>
+
+<h3>Snowflake</h3>
+<p>A Discord ID. Alias for <code>string</code>. All entity IDs (<code>id</code>, <code>guildId</code>, <code>channelId</code>, etc.) are Snowflakes.</p>
+
+<h3>FileAttachment</h3>
+<table>
+    <thead><tr><th>Property</th><th>Type</th></tr></thead>
+    <tbody>
+        <tr><td><code>name</code></td><td><code>string</code> <span class="opt-req">required</td></tr>
+        <tr><td><code>data</code></td><td><code>Buffer | Uint8Array | Blob</code> <span class="opt-req">required</td></tr>
+        <tr><td><code>contentType</code></td><td><code>string</code></td></tr>
+    </tbody>
+</table>
+
+<h3>APIAllowedMentions</h3>
+<table>
+    <thead><tr><th>Property</th><th>Type</th></tr></thead>
+    <tbody>
+        <tr><td><code>parse</code></td><td><code>("roles" | "users" | "everyone")[]</code></td></tr>
+        <tr><td><code>roles</code></td><td><code>Snowflake[]</code></td></tr>
+        <tr><td><code>users</code></td><td><code>Snowflake[]</code></td></tr>
+        <tr><td><code>replied_user</code></td><td><code>boolean</code></td></tr>
+    </tbody>
+</table>
+
+<h3>APIEmbed</h3>
+<table>
+    <thead><tr><th>Property</th><th>Type</th></tr></thead>
+    <tbody>
+        <tr><td><code>title</code></td><td><code>string</code></td></tr>
+        <tr><td><code>description</code></td><td><code>string</code></td></tr>
+        <tr><td><code>url</code></td><td><code>string</code></td></tr>
+        <tr><td><code>timestamp</code></td><td><code>string</code> (ISO 8601)</td></tr>
+        <tr><td><code>color</code></td><td><code>number</code></td></tr>
+        <tr><td><code>footer</code></td><td><code>{ text, icon_url?, proxy_icon_url? }</code></td></tr>
+        <tr><td><code>image</code></td><td><code>{ url, proxy_url?, height?, width? }</code></td></tr>
+        <tr><td><code>thumbnail</code></td><td><code>{ url, proxy_url?, height?, width? }</code></td></tr>
+        <tr><td><code>author</code></td><td><code>{ name, url?, icon_url?, proxy_icon_url? }</code></td></tr>
+        <tr><td><code>fields</code></td><td><code>{ name, value, inline? }[]</code></td></tr>
+    </tbody>
+</table>
+
+<h3>APIAttachment</h3>
+<table>
+    <thead><tr><th>Property</th><th>Type</th></tr></thead>
+    <tbody>
+        <tr><td><code>id</code></td><td><code>Snowflake</code></td></tr>
+        <tr><td><code>filename</code></td><td><code>string</code></td></tr>
+        <tr><td><code>description</code></td><td><code>string</code></td></tr>
+        <tr><td><code>content_type</code></td><td><code>string</code></td></tr>
+        <tr><td><code>size</code></td><td><code>number</code></td></tr>
+        <tr><td><code>url</code></td><td><code>string</code></td></tr>
+        <tr><td><code>proxy_url</code></td><td><code>string</code></td></tr>
+        <tr><td><code>height</code></td><td><code>number | null</code></td></tr>
+        <tr><td><code>width</code></td><td><code>number | null</code></td></tr>
+        <tr><td><code>ephemeral</code></td><td><code>boolean</code></td></tr>
+    </tbody>
+</table>
+
+<h3>APIActionRow</h3>
+<table>
+    <thead><tr><th>Property</th><th>Type</th></tr></thead>
+    <tbody>
+        <tr><td><code>type</code></td><td><code>1</code> (ActionRow)</td></tr>
+        <tr><td><code>components</code></td><td><code>APIComponent[]</code></td></tr>
+    </tbody>
+</table>
+
+<h3>APIOverwrite</h3>
+<p>Permission overwrite for a channel.</p>
+<table>
+    <thead><tr><th>Property</th><th>Type</th></tr></thead>
+    <tbody>
+        <tr><td><code>id</code></td><td><code>Snowflake</code></td></tr>
+        <tr><td><code>type</code></td><td><code>0</code> (role) | <code>1</code> (member)</td></tr>
+        <tr><td><code>allow</code></td><td><code>string</code> (permission bitfield)</td></tr>
+        <tr><td><code>deny</code></td><td><code>string</code> (permission bitfield)</td></tr>
+    </tbody>
+</table>
+
+<h3>APIReaction</h3>
+<table>
+    <thead><tr><th>Property</th><th>Type</th></tr></thead>
+    <tbody>
+        <tr><td><code>count</code></td><td><code>number</code></td></tr>
+        <tr><td><code>count_details</code></td><td><code>{ burst: number; normal: number }</code></td></tr>
+        <tr><td><code>me</code></td><td><code>boolean</code></td></tr>
+        <tr><td><code>me_burst</code></td><td><code>boolean</code></td></tr>
+        <tr><td><code>emoji</code></td><td><code>APIEmoji</code></td></tr>
+        <tr><td><code>burst_colors</code></td><td><code>string[]</code></td></tr>
+    </tbody>
+</table>
+
+<h3>APIEmoji</h3>
+<table>
+    <thead><tr><th>Property</th><th>Type</th></tr></thead>
+    <tbody>
+        <tr><td><code>id</code></td><td><code>Snowflake | null</code></td></tr>
+        <tr><td><code>name</code></td><td><code>string | null</code></td></tr>
+        <tr><td><code>animated</code></td><td><code>boolean</code></td></tr>
+        <tr><td><code>managed</code></td><td><code>boolean</code></td></tr>
+        <tr><td><code>require_colons</code></td><td><code>boolean</code></td></tr>
+        <tr><td><code>roles</code></td><td><code>Snowflake[]</code></td></tr>
+        <tr><td><code>available</code></td><td><code>boolean</code></td></tr>
+    </tbody>
+</table>
+
+<h3>APIStickerItem</h3>
+<table>
+    <thead><tr><th>Property</th><th>Type</th></tr></thead>
+    <tbody>
+        <tr><td><code>id</code></td><td><code>Snowflake</code></td></tr>
+        <tr><td><code>name</code></td><td><code>string</code></td></tr>
+        <tr><td><code>format_type</code></td><td><code>number</code></td></tr>
+    </tbody>
+</table>
+
+<h3>APIRoleTags</h3>
+<table>
+    <thead><tr><th>Property</th><th>Type</th></tr></thead>
+    <tbody>
+        <tr><td><code>bot_id</code></td><td><code>Snowflake</code></td></tr>
+        <tr><td><code>integration_id</code></td><td><code>Snowflake</code></td></tr>
+        <tr><td><code>premium_subscriber</code></td><td><code>null</code> (presence = true)</td></tr>
+        <tr><td><code>subscription_listing_id</code></td><td><code>Snowflake</code></td></tr>
+        <tr><td><code>available_for_purchase</code></td><td><code>null</code> (presence = true)</td></tr>
+        <tr><td><code>guild_connections</code></td><td><code>null</code> (presence = true)</td></tr>
+    </tbody>
+</table>
+
+<h3>APIActivity</h3>
+<table>
+    <thead><tr><th>Property</th><th>Type</th></tr></thead>
+    <tbody>
+        <tr><td><code>name</code></td><td><code>string</code></td></tr>
+        <tr><td><code>type</code></td><td><code>0</code> Game | <code>1</code> Streaming | <code>2</code> Listening | <code>3</code> Watching | <code>4</code> Custom | <code>5</code> Competing</td></tr>
+        <tr><td><code>url</code></td><td><code>string | null</code></td></tr>
+        <tr><td><code>created_at</code></td><td><code>number</code></td></tr>
+        <tr><td><code>timestamps</code></td><td><code>{ start?, end? }</code></td></tr>
+        <tr><td><code>application_id</code></td><td><code>Snowflake</code></td></tr>
+        <tr><td><code>details</code></td><td><code>string | null</code></td></tr>
+        <tr><td><code>state</code></td><td><code>string | null</code></td></tr>
+        <tr><td><code>emoji</code></td><td><code>{ name, id?, animated? } | null</code></td></tr>
+        <tr><td><code>party</code></td><td><code>{ id?, size? }</code></td></tr>
+        <tr><td><code>assets</code></td><td><code>{ large_image?, large_text?, small_image?, small_text? }</code></td></tr>
+        <tr><td><code>buttons</code></td><td><code>{ label, url }[]</code></td></tr>
+    </tbody>
+</table>
+
+<h3>SweeperConfig</h3>
+<p>Each key accepts <code>{ interval: number, filter: (value) =&gt; boolean }</code>.</p>
+<table>
+    <thead><tr><th>Property</th><th>Sweeps</th></tr></thead>
+    <tbody>
+        <tr><td><code>guilds</code></td><td><code>Guild</code></td></tr>
+        <tr><td><code>channels</code></td><td><code>Channel</code></td></tr>
+        <tr><td><code>users</code></td><td><code>User</code></td></tr>
+        <tr><td><code>members</code></td><td><code>GuildMember</code></td></tr>
+        <tr><td><code>messages</code></td><td><code>Message</code></td></tr>
+        <tr><td><code>presences</code></td><td><code>Presence</code></td></tr>
+    </tbody>
+</table>
+
+<h3>Partials</h3>
+<table>
+    <thead><tr><th>Name</th><th>Value</th></tr></thead>
+    <tbody>
+        <tr><td><code>User</code></td><td><code>0</code></td></tr>
+        <tr><td><code>Channel</code></td><td><code>1</code></td></tr>
+        <tr><td><code>GuildMember</code></td><td><code>2</code></td></tr>
+        <tr><td><code>Message</code></td><td><code>3</code></td></tr>
+        <tr><td><code>Reaction</code></td><td><code>4</code></td></tr>
+        <tr><td><code>ThreadMember</code></td><td><code>5</code></td></tr>
+    </tbody>
+</table>
+
+<hr>
+
+<!-- ── Enums ── -->
+<h2>Enums</h2>
+
+<h3>ChannelType</h3>
+<table>
+    <thead><tr><th>Name</th><th>Value</th></tr></thead>
+    <tbody>
+        <tr><td><code>GuildText</code></td><td><code>0</code></td></tr>
+        <tr><td><code>DM</code></td><td><code>1</code></td></tr>
+        <tr><td><code>GuildVoice</code></td><td><code>2</code></td></tr>
+        <tr><td><code>GroupDM</code></td><td><code>3</code></td></tr>
+        <tr><td><code>GuildCategory</code></td><td><code>4</code></td></tr>
+        <tr><td><code>GuildAnnouncement</code></td><td><code>5</code></td></tr>
+        <tr><td><code>AnnouncementThread</code></td><td><code>10</code></td></tr>
+        <tr><td><code>PublicThread</code></td><td><code>11</code></td></tr>
+        <tr><td><code>PrivateThread</code></td><td><code>12</code></td></tr>
+        <tr><td><code>GuildStageVoice</code></td><td><code>13</code></td></tr>
+        <tr><td><code>GuildDirectory</code></td><td><code>14</code></td></tr>
+        <tr><td><code>GuildForum</code></td><td><code>15</code></td></tr>
+        <tr><td><code>GuildMedia</code></td><td><code>16</code></td></tr>
+    </tbody>
+</table>
+
+<h3>MessageType</h3>
+<table>
+    <thead><tr><th>Name</th><th>Value</th></tr></thead>
+    <tbody>
+        <tr><td><code>Default</code></td><td><code>0</code></td></tr>
+        <tr><td><code>RecipientAdd</code></td><td><code>1</code></td></tr>
+        <tr><td><code>RecipientRemove</code></td><td><code>2</code></td></tr>
+        <tr><td><code>Call</code></td><td><code>3</code></td></tr>
+        <tr><td><code>ChannelNameChange</code></td><td><code>4</code></td></tr>
+        <tr><td><code>ChannelIconChange</code></td><td><code>5</code></td></tr>
+        <tr><td><code>ChannelPinnedMessage</code></td><td><code>6</code></td></tr>
+        <tr><td><code>UserJoin</code></td><td><code>7</code></td></tr>
+        <tr><td><code>GuildBoost</code></td><td><code>8</code></td></tr>
+        <tr><td><code>GuildBoostTier1</code></td><td><code>9</code></td></tr>
+        <tr><td><code>GuildBoostTier2</code></td><td><code>10</code></td></tr>
+        <tr><td><code>GuildBoostTier3</code></td><td><code>11</code></td></tr>
+        <tr><td><code>ChannelFollowAdd</code></td><td><code>12</code></td></tr>
+        <tr><td><code>Reply</code></td><td><code>19</code></td></tr>
+        <tr><td><code>ChatInputCommand</code></td><td><code>20</code></td></tr>
+        <tr><td><code>ThreadStarterMessage</code></td><td><code>21</code></td></tr>
+        <tr><td><code>ContextMenuCommand</code></td><td><code>23</code></td></tr>
+        <tr><td><code>AutoModerationAction</code></td><td><code>24</code></td></tr>
+        <tr><td><code>StageStart</code></td><td><code>27</code></td></tr>
+        <tr><td><code>StageEnd</code></td><td><code>28</code></td></tr>
+        <tr><td><code>StageSpeaker</code></td><td><code>29</code></td></tr>
+    </tbody>
+</table>
+
+<h3>InteractionType</h3>
+<table>
+    <thead><tr><th>Name</th><th>Value</th></tr></thead>
+    <tbody>
+        <tr><td><code>Ping</code></td><td><code>1</code></td></tr>
+        <tr><td><code>ApplicationCommand</code></td><td><code>2</code></td></tr>
+        <tr><td><code>MessageComponent</code></td><td><code>3</code></td></tr>
+        <tr><td><code>ApplicationCommandAutocomplete</code></td><td><code>4</code></td></tr>
+        <tr><td><code>ModalSubmit</code></td><td><code>5</code></td></tr>
+    </tbody>
+</table>
+
+<hr>
+
+<!-- ── Collectors ── -->
+<h2>Collectors</h2>
+<p>All collectors extend a base <code>Collector&lt;K, V&gt;</code> class, which extends <code>EventEmitter</code>.</p>
+
+<h3>Base Collector</h3>
+<table>
+    <thead><tr><th>Property / Method</th><th>Type / Returns</th></tr></thead>
+    <tbody>
+        <tr><td><code>collected</code></td><td><code>Collection&lt;K, V&gt;</code></td></tr>
+        <tr><td><code>ended</code></td><td><code>boolean</code></td></tr>
+        <tr><td><code>endReason</code></td><td><code>string | null</code></td></tr>
+        <tr><td><code>isEnded</code></td><td><code>boolean</code></td></tr>
+        <tr><td><code>totalReceived</code></td><td><code>number</code></td></tr>
+        <tr><td><code>stop(reason?)</code></td><td><code>void</code></td></tr>
+        <tr><td><code>[Symbol.asyncIterator]()</code></td><td><code>AsyncGenerator&lt;[K, V]&gt;</code></td></tr>
+    </tbody>
+</table>
+
+<h3>Collector Events</h3>
+<table>
+    <thead><tr><th>Event</th><th>Payload</th></tr></thead>
+    <tbody>
+        <tr><td><code>"collect"</code></td><td><code>item: V</code></td></tr>
+        <tr><td><code>"dispose"</code></td><td><code>item: V</code></td></tr>
+        <tr><td><code>"end"</code></td><td><code>collected: Collection&lt;K, V&gt;, reason: string</code></td></tr>
+    </tbody>
+</table>
+
+<h3>MessageCollector</h3>
+<p><code>extends Collector&lt;Snowflake, Message&gt;</code></p>
+<table>
+    <thead><tr><th>Property</th><th>Type</th></tr></thead>
+    <tbody>
+        <tr><td><code>channelId</code></td><td><code>Snowflake</code></td></tr>
+        <tr><td><code>collected</code></td><td><code>Collection&lt;Snowflake, Message&gt;</code></td></tr>
+    </tbody>
+</table>
+
+<h3>ComponentCollector</h3>
+<p><code>extends Collector&lt;Snowflake, Interaction&gt;</code></p>
+<table>
+    <thead><tr><th>Property</th><th>Type</th></tr></thead>
+    <tbody>
+        <tr><td><code>messageId</code></td><td><code>Snowflake</code></td></tr>
+        <tr><td><code>collected</code></td><td><code>Collection&lt;Snowflake, Interaction&gt;</code></td></tr>
+        <tr><td><code>users</code></td><td><code>Set&lt;Snowflake&gt;</code></td></tr>
+    </tbody>
+</table>
+
+<h3>ReactionCollector</h3>
+<p><code>extends Collector&lt;string, ReactionData&gt;</code></p>
+<table>
+    <thead><tr><th>Property</th><th>Type</th></tr></thead>
+    <tbody>
+        <tr><td><code>messageId</code></td><td><code>Snowflake</code></td></tr>
+        <tr><td><code>collected</code></td><td><code>Collection&lt;string, ReactionData&gt;</code></td></tr>
+        <tr><td><code>users</code></td><td><code>Set&lt;Snowflake&gt;</code></td></tr>
+        <tr><td><code>emojis</code></td><td><code>Set&lt;string&gt;</code></td></tr>
+    </tbody>
+</table>
+
+<hr>
+
+<!-- ── VoiceState ── -->
+<h2>VoiceState</h2>
+<table>
+    <thead><tr><th>Property</th><th>Type</th></tr></thead>
+    <tbody>
+        <tr><td><code>guildId</code></td><td><code>Snowflake</code></td></tr>
+        <tr><td><code>channelId</code></td><td><code>Snowflake | null</code></td></tr>
+        <tr><td><code>userId</code></td><td><code>Snowflake</code></td></tr>
+        <tr><td><code>sessionId</code></td><td><code>string</code></td></tr>
+        <tr><td><code>deaf</code></td><td><code>boolean</code></td></tr>
+        <tr><td><code>mute</code></td><td><code>boolean</code></td></tr>
+        <tr><td><code>selfDeaf</code></td><td><code>boolean</code></td></tr>
+        <tr><td><code>selfMute</code></td><td><code>boolean</code></td></tr>
+        <tr><td><code>selfStream</code></td><td><code>boolean</code></td></tr>
+        <tr><td><code>selfVideo</code></td><td><code>boolean</code></td></tr>
+        <tr><td><code>suppress</code></td><td><code>boolean</code></td></tr>
+        <tr><td><code>requestToSpeakTimestamp</code></td><td><code>Date | null</code></td></tr>
+        <tr><td><code>guild</code></td><td><code>Guild | undefined</code></td></tr>
+        <tr><td><code>member</code></td><td><code>GuildMember | undefined</code></td></tr>
+        <tr><td><code>channel</code></td><td><code>VoiceChannel | undefined</code></td></tr>
+    </tbody>
+</table>
+
+<hr>
+
+<!-- ── Presence ── -->
+<h2>Presence</h2>
+<table>
+    <thead><tr><th>Property</th><th>Type</th></tr></thead>
+    <tbody>
+        <tr><td><code>userId</code></td><td><code>Snowflake</code></td></tr>
+        <tr><td><code>guildId</code></td><td><code>Snowflake</code></td></tr>
+        <tr><td><code>status</code></td><td><code>"online" | "idle" | "dnd" | "offline"</code></td></tr>
+        <tr><td><code>activities</code></td><td><code>APIActivity[]</code></td></tr>
+        <tr><td><code>clientStatus</code></td><td><code>{ desktop?: string; mobile?: string; web?: string }</code></td></tr>
+        <tr><td><code>user</code></td><td><code>User | undefined</code></td></tr>
+        <tr><td><code>guild</code></td><td><code>Guild | undefined</code></td></tr>
+    </tbody>
+</table>
+
+<hr>
+
+<!-- ── LimitedCollection ── -->
+<h2>LimitedCollection</h2>
+<p><code>extends Collection&lt;K, V&gt;</code> - A collection with a maximum size. Evicts the oldest entry when full.</p>
+<table>
+    <thead><tr><th>Constructor option</th><th>Type</th></tr></thead>
+    <tbody>
+        <tr><td><code>maxSize</code></td><td><code>number</code></td></tr>
+        <tr><td><code>keepOverLimit</code></td><td><code>(value: V, key: K, collection) =&gt; boolean</code></td></tr>
+    </tbody>
+</table>
+<p>All <code>Collection</code> methods work. The <code>set()</code> method triggers eviction when <code>maxSize</code> is reached.</p>
+
+<hr>
+
+<!-- ── AudioResource / StreamType ── -->
+<h2>AudioResource</h2>
+<p>Wraps an Opus stream for playback. Created via <code>createAudioResource()</code>.</p>
+<table>
+    <thead><tr><th>Property / Method</th><th>Type / Returns</th></tr></thead>
+    <tbody>
+        <tr><td><code>opusStream</code></td><td><code>Readable</code></td></tr>
+        <tr><td><code>metadata</code></td><td><code>T</code></td></tr>
+        <tr><td><code>isDestroyed</code></td><td><code>boolean</code></td></tr>
+        <tr><td><code>destroy()</code></td><td><code>void</code> - kills FFmpeg, destroys stream</td></tr>
+    </tbody>
+</table>
+
+<h3>StreamType</h3>
+<table>
+    <thead><tr><th>Value</th><th>Description</th></tr></thead>
+    <tbody>
+        <tr><td><code>Opus</code></td><td>Raw Opus frames - pass-through, zero overhead</td></tr>
+        <tr><td><code>OggOpus</code></td><td>Ogg container - demuxed via OggDemuxer, no FFmpeg</td></tr>
+        <tr><td><code>Arbitrary</code></td><td>Anything else - transcoded via FFmpeg (default)</td></tr>
+    </tbody>
+</table>
+
+<hr>
+
+<!-- ── GatewayIntents ── -->
+<h2>GatewayIntents</h2>
+<p>Bitfield constants from <code>@volundr/gateway</code>. Combine with <code>|</code>.</p>
+
+<table>
+    <thead><tr><th>Intent</th><th>Events</th><th>Privileged</th></tr></thead>
+    <tbody>
+        <tr><td><code>Guilds</code></td><td>Guild create/update/delete, channels, roles</td><td></td></tr>
+        <tr><td><code>GuildMembers</code></td><td>Member add/remove/update, chunks</td><td>Yes</td></tr>
+        <tr><td><code>GuildModeration</code></td><td>Ban add/remove, audit log</td><td></td></tr>
+        <tr><td><code>GuildExpressions</code></td><td>Emoji/sticker updates</td><td></td></tr>
+        <tr><td><code>GuildIntegrations</code></td><td>Integration updates</td><td></td></tr>
+        <tr><td><code>GuildWebhooks</code></td><td>Webhook updates</td><td></td></tr>
+        <tr><td><code>GuildInvites</code></td><td>Invite create/delete</td><td></td></tr>
+        <tr><td><code>GuildVoiceStates</code></td><td>Voice state updates</td><td></td></tr>
+        <tr><td><code>GuildPresences</code></td><td>Presence updates</td><td>Yes</td></tr>
+        <tr><td><code>GuildMessages</code></td><td>Message create/update/delete in guilds</td><td></td></tr>
+        <tr><td><code>GuildMessageReactions</code></td><td>Reaction add/remove in guilds</td><td></td></tr>
+        <tr><td><code>GuildMessageTyping</code></td><td>Typing start in guilds</td><td></td></tr>
+        <tr><td><code>DirectMessages</code></td><td>DM message create/update/delete</td><td></td></tr>
+        <tr><td><code>DirectMessageReactions</code></td><td>DM reaction add/remove</td><td></td></tr>
+        <tr><td><code>DirectMessageTyping</code></td><td>DM typing start</td><td></td></tr>
+        <tr><td><code>MessageContent</code></td><td>Access to <code>message.content</code></td><td>Yes</td></tr>
+        <tr><td><code>GuildScheduledEvents</code></td><td>Scheduled event create/update/delete</td><td></td></tr>
+        <tr><td><code>AutoModerationConfiguration</code></td><td>Auto mod rule create/update/delete</td><td></td></tr>
+        <tr><td><code>AutoModerationExecution</code></td><td>Auto mod action execution</td><td></td></tr>
+        <tr><td><code>GuildMessagePolls</code></td><td>Poll vote add/remove in guilds</td><td></td></tr>
+        <tr><td><code>DirectMessagePolls</code></td><td>Poll vote add/remove in DMs</td><td></td></tr>
+    </tbody>
+</table>
+
+<hr>
+
+<!-- ── GatewayEvent enum ── -->
+<h2>GatewayEvent</h2>
+<p>Enum from <code>@volundr/types</code>. All Discord gateway event names.</p>
+
+<h3>Core</h3>
+<table>
+    <thead><tr><th>Event</th><th>Value</th></tr></thead>
+    <tbody>
+        <tr><td><code>Ready</code></td><td><code>"READY"</code></td></tr>
+        <tr><td><code>Resumed</code></td><td><code>"RESUMED"</code></td></tr>
+    </tbody>
+</table>
+
+<h3>Channels</h3>
+<table>
+    <thead><tr><th>Event</th><th>Value</th></tr></thead>
+    <tbody>
+        <tr><td><code>ChannelCreate</code></td><td><code>"CHANNEL_CREATE"</code></td></tr>
+        <tr><td><code>ChannelUpdate</code></td><td><code>"CHANNEL_UPDATE"</code></td></tr>
+        <tr><td><code>ChannelDelete</code></td><td><code>"CHANNEL_DELETE"</code></td></tr>
+        <tr><td><code>ChannelPinsUpdate</code></td><td><code>"CHANNEL_PINS_UPDATE"</code></td></tr>
+    </tbody>
+</table>
+
+<h3>Guilds</h3>
+<table>
+    <thead><tr><th>Event</th><th>Value</th></tr></thead>
+    <tbody>
+        <tr><td><code>GuildCreate</code></td><td><code>"GUILD_CREATE"</code></td></tr>
+        <tr><td><code>GuildUpdate</code></td><td><code>"GUILD_UPDATE"</code></td></tr>
+        <tr><td><code>GuildDelete</code></td><td><code>"GUILD_DELETE"</code></td></tr>
+        <tr><td><code>GuildBanAdd</code></td><td><code>"GUILD_BAN_ADD"</code></td></tr>
+        <tr><td><code>GuildBanRemove</code></td><td><code>"GUILD_BAN_REMOVE"</code></td></tr>
+        <tr><td><code>GuildEmojisUpdate</code></td><td><code>"GUILD_EMOJIS_UPDATE"</code></td></tr>
+        <tr><td><code>GuildStickersUpdate</code></td><td><code>"GUILD_STICKERS_UPDATE"</code></td></tr>
+        <tr><td><code>GuildIntegrationsUpdate</code></td><td><code>"GUILD_INTEGRATIONS_UPDATE"</code></td></tr>
+        <tr><td><code>GuildAuditLogEntryCreate</code></td><td><code>"GUILD_AUDIT_LOG_ENTRY_CREATE"</code></td></tr>
+    </tbody>
+</table>
+
+<h3>Members</h3>
+<table>
+    <thead><tr><th>Event</th><th>Value</th></tr></thead>
+    <tbody>
+        <tr><td><code>GuildMemberAdd</code></td><td><code>"GUILD_MEMBER_ADD"</code></td></tr>
+        <tr><td><code>GuildMemberRemove</code></td><td><code>"GUILD_MEMBER_REMOVE"</code></td></tr>
+        <tr><td><code>GuildMemberUpdate</code></td><td><code>"GUILD_MEMBER_UPDATE"</code></td></tr>
+        <tr><td><code>GuildMembersChunk</code></td><td><code>"GUILD_MEMBERS_CHUNK"</code></td></tr>
+    </tbody>
+</table>
+
+<h3>Roles</h3>
+<table>
+    <thead><tr><th>Event</th><th>Value</th></tr></thead>
+    <tbody>
+        <tr><td><code>GuildRoleCreate</code></td><td><code>"GUILD_ROLE_CREATE"</code></td></tr>
+        <tr><td><code>GuildRoleUpdate</code></td><td><code>"GUILD_ROLE_UPDATE"</code></td></tr>
+        <tr><td><code>GuildRoleDelete</code></td><td><code>"GUILD_ROLE_DELETE"</code></td></tr>
+    </tbody>
+</table>
+
+<h3>Messages</h3>
+<table>
+    <thead><tr><th>Event</th><th>Value</th></tr></thead>
+    <tbody>
+        <tr><td><code>MessageCreate</code></td><td><code>"MESSAGE_CREATE"</code></td></tr>
+        <tr><td><code>MessageUpdate</code></td><td><code>"MESSAGE_UPDATE"</code></td></tr>
+        <tr><td><code>MessageDelete</code></td><td><code>"MESSAGE_DELETE"</code></td></tr>
+        <tr><td><code>MessageDeleteBulk</code></td><td><code>"MESSAGE_DELETE_BULK"</code></td></tr>
+    </tbody>
+</table>
+
+<h3>Reactions</h3>
+<table>
+    <thead><tr><th>Event</th><th>Value</th></tr></thead>
+    <tbody>
+        <tr><td><code>MessageReactionAdd</code></td><td><code>"MESSAGE_REACTION_ADD"</code></td></tr>
+        <tr><td><code>MessageReactionRemove</code></td><td><code>"MESSAGE_REACTION_REMOVE"</code></td></tr>
+        <tr><td><code>MessageReactionRemoveAll</code></td><td><code>"MESSAGE_REACTION_REMOVE_ALL"</code></td></tr>
+        <tr><td><code>MessageReactionRemoveEmoji</code></td><td><code>"MESSAGE_REACTION_REMOVE_EMOJI"</code></td></tr>
+    </tbody>
+</table>
+
+<h3>Voice &amp; Presence</h3>
+<table>
+    <thead><tr><th>Event</th><th>Value</th></tr></thead>
+    <tbody>
+        <tr><td><code>VoiceStateUpdate</code></td><td><code>"VOICE_STATE_UPDATE"</code></td></tr>
+        <tr><td><code>VoiceServerUpdate</code></td><td><code>"VOICE_SERVER_UPDATE"</code></td></tr>
+        <tr><td><code>PresenceUpdate</code></td><td><code>"PRESENCE_UPDATE"</code></td></tr>
+        <tr><td><code>TypingStart</code></td><td><code>"TYPING_START"</code></td></tr>
+        <tr><td><code>UserUpdate</code></td><td><code>"USER_UPDATE"</code></td></tr>
+    </tbody>
+</table>
+
+<h3>Interactions</h3>
+<table>
+    <thead><tr><th>Event</th><th>Value</th></tr></thead>
+    <tbody>
+        <tr><td><code>InteractionCreate</code></td><td><code>"INTERACTION_CREATE"</code></td></tr>
+    </tbody>
+</table>
+
+<h3>Threads</h3>
+<table>
+    <thead><tr><th>Event</th><th>Value</th></tr></thead>
+    <tbody>
+        <tr><td><code>ThreadCreate</code></td><td><code>"THREAD_CREATE"</code></td></tr>
+        <tr><td><code>ThreadUpdate</code></td><td><code>"THREAD_UPDATE"</code></td></tr>
+        <tr><td><code>ThreadDelete</code></td><td><code>"THREAD_DELETE"</code></td></tr>
+        <tr><td><code>ThreadListSync</code></td><td><code>"THREAD_LIST_SYNC"</code></td></tr>
+        <tr><td><code>ThreadMemberUpdate</code></td><td><code>"THREAD_MEMBER_UPDATE"</code></td></tr>
+        <tr><td><code>ThreadMembersUpdate</code></td><td><code>"THREAD_MEMBERS_UPDATE"</code></td></tr>
+    </tbody>
+</table>
+
+<h3>Scheduled Events</h3>
+<table>
+    <thead><tr><th>Event</th><th>Value</th></tr></thead>
+    <tbody>
+        <tr><td><code>GuildScheduledEventCreate</code></td><td><code>"GUILD_SCHEDULED_EVENT_CREATE"</code></td></tr>
+        <tr><td><code>GuildScheduledEventUpdate</code></td><td><code>"GUILD_SCHEDULED_EVENT_UPDATE"</code></td></tr>
+        <tr><td><code>GuildScheduledEventDelete</code></td><td><code>"GUILD_SCHEDULED_EVENT_DELETE"</code></td></tr>
+        <tr><td><code>GuildScheduledEventUserAdd</code></td><td><code>"GUILD_SCHEDULED_EVENT_USER_ADD"</code></td></tr>
+        <tr><td><code>GuildScheduledEventUserRemove</code></td><td><code>"GUILD_SCHEDULED_EVENT_USER_REMOVE"</code></td></tr>
+    </tbody>
+</table>
+
+<h3>Stage</h3>
+<table>
+    <thead><tr><th>Event</th><th>Value</th></tr></thead>
+    <tbody>
+        <tr><td><code>StageInstanceCreate</code></td><td><code>"STAGE_INSTANCE_CREATE"</code></td></tr>
+        <tr><td><code>StageInstanceUpdate</code></td><td><code>"STAGE_INSTANCE_UPDATE"</code></td></tr>
+        <tr><td><code>StageInstanceDelete</code></td><td><code>"STAGE_INSTANCE_DELETE"</code></td></tr>
+    </tbody>
+</table>
+
+<h3>Auto Moderation</h3>
+<table>
+    <thead><tr><th>Event</th><th>Value</th></tr></thead>
+    <tbody>
+        <tr><td><code>AutoModerationRuleCreate</code></td><td><code>"AUTO_MODERATION_RULE_CREATE"</code></td></tr>
+        <tr><td><code>AutoModerationRuleUpdate</code></td><td><code>"AUTO_MODERATION_RULE_UPDATE"</code></td></tr>
+        <tr><td><code>AutoModerationRuleDelete</code></td><td><code>"AUTO_MODERATION_RULE_DELETE"</code></td></tr>
+        <tr><td><code>AutoModerationActionExecution</code></td><td><code>"AUTO_MODERATION_ACTION_EXECUTION"</code></td></tr>
+    </tbody>
+</table>
+
+<h3>Invites</h3>
+<table>
+    <thead><tr><th>Event</th><th>Value</th></tr></thead>
+    <tbody>
+        <tr><td><code>InviteCreate</code></td><td><code>"INVITE_CREATE"</code></td></tr>
+        <tr><td><code>InviteDelete</code></td><td><code>"INVITE_DELETE"</code></td></tr>
+    </tbody>
+</table>
+
+<h3>Webhooks &amp; Polls</h3>
+<table>
+    <thead><tr><th>Event</th><th>Value</th></tr></thead>
+    <tbody>
+        <tr><td><code>WebhooksUpdate</code></td><td><code>"WEBHOOKS_UPDATE"</code></td></tr>
+        <tr><td><code>MessagePollVoteAdd</code></td><td><code>"MESSAGE_POLL_VOTE_ADD"</code></td></tr>
+        <tr><td><code>MessagePollVoteRemove</code></td><td><code>"MESSAGE_POLL_VOTE_REMOVE"</code></td></tr>
+    </tbody>
+</table>

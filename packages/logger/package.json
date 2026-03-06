@@ -1,0 +1,33 @@
+{
+  "name": "@volundr/logger",
+  "version": "0.9.1",
+  "description": "Structured logger for Volundr",
+  "type": "module",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    }
+  },
+  "files": ["dist"],
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/volundr-js/volundr",
+    "directory": "packages/logger"
+  },
+  "keywords": ["discord", "logger", "logging"],
+  "author": "brviictoor",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/node": "^25.3.2"
+  }
+}

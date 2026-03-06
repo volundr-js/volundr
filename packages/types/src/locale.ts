@@ -1,0 +1,38 @@
+/** Discord-supported locale codes (BCP 47). */
+export enum Locale {
+    Indonesian = "id",
+    Danish = "da",
+    German = "de",
+    EnglishGB = "en-GB",
+    EnglishUS = "en-US",
+    SpanishES = "es-ES",
+    SpanishLATAM = "es-419",
+    French = "fr",
+    Croatian = "hr",
+    Italian = "it",
+    Lithuanian = "lt",
+    Hungarian = "hu",
+    Dutch = "nl",
+    Norwegian = "no",
+    Polish = "pl",
+    PortugueseBR = "pt-BR",
+    Romanian = "ro",
+    Finnish = "fi",
+    Swedish = "sv-SE",
+    Vietnamese = "vi",
+    Turkish = "tr",
+    Czech = "cs",
+    Greek = "el",
+    Bulgarian = "bg",
+    Russian = "ru",
+    Ukrainian = "uk",
+    Hindi = "hi",
+    Thai = "th",
+    ChineseCN = "zh-CN",
+    Japanese = "ja",
+    ChineseTW = "zh-TW",
+    Korean = "ko",
+}
+
+/** String union of all valid Discord locale codes. */
+export type LocaleString = `${Locale}`;

@@ -1,0 +1,28 @@
+node_modules/
+dist/
+*.tgz
+
+# Environment
+.env
+.env.*
+!.env.example
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+npm-debug.log*
+
+# Lavalink session
+.lavalink-session
+
+# Claude
+.claude/

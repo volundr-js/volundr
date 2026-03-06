@@ -1,0 +1,40 @@
+{
+  "name": "@volundr/lavalink",
+  "version": "0.9.1",
+  "description": "Lavalink v4 client for Volundr",
+  "type": "module",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    }
+  },
+  "files": ["dist"],
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/volundr-js/volundr",
+    "directory": "packages/lavalink"
+  },
+  "keywords": ["discord", "lavalink", "music", "audio"],
+  "author": "brviictoor",
+  "license": "ISC",
+  "dependencies": {
+    "@volundr/client": "workspace:*",
+    "@volundr/logger": "workspace:*",
+    "@volundr/types": "workspace:*",
+    "ws": "^8.18.1"
+  },
+  "devDependencies": {
+    "@types/node": "^25.3.2",
+    "@types/ws": "^8.18.1"
+  }
+}

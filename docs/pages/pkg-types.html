@@ -1,0 +1,77 @@
+<h1>@volundr/types</h1>
+<p class="lead">TypeScript type definitions for the Discord API.</p>
+
+<div class="req">npm install @volundr/types</div>
+
+<p>Pure type package - no runtime code, no dependencies. Used internally by all <code>@volundr/*</code> packages.</p>
+
+<pre><code class="language-typescript">import type { APIMessage, APIUser, APIGuild, ChannelType } from "@volundr/types";</code></pre>
+
+<hr>
+
+<h2>Exported Categories</h2>
+
+<h3>Common</h3>
+<p><code>Snowflake</code>, <code>Timestamp</code>, <code>HasId</code>, <code>Mentionable</code>, <code>Nameable</code>, <code>ImageHolder</code></p>
+
+<h3>User</h3>
+<p><code>APIUser</code>, <code>APIAvatarDecorationData</code></p>
+
+<h3>Guild</h3>
+<p><code>APIGuild</code>, <code>GatewayGuild</code>, <code>APIUnavailableGuild</code></p>
+
+<h3>Channel</h3>
+<p><code>ChannelType</code>, <code>APIChannel</code>, <code>APIOverwrite</code>, <code>APIThreadMetadata</code>, <code>APIThreadMember</code>, <code>APIForumTag</code>, <code>APIDefaultReaction</code></p>
+
+<h3>Member</h3>
+<p><code>APIGuildMember</code></p>
+
+<h3>Role</h3>
+<p><code>APIRole</code>, <code>APIRoleTags</code></p>
+
+<h3>Emoji</h3>
+<p><code>APIEmoji</code></p>
+
+<h3>Message</h3>
+<p><code>MessageType</code>, <code>AllowedMentionsTypes</code>, <code>APIMessage</code>, <code>APIAttachment</code>, <code>APIEmbed</code>, <code>APIEmbedField</code>, <code>APIEmbedFooter</code>, <code>APIEmbedMedia</code>, <code>APIEmbedAuthor</code>, <code>APIReaction</code>, <code>APIAllowedMentions</code>, <code>APIMessageReference</code></p>
+
+<h3>Interaction</h3>
+<p><code>InteractionType</code>, <code>ApplicationCommandType</code>, <code>APIInteraction</code>, <code>APIInteractionData</code>, <code>APIResolvedData</code>, <code>APIEntitlement</code></p>
+
+<h3>Components</h3>
+<p><code>ComponentType</code>, <code>ButtonStyle</code>, <code>TextInputStyle</code>, <code>SeparatorSpacing</code>, <code>MessageFlags</code>, <code>InteractionResponseType</code></p>
+<p><code>APIActionRow</code>, <code>APIButton</code>, <code>APIStringSelect</code>, <code>APISelectOption</code>, <code>APITextInput</code>, <code>APIModal</code></p>
+<p>V2: <code>APITextDisplay</code>, <code>APIThumbnail</code>, <code>APISection</code>, <code>APIMediaGallery</code>, <code>APISeparator</code>, <code>APIContainer</code></p>
+
+<h3>Voice</h3>
+<p><code>APIVoiceState</code></p>
+
+<h3>Presence</h3>
+<p><code>ActivityType</code>, <code>StatusType</code>, <code>APIPresenceUpdate</code>, <code>APIActivity</code>, <code>APIClientStatus</code></p>
+
+<h3>Application Commands</h3>
+<p><code>ApplicationCommandOptionType</code>, <code>APIApplicationCommand</code>, <code>APIApplicationCommandOptionData</code>, <code>APIApplicationCommandOptionChoice</code>, <code>CreateApplicationCommandData</code></p>
+
+<h3>Locale</h3>
+<p><code>Locale</code>, <code>LocaleString</code></p>
+
+<h3>Gateway Events</h3>
+<p><code>GatewayEvent</code> enum, <code>GatewayReadyData</code>, <code>GatewayEvents</code> (discriminated union), and 30+ per-event payload types.</p>
+
+<h3>Audit Log</h3>
+<p><code>AuditLogEvent</code>, <code>APIAuditLog</code>, <code>APIAuditLogEntry</code>, <code>APIAuditLogChange</code></p>
+
+<h3>Invite</h3>
+<p><code>InviteTargetType</code>, <code>APIInvite</code>, <code>APIInviteMetadata</code>, <code>CreateInviteOptions</code></p>
+
+<h3>Auto Moderation</h3>
+<p><code>AutoModerationEventType</code>, <code>AutoModerationTriggerType</code>, <code>AutoModerationActionType</code>, <code>APIAutoModerationRule</code>, <code>APIAutoModerationAction</code></p>
+
+<h3>Scheduled Events</h3>
+<p><code>GuildScheduledEventPrivacyLevel</code>, <code>GuildScheduledEventEntityType</code>, <code>GuildScheduledEventStatus</code>, <code>APIGuildScheduledEvent</code></p>
+
+<h3>Other</h3>
+<p><code>WebhookType</code>, <code>APIWebhook</code>, <code>StageInstancePrivacyLevel</code>, <code>APIStageInstance</code>, <code>StickerType</code>, <code>StickerFormatType</code>, <code>APISticker</code>, <code>APIStickerItem</code>, <code>APIGuildTemplate</code></p>
+
+<h3>TypedEmitter</h3>
+<p>Standalone typed event emitter used by all Völundr classes. Not based on Node.js <code>EventEmitter</code>. Lightweight implementation with its own <code>on</code>, <code>once</code>, <code>off</code>, <code>emit</code> and strict event types via generics.</p>

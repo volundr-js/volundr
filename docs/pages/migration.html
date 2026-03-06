@@ -1,0 +1,176 @@
+<h1>Migration from discord.js</h1>
+<p class="lead">A side-by-side mapping for developers coming from discord.js.</p>
+
+<h2>Installation</h2>
+<table>
+    <thead><tr><th>discord.js</th><th>Völundr</th></tr></thead>
+    <tbody>
+        <tr><td><code>npm install discord.js</code></td><td><code>npm install @volundr/client</code></td></tr>
+    </tbody>
+</table>
+
+<h2>Client setup</h2>
+<table>
+    <thead><tr><th>discord.js</th><th>Völundr</th></tr></thead>
+    <tbody>
+        <tr>
+            <td><code>new Client({ intents: [GatewayIntentBits.Guilds] })</code></td>
+            <td><code>new Client({ token, intents: GatewayIntents.Guilds })</code></td>
+        </tr>
+        <tr>
+            <td><code>client.login(token)</code></td>
+            <td><code>client.connect()</code> <em>(token is in constructor)</em></td>
+        </tr>
+        <tr>
+            <td><code>client.destroy()</code></td>
+            <td><code>client.disconnect()</code></td>
+        </tr>
+    </tbody>
+</table>
+
+<h2>Intents</h2>
+<table>
+    <thead><tr><th>discord.js</th><th>Völundr</th></tr></thead>
+    <tbody>
+        <tr>
+            <td><code>GatewayIntentBits.Guilds</code></td>
+            <td><code>GatewayIntents.Guilds</code></td>
+        </tr>
+        <tr>
+            <td><code>[IntentA, IntentB]</code> (array)</td>
+            <td><code>IntentA | IntentB</code> (bitwise OR)</td>
+        </tr>
+    </tbody>
+</table>
+
+<h2>Events</h2>
+<table>
+    <thead><tr><th>discord.js</th><th>Völundr</th></tr></thead>
+    <tbody>
+        <tr>
+            <td><code>Events.MessageCreate</code> / <code>"messageCreate"</code></td>
+            <td><code>"MESSAGE_CREATE"</code> or <code>GatewayEvent.MessageCreate</code></td>
+        </tr>
+        <tr>
+            <td><code>Events.InteractionCreate</code></td>
+            <td><code>"INTERACTION_CREATE"</code></td>
+        </tr>
+        <tr>
+            <td><code>Events.ClientReady</code></td>
+            <td><code>"ready"</code></td>
+        </tr>
+    </tbody>
+</table>
+<p>All Discord events use native <code>SCREAMING_SNAKE_CASE</code> names. No translation layer.</p>
+
+<h2>Sending messages</h2>
+<table>
+    <thead><tr><th>discord.js</th><th>Völundr</th></tr></thead>
+    <tbody>
+        <tr>
+            <td><code>channel.send("text")</code></td>
+            <td><code>channel.send("text")</code> <em>(same)</em></td>
+        </tr>
+        <tr>
+            <td><code>channel.send({ embeds: [embed] })</code></td>
+            <td><code>channel.send(msg =&gt; msg.addEmbed(embed))</code></td>
+        </tr>
+        <tr>
+            <td><code>message.reply("text")</code></td>
+            <td><code>message.reply("text")</code> <em>(same)</em></td>
+        </tr>
+        <tr>
+            <td><code>interaction.reply({ content: "hi", ephemeral: true })</code></td>
+            <td><code>interaction.reply(msg =&gt; { msg.content = "hi"; msg.ephemeral = true; })</code></td>
+        </tr>
+    </tbody>
+</table>
+
+<h2>Builders</h2>
+<table>
+    <thead><tr><th>discord.js</th><th>Völundr</th></tr></thead>
+    <tbody>
+        <tr><td><code>EmbedBuilder</code></td><td><code>EmbedBuilder</code> <em>(same API)</em></td></tr>
+        <tr><td><code>ButtonBuilder</code></td><td><code>ButtonBuilder</code></td></tr>
+        <tr><td><code>StringSelectMenuBuilder</code></td><td><code>StringSelectMenuBuilder</code></td></tr>
+        <tr><td><code>SlashCommandBuilder</code></td><td><code>SlashCommandBuilder</code></td></tr>
+        <tr><td><code>ActionRowBuilder</code></td><td>Not needed - use <code>msg.addComponents(row =&gt; ...)</code></td></tr>
+        <tr><td><code>ModalBuilder</code></td><td><code>ModalBuilder</code></td></tr>
+    </tbody>
+</table>
+
+<h2>Cache</h2>
+<table>
+    <thead><tr><th>discord.js</th><th>Völundr</th></tr></thead>
+    <tbody>
+        <tr>
+            <td><code>client.guilds.cache</code></td>
+            <td><code>client.guilds</code> <em>(already a Collection)</em></td>
+        </tr>
+        <tr>
+            <td><code>guild.members.cache</code></td>
+            <td><code>guild.members</code></td>
+        </tr>
+        <tr>
+            <td><code>.cache.get(id)</code></td>
+            <td><code>.get(id)</code></td>
+        </tr>
+        <tr>
+            <td><code>.cache.find(fn)</code></td>
+            <td><code>.find(fn)</code></td>
+        </tr>
+    </tbody>
+</table>
+
+<h2>Fetching</h2>
+<table>
+    <thead><tr><th>discord.js</th><th>Völundr</th></tr></thead>
+    <tbody>
+        <tr>
+            <td><code>guild.members.fetch(id)</code></td>
+            <td><code>guild.members.fetch(id)</code> or <code>client.fetchGuildMember(guildId, userId)</code></td>
+        </tr>
+        <tr>
+            <td><code>channel.messages.fetch(id)</code></td>
+            <td><code>client.fetchMessage(channelId, messageId)</code></td>
+        </tr>
+    </tbody>
+</table>
+<p>In Völundr: <code>.get()</code> reads from cache, <code>.fetch()</code> calls the API. Always.</p>
+
+<h2>Collections</h2>
+<p>Völundr's <code>Collection</code> is almost identical to discord.js's. Same <code>.filter()</code>, <code>.map()</code>, <code>.find()</code>, <code>.first()</code>, <code>.last()</code>, <code>.random()</code>, etc.</p>
+
+<h2>Interactions</h2>
+<table>
+    <thead><tr><th>discord.js</th><th>Volundr</th></tr></thead>
+    <tbody>
+        <tr>
+            <td><code>if (interaction.commandName === "ping")</code></td>
+            <td><code>client.command("ping", handler)</code></td>
+        </tr>
+        <tr>
+            <td><code>if (interaction.customId === "btn")</code></td>
+            <td><code>client.button("btn", handler)</code></td>
+        </tr>
+        <tr>
+            <td><code>if (interaction.isModalSubmit())</code></td>
+            <td><code>client.modal("id", handler)</code></td>
+        </tr>
+    </tbody>
+</table>
+<p>Declarative routing replaces the <code>if/switch</code> pattern. You can still use <code>client.on("INTERACTION_CREATE")</code> if you prefer.</p>
+
+<h2>Key differences</h2>
+<ul>
+    <li><strong>Token in constructor</strong> - no separate <code>.login()</code> call.</li>
+    <li><strong>No <code>.cache</code> layer</strong> - <code>client.guilds</code> <em>is</em> the collection.</li>
+    <li><strong>Native event names</strong> - <code>MESSAGE_CREATE</code> not <code>messageCreate</code>.</li>
+    <li><strong>Declarative routing</strong> - <code>client.command()</code>, <code>client.button()</code> instead of manual <code>if/switch</code>.</li>
+    <li><strong>Tagged templates</strong> - <code>fmt`Hello ${user}!`</code> auto-resolves mentions.</li>
+    <li><strong>Event streaming</strong> - <code>client.stream("EVENT")</code> returns an AsyncGenerator.</li>
+    <li><strong>Resource management</strong> - <code>await using client = new Client(...)</code> via <code>Symbol.asyncDispose</code>.</li>
+    <li><strong>Callback builder pattern</strong> - <code>msg =&gt; { msg.content = "..." }</code> in addition to options objects.</li>
+    <li><strong>Bitwise intents</strong> - <code>A | B</code> not <code>[A, B]</code>.</li>
+    <li><strong>No managers</strong> - direct methods on Client instead of <code>guild.channels.create()</code>.</li>
+</ul>

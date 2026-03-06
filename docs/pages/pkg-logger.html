@@ -1,0 +1,65 @@
+<h1>@volundr/logger</h1>
+<p class="lead">Structured logging with lazy evaluation.</p>
+
+<div class="req">npm install @volundr/logger</div>
+
+<h2>Usage</h2>
+<pre><code class="language-typescript">import { Logger, LogLevel } from "@volundr/logger";
+
+// Set global level
+Logger.setLevel(LogLevel.DEBUG);
+
+// Get a logger instance (cached)
+const log = Logger.getLogger("gateway", "Shard-0");
+
+log.info("Connected");
+log.debug(() => `Heartbeat ACK: ${latency}ms`); // lazy - only evaluated if DEBUG enabled
+log.warn("Rate limited", { route, retryAfter });
+log.error("Fatal", err);</code></pre>
+
+<hr>
+
+<h2>Logger</h2>
+
+<h3>Static Methods</h3>
+<table>
+    <thead><tr><th>Method</th><th>Returns</th><th>Description</th></tr></thead>
+    <tbody>
+        <tr><td><code>Logger.getLogger(namespace, name)</code></td><td><code>Logger</code></td><td>Get or create logger (cached globally)</td></tr>
+        <tr><td><code>Logger.setLevel(level)</code></td><td><code>void</code></td><td>Set global log level</td></tr>
+        <tr><td><code>Logger.getLevel()</code></td><td><code>LogLevel</code></td><td>Get current global level</td></tr>
+    </tbody>
+</table>
+
+<h3>Instance Methods</h3>
+<table>
+    <thead><tr><th>Method</th><th>Description</th></tr></thead>
+    <tbody>
+        <tr><td><code>trace(message, ...args)</code></td><td>Log at TRACE level</td></tr>
+        <tr><td><code>debug(message, ...args)</code></td><td>Log at DEBUG level</td></tr>
+        <tr><td><code>info(message, ...args)</code></td><td>Log at INFO level</td></tr>
+        <tr><td><code>warn(message, ...args)</code></td><td>Log at WARN level</td></tr>
+        <tr><td><code>error(message, ...args)</code></td><td>Log at ERROR level</td></tr>
+        <tr><td><code>isTraceEnabled()</code></td><td>Check if TRACE is enabled</td></tr>
+        <tr><td><code>isDebugEnabled()</code></td><td>Check if DEBUG is enabled</td></tr>
+    </tbody>
+</table>
+
+<p><code>message</code> accepts <code>string</code> or <code>() =&gt; string</code> (lazy - defers string interpolation until actually logging).</p>
+
+<hr>
+
+<h2>LogLevel</h2>
+<table>
+    <thead><tr><th>Level</th><th>Value</th></tr></thead>
+    <tbody>
+        <tr><td><code>LogLevel.TRACE</code></td><td><code>0</code></td></tr>
+        <tr><td><code>LogLevel.DEBUG</code></td><td><code>1</code></td></tr>
+        <tr><td><code>LogLevel.INFO</code></td><td><code>2</code></td></tr>
+        <tr><td><code>LogLevel.WARN</code></td><td><code>3</code></td></tr>
+        <tr><td><code>LogLevel.ERROR</code></td><td><code>4</code></td></tr>
+        <tr><td><code>LogLevel.OFF</code></td><td><code>5</code></td></tr>
+    </tbody>
+</table>
+
+<p>Default: <code>LogLevel.INFO</code>. Messages are only emitted when <code>level &gt;= globalLevel</code>.</p>

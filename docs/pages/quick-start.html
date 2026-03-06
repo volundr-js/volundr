@@ -1,0 +1,57 @@
+<h1>Quick Start</h1>
+<p class="lead">From zero to a working bot in under a minute.</p>
+
+<h2>Install</h2>
+<pre><code class="language-bash">npm install @volundr/client</code></pre>
+
+<h2>The simplest bot</h2>
+<pre><code class="language-typescript">import { Client } from "@volundr/client";
+import { GatewayIntents } from "@volundr/gateway";
+
+const client = new Client({
+    token: process.env.DISCORD_TOKEN!,
+    intents: GatewayIntents.Guilds,
+});
+
+client.command("ping", i => i.reply("Pong!"));
+client.connect();</code></pre>
+
+<p>4 lines of actual logic. No boilerplate, no <code>if/switch</code>, no 47 imports.</p>
+
+<h2>A real bot in 30 lines</h2>
+<pre><code class="language-typescript">import { Client, fmt, embed, row, button } from "@volundr/client";
+import { GatewayIntents } from "@volundr/gateway";
+import { ButtonStyle } from "@volundr/types";
+
+const client = new Client({
+    token: process.env.DISCORD_TOKEN!,
+    intents: GatewayIntents.Guilds,
+});
+
+// Slash command with embed + button
+client.command("userinfo", async (i) => {
+    const user = i.options.getUser("target", i.client) ?? i.user;
+    await i.reply({
+        embeds: [embed({ title: user.displayName, thumbnail: user.displayAvatarURL(), color: 0x5865F2 })],
+        components: [row(button("refresh", "Refresh", ButtonStyle.Primary))],
+    });
+});
+
+// Button handler with regex matching
+client.button("refresh", async (i) => {
+    await i.update(fmt`Refreshed by ${i.user}!`);
+});
+
+// Autocomplete
+client.autocomplete("search", async (i) => {
+    const query = i.focused?.value ?? "";
+    await i.respond([{ name: `Result: ${query}`, value: String(query) }]);
+});
+
+client.connect();</code></pre>
+
+<p>Commands, buttons, autocomplete, embeds, tagged templates - all in 30 lines. No frameworks, no file-based routing, no decorators. Just TypeScript.</p>
+
+<div class="callout callout-tip">
+    <strong>Tip:</strong> Every <code>.command()</code>, <code>.button()</code>, <code>.selectMenu()</code>, and <code>.modal()</code> returns <code>this</code>, so you can chain them. RegExp matching on <code>custom_id</code> lets you route <code>ticket-123</code>, <code>ticket-456</code> etc. with a single handler.
+</div>
