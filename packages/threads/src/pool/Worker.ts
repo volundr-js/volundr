@@ -3,9 +3,14 @@ import { EventEmitter } from "node:events";
 import { Task, WorkerStatus } from "../types/index.js";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
+import { existsSync } from "node:fs";
 import { Logger } from "@volundr/logger";
 
-const workerScript = join(dirname(fileURLToPath(import.meta.url)), "worker-script.ts");
+const __dir = dirname(fileURLToPath(import.meta.url));
+const jsPath = join(__dir, "worker-script.js");
+const tsPath = join(__dir, "worker-script.ts");
+const workerScript = existsSync(jsPath) ? jsPath : tsPath;
+const useTsx = workerScript === tsPath;
 
 const SLOW_TASK_THRESHOLD = 5_000;
 
@@ -30,9 +35,9 @@ export class Worker extends EventEmitter {
     }
 
     private spawn(): void {
-        this.nodeWorker = new NodeWorker(workerScript, {
+        this.nodeWorker = new NodeWorker(workerScript, useTsx ? {
             execArgv: ["--import", "tsx"],
-        });
+        } : {});
 
         this.log.info("Spawned");
 
