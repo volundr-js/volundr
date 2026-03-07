@@ -246,7 +246,7 @@ export class ShardManager extends TypedEmitter<ShardManagerEvents> {
 
     private spawnShard(shardId: number): void {
         const worker = new Worker(workerScript, {
-            execArgv: ["--import", "tsx"],
+            execArgv: process.execArgv,
             workerData: {
                 token: this.token,
                 intents: this.intents,

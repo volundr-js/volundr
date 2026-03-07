@@ -6,6 +6,7 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
+    "build": "pnpm -r run build",
     "test": "tsx --test packages/*/tests/*.test.ts"
   },
   "keywords": [],

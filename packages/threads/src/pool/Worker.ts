@@ -30,7 +30,7 @@ export class Worker extends EventEmitter {
     }
 
     private spawn(): void {
-        this.nodeWorker = new NodeWorker(workerScript);
+        this.nodeWorker = new NodeWorker(workerScript, { execArgv: [] });
 
         this.log.info("Spawned");
 
