@@ -1,6 +1,6 @@
 {
   "name": "@volundr/gateway",
-  "version": "0.9.1",
+  "version": "0.9.2",
   "description": "Discord Gateway WebSocket client for Volundr",
   "type": "module",
   "main": "dist/index.js",

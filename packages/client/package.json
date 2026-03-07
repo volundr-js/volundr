@@ -1,6 +1,6 @@
 {
   "name": "@volundr/client",
-  "version": "0.9.1",
+  "version": "0.9.2",
   "description": "Unified Discord client for Volundr",
   "type": "module",
   "main": "dist/index.js",
