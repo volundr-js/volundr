@@ -30,19 +30,28 @@ export class InteractionOptions {
         this.resolved = data;
     }
 
-    /** Get the raw option by name. */
+    /** Get the raw option by name. Searches up to 2 levels deep (subcommand groups). */
     get(name: string): APIApplicationCommandOption | undefined {
-        // Check top-level first, then subcommand options
+        // Check top-level first
         let opt = this.options.find((o) => o.name === name);
-        if (!opt) {
-            for (const o of this.options) {
-                if (o.options) {
-                    opt = o.options.find((sub) => sub.name === name);
-                    if (opt) break;
+        if (opt) return opt;
+
+        // Then subcommand/group options (1 level deep)
+        for (const o of this.options) {
+            if (o.options) {
+                opt = o.options.find((sub) => sub.name === name);
+                if (opt) return opt;
+
+                // Then nested subcommand options inside groups (2 levels deep)
+                for (const sub of o.options) {
+                    if (sub.options) {
+                        opt = sub.options.find((nested) => nested.name === name);
+                        if (opt) return opt;
+                    }
                 }
             }
         }
-        return opt;
+        return undefined;
     }
 
     /** Get a string option value. */
@@ -92,10 +101,19 @@ export class InteractionOptions {
         return String(opt.value);
     }
 
-    /** Get the subcommand name, if any. */
+    /** Get the subcommand name, if any. Also searches inside subcommand groups. */
     getSubcommand(): string | null {
         const sub = this.options.find((o) => o.type === OptionType.SubCommand);
-        return sub?.name ?? null;
+        if (sub) return sub.name;
+
+        // Search inside subcommand groups
+        const group = this.options.find((o) => o.type === OptionType.SubCommandGroup);
+        if (group?.options) {
+            const nested = group.options.find((o) => o.type === OptionType.SubCommand);
+            if (nested) return nested.name;
+        }
+
+        return null;
     }
 
     /** Get the subcommand group name, if any. */
