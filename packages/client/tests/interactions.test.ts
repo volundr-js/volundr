@@ -304,3 +304,37 @@ describe("InteractionOptions subcommand traversal", () => {
         assert.equal(focused.value, "htt");
     });
 });
+
+describe("InteractionOptions name collision (issue #2)", () => {
+    function makeSlash(options: unknown[]) {
+        return interactionFrom(mockClient, {
+            id: "1",
+            application_id: "999",
+            type: InteractionType.ApplicationCommand,
+            data: { type: 1, name: "config", id: "c1", options },
+            token: "tok",
+            version: 1,
+            entitlements: [],
+        } as never) as ChatInputInteraction;
+    }
+
+    it("getChannelId() returns value when subcommand and option share the same name", () => {
+        // /config channel channel:#general
+        const i = makeSlash([{
+            type: 1,
+            name: "channel",
+            options: [{ type: 7, name: "channel", value: "123456789" }],
+        }]);
+        assert.equal(i.options.getChannelId("channel"), "123456789");
+    });
+
+    it("getString() returns value when subcommand and option share the same name", () => {
+        // /config name name:hello
+        const i = makeSlash([{
+            type: 1,
+            name: "name",
+            options: [{ type: 3, name: "name", value: "hello" }],
+        }]);
+        assert.equal(i.options.getString("name"), "hello");
+    });
+});
