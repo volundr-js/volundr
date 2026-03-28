@@ -94,8 +94,17 @@ export class InteractionOptions {
 
     /** Get the subcommand name, if any. */
     getSubcommand(): string | null {
+        // Check top-level subcommand first
         const sub = this.options.find((o) => o.type === OptionType.SubCommand);
-        return sub?.name ?? null;
+        if (sub) return sub.name;
+        // Also search inside subcommand groups
+        for (const o of this.options) {
+            if (o.type === OptionType.SubCommandGroup && o.options) {
+                const nested = o.options.find((s) => s.type === OptionType.SubCommand);
+                if (nested) return nested.name;
+            }
+        }
+        return null;
     }
 
     /** Get the subcommand group name, if any. */
