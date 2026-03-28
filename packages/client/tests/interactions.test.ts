@@ -237,3 +237,104 @@ describe("ContextMenuInteraction", () => {
         assert.equal(interaction.targetId, null);
     });
 });
+
+describe("InteractionOptions subcommand traversal", () => {
+    function makeSlash(options: unknown[]) {
+        return interactionFrom(mockClient, {
+            id: "1",
+            application_id: "999",
+            type: InteractionType.ApplicationCommand,
+            data: { type: 1, name: "cmd", id: "c1", options },
+            token: "tok",
+            version: 1,
+            entitlements: [],
+        } as never) as ChatInputInteraction;
+    }
+
+    it("getSubcommand() returns name for flat subcommand", () => {
+        const i = makeSlash([{ type: 1, name: "reset", options: [] }]);
+        assert.equal(i.options.getSubcommand(), "reset");
+    });
+
+    it("getSubcommand() returns name inside subcommand group", () => {
+        const i = makeSlash([
+            { type: 2, name: "sources", options: [{ type: 1, name: "add", options: [] }] },
+        ]);
+        assert.equal(i.options.getSubcommand(), "add");
+    });
+
+    it("getSubcommand() returns null when no subcommand", () => {
+        const i = makeSlash([{ type: 3, name: "query", value: "hello" }]);
+        assert.equal(i.options.getSubcommand(), null);
+    });
+
+    it("getSubcommandGroup() returns group name", () => {
+        const i = makeSlash([
+            { type: 2, name: "sources", options: [{ type: 1, name: "add", options: [] }] },
+        ]);
+        assert.equal(i.options.getSubcommandGroup(), "sources");
+    });
+
+    it("getString() resolves option inside grouped subcommand", () => {
+        const i = makeSlash([
+            {
+                type: 2, name: "sources", options: [{
+                    type: 1, name: "add", options: [
+                        { type: 3, name: "url", value: "https://example.com" },
+                    ],
+                }],
+            },
+        ]);
+        assert.equal(i.options.getString("url"), "https://example.com");
+    });
+
+    it("getFocused() resolves focused option inside grouped subcommand", () => {
+        const i = makeSlash([
+            {
+                type: 2, name: "sources", options: [{
+                    type: 1, name: "add", options: [
+                        { type: 3, name: "url", value: "htt", focused: true },
+                    ],
+                }],
+            },
+        ]);
+        const focused = i.options.getFocused();
+        assert.ok(focused !== null);
+        assert.equal(focused.name, "url");
+        assert.equal(focused.value, "htt");
+    });
+});
+
+describe("InteractionOptions name collision (issue #2)", () => {
+    function makeSlash(options: unknown[]) {
+        return interactionFrom(mockClient, {
+            id: "1",
+            application_id: "999",
+            type: InteractionType.ApplicationCommand,
+            data: { type: 1, name: "config", id: "c1", options },
+            token: "tok",
+            version: 1,
+            entitlements: [],
+        } as never) as ChatInputInteraction;
+    }
+
+    it("getChannelId() returns value when subcommand and option share the same name", () => {
+        // /config channel channel:#general
+        const i = makeSlash([{
+            type: 1,
+            name: "channel",
+            options: [{ type: 7, name: "channel", value: "123456789" }],
+        }]);
+        assert.equal(i.options.getChannelId("channel"), "123456789");
+    });
+
+    it("getString() returns value when subcommand and option share the same name", () => {
+        // /config name name:hello
+        const i = makeSlash([{
+            type: 1,
+            name: "name",
+            options: [{ type: 3, name: "name", value: "hello" }],
+        }]);
+        assert.equal(i.options.getString("name"), "hello");
+    });
+});

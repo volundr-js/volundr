@@ -30,19 +30,25 @@ export class InteractionOptions {
         this.resolved = data;
     }
 
-    /** Get the raw option by name. */
-    get(name: string): APIApplicationCommandOption | undefined {
-        // Check top-level first, then subcommand options
-        let opt = this.options.find((o) => o.name === name);
-        if (!opt) {
-            for (const o of this.options) {
-                if (o.options) {
-                    opt = o.options.find((sub) => sub.name === name);
-                    if (opt) break;
-                }
+    /** Resolve the active subcommand's option list, handling both flat and grouped layouts. */
+    private resolveActiveOptions(): APIApplicationCommandOption[] {
+        // Flat subcommand: /cmd sub
+        const sub = this.options.find((o) => o.type === OptionType.SubCommand);
+        if (sub?.options) return sub.options;
+        // Grouped subcommand: /cmd group sub
+        for (const o of this.options) {
+            if (o.type === OptionType.SubCommandGroup && o.options) {
+                const nested = o.options.find((s) => s.type === OptionType.SubCommand);
+                if (nested?.options) return nested.options;
             }
         }
-        return opt;
+        // No subcommand — top-level options
+        return this.options;
+    }
+
+    /** Get the raw option by name. */
+    get(name: string): APIApplicationCommandOption | undefined {
+        return this.resolveActiveOptions().find((o) => o.name === name);
     }
 
     /** Get a string option value. */
@@ -94,8 +100,17 @@ export class InteractionOptions {
 
     /** Get the subcommand name, if any. */
     getSubcommand(): string | null {
+        // Check top-level subcommand first
         const sub = this.options.find((o) => o.type === OptionType.SubCommand);
-        return sub?.name ?? null;
+        if (sub) return sub.name;
+        // Also search inside subcommand groups
+        for (const o of this.options) {
+            if (o.type === OptionType.SubCommandGroup && o.options) {
+                const nested = o.options.find((s) => s.type === OptionType.SubCommand);
+                if (nested) return nested.name;
+            }
+        }
+        return null;
     }
 
     /** Get the subcommand group name, if any. */
@@ -106,13 +121,8 @@ export class InteractionOptions {
 
     /** Get the focused option (for autocomplete). */
     getFocused(): { name: string; value: string | number } | null {
-        for (const opt of this.options) {
+        for (const opt of this.resolveActiveOptions()) {
             if (opt.focused) return { name: opt.name, value: opt.value as string | number };
-            if (opt.options) {
-                for (const sub of opt.options) {
-                    if (sub.focused) return { name: sub.name, value: sub.value as string | number };
-                }
-            }
         }
         return null;
     }
